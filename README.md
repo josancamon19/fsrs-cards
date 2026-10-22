@@ -21,7 +21,7 @@ is stored in SQLite in `./data/anki.db`, and media files go in `./data/media/`.
   - Each rating button shows the exact interval FSRS will schedule. Fuzz is seeded per card, so the preview matches the real result.
   - Every card shows its live FSRS state: retrievability, stability and difficulty. After each answer a toast
     shows the change: `Good → 1.5mo · S 19.2d → 46.0d · D 6.3 · R was 91%`.
-  - Keys: `Space` reveals the answer, then rates Good. `1`–`4` rate Again/Hard/Good/Easy. `U` undoes, `I` opens card info and `Esc` goes back.
+  - Keys: `Space` reveals the answer, then rates Good. `1`–`4` rate Again/Hard/Good/Easy. `U` undoes, `S` skips the card for now (it returns at the end of the session; no review is logged, so FSRS is unaffected), `I` opens card info and `Esc` goes back. Hover a study-bar button to see what it does.
 - **Card info** shows the forgetting curve and stability after each review. It also lists the full review log with R at review time,
   elapsed days, S before→after, D, interval and time spent.
 - **Stats** cover today's KPIs, true retention vs. desired retention, and card states. Answers are broken down by card state,

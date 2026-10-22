@@ -156,12 +156,14 @@ def counts(ids: list[int], now: datetime, s: dict) -> dict:
     }
 
 
-def next_card(ids: list[int], now: datetime, s: dict, exclude: int | None = None):
+def next_card(ids: list[int], now: datetime, s: dict, exclude: list[int] | None = None):
+    """`exclude`: cards to hold back for now, oldest first (skipped cards, then the card just answered).
+    When nothing else is left they come back, oldest first."""
     c = db.conn()
     ind = _in(ids)
     now_ts = int(now.timestamp())
     cnt = counts(ids, now, s)
-    ex = f"AND id != {int(exclude)}" if exclude else ""
+    ex = f"AND id NOT IN ({','.join(str(int(x)) for x in exclude)})" if exclude else ""
     base = f"SELECT * FROM cards WHERE suspended = 0 AND deck_id IN {ind} {ex}"
 
     row = c.execute(f"{base} AND state IN (1,3) AND due <= ? ORDER BY due LIMIT 1", (now_ts,)).fetchone()
@@ -189,8 +191,8 @@ def next_card(ids: list[int], now: datetime, s: dict, exclude: int | None = None
                     (now_ts + s["learn_ahead_min"] * 60,)).fetchone()
     if row:
         return row, cnt
-    if exclude:  # the only card left is the one just answered
-        return next_card(ids, now, s, None)
+    if exclude:  # only held-back cards are left: release the oldest one
+        return next_card(ids, now, s, exclude[1:])
     return None, cnt
 
 

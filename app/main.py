@@ -201,7 +201,13 @@ def card_payload(row, now: datetime) -> dict:
     return r
 
 
-def study_state(deck: str | None, exclude: int | None = None):
+def skip_list(skip: str | list[int] | None) -> list[int]:
+    if isinstance(skip, str):
+        skip = [int(x) for x in skip.split(",") if x.strip().isdigit()]
+    return list(skip or [])[-200:]
+
+
+def study_state(deck: str | None, exclude: list[int] | None = None):
     s = db.get_settings()
     now = now_utc()
     ids = sched.deck_ids(deck)
@@ -216,8 +222,9 @@ def study_state(deck: str | None, exclude: int | None = None):
 
 
 @app.get("/api/study/next")
-def study_next(deck: str | None = None):
-    return study_state(deck)
+def study_next(deck: str | None = None, skip: str | None = None):
+    """`skip`: comma-separated card ids skipped this session (oldest first). Skipping writes no review."""
+    return study_state(deck, skip_list(skip))
 
 
 @app.get("/api/study/card/{card_id}")
@@ -235,6 +242,7 @@ class Answer(BaseModel):
     rating: int
     duration_ms: int = 0
     deck: str | None = None
+    skip: list[int] = []            # cards skipped this session, oldest first
 
 
 @app.post("/api/study/answer")
@@ -259,7 +267,7 @@ def study_answer(a: Answer):
                    log["retrievability"], log["elapsed_days"], log["interval_secs"],
                    min(a.duration_ms, 600_000), prev))
         c.execute("COMMIT")
-    res = study_state(a.deck, exclude=a.card_id)
+    res = study_state(a.deck, exclude=[x for x in skip_list(a.skip) if x != a.card_id] + [a.card_id])
     res["answered"] = {"card_id": a.card_id, "rating": a.rating, "interval_secs": log["interval_secs"],
                        "stability": log["stability"], "difficulty": log["difficulty"],
                        "stability_before": log["stability_before"], "retrievability": log["retrievability"]}

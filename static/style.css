@@ -347,3 +347,23 @@ table.data th:last-child, table.data td:last-child { padding-right: 16px; }
 .mic-row select { flex: 1 1 240px; min-width: 0; }
 .mic-test { width: 90px; height: 6px; border-radius: 3px; background: var(--surface-3); overflow: hidden; }
 .mic-test i { display: block; height: 100%; width: 0; background: var(--good); transition: width .09s ease-out; }
+
+/* study-bar tooltips: what each button does + its shortcut */
+.study-bar [data-tip] { position: relative; }
+.study-bar [data-tip]::after {
+  content: attr(data-tip) "\A" "Shortcut: " attr(data-key); white-space: pre-line;
+  position: absolute; top: calc(100% + 8px); left: 50%; transform: translate(-50%, -4px); z-index: 30;
+  width: max-content; max-width: 250px; padding: 8px 10px; border-radius: 8px; text-align: left;
+  background: var(--ink); color: var(--plane); font: 500 12px/1.45 var(--font); letter-spacing: 0; text-transform: none;
+  box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: opacity .12s, transform .12s;
+}
+.study-bar [data-tip-end]::after { left: auto; right: 0; transform: translateY(-4px); }
+@media (hover: hover) {
+  .study-bar [data-tip]:hover::after { opacity: 1; transform: translate(-50%, 0); transition-delay: .35s; }
+  .study-bar [data-tip-end]:hover::after { transform: translateY(0); }
+}
+.study-bar [data-tip]:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+.study-bar [data-tip-end]:focus-visible::after { transform: translateY(0); }
+.study-bar [data-tip-start]::after { left: 0; transform: translateY(-4px); }
+@media (hover: hover) { .study-bar [data-tip-start]:hover::after { transform: translateY(0); } }
+.study-bar [data-tip-start]:focus-visible::after { transform: translateY(0); }

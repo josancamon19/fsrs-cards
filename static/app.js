@@ -299,19 +299,20 @@ function typeCompare(given, expected) {
 let S = null; // study state
 function studyRestyle() { if (S && S.card) S.revealed ? showAnswer(true) : showQuestion(); }
 async function studyView(deck) {
-  S = { deck, card: null, revealed: false, shownAt: 0, counts: null, busy: false, typed: '' };
+  S = { deck, card: null, revealed: false, shownAt: 0, counts: null, busy: false, typed: '', skipped: [] };
   document.activeElement?.blur?.();
   view.innerHTML = `
     <div class="study">
       <div class="study-bar">
-        <a class="icon-btn" href="#/" title="Back (Esc)">←</a>
+        <a class="icon-btn" href="#/" aria-label="Back to decks" data-tip="Back to decks" data-key="Esc" data-tip-start>←</a>
         <div class="study-deck">${esc(deck ? deck.split('::').slice(-1)[0] : 'All decks')}</div>
         <div class="qcounts" id="qc"></div>
-        <button class="icon-btn mic-btn" id="mic-btn" title="Record spoken answers (M)"><span class="mic-dot"></span><span class="mic-bars"><i></i><i></i><i></i></span><span class="mic-lbl">Mic</span></button>
-        <button class="icon-btn flag-btn" id="flag-btn" title="Flag this answer to dive into later (F)">⚑</button>
-        <button class="icon-btn" id="susp-btn" title="Suspend card (@)">⊘</button>
-        <button class="icon-btn" id="undo-btn" title="Undo (U)">↶</button>
-        <button class="icon-btn" id="info-btn" title="Card info (I)">ⓘ</button>
+        <button class="icon-btn mic-btn" id="mic-btn" aria-label="Microphone" data-key="M"><span class="mic-dot"></span><span class="mic-bars"><i></i><i></i><i></i></span><span class="mic-lbl">Mic</span></button>
+        <button class="icon-btn flag-btn" id="flag-btn" aria-label="Flag" data-key="F">⚑</button>
+        <button class="icon-btn" id="skip-btn" aria-label="Skip" data-tip="Skip for now: the card comes back at the end of this session. No review is logged, so FSRS isn't affected" data-key="S">↷</button>
+        <button class="icon-btn" id="susp-btn" aria-label="Suspend" data-tip="Suspend: take the card out of study and add it to the rewrite list, with a reason" data-key="@" data-tip-end>⊘</button>
+        <button class="icon-btn" id="undo-btn" aria-label="Undo" data-tip="Undo the last rating, skip or suspend" data-key="U" data-tip-end>↶</button>
+        <button class="icon-btn" id="info-btn" aria-label="Card info" data-tip="Card info: review history, forgetting curve and your spoken answers" data-key="I" data-tip-end>ⓘ</button>
       </div>
       <div class="progress"><div id="prog" style="width:0"></div></div>
       <div class="susp-pop hidden" id="susp-pop"></div>
@@ -323,6 +324,7 @@ async function studyView(deck) {
   $('#info-btn').onclick = () => S.card && openCardInfo(S.card.id);
   $('#mic-btn').onclick = () => recToggle();
   $('#flag-btn').onclick = () => toggleFlag();
+  $('#skip-btn').onclick = () => skipCard();
   const onKey = e => {
     if ($('.modal-bg')) { if (e.key === 'Escape') closeModal(); return; }
     const tgt = e.composedPath()[0];
@@ -339,13 +341,14 @@ async function studyView(deck) {
     else if (e.key === 'i') openCardInfo(S.card.id);
     else if (e.key === 'm') recToggle();
     else if (e.key === 'f') toggleFlag();
+    else if (e.key === 's') skipCard();
     else if (e.key === 'o' && S.revealed && S.card.source_url) location.href = S.card.source_url;
   };
   addEventListener('keydown', onKey);
   cleanup = () => { removeEventListener('keydown', onKey); recDiscard(); recRelease(); S = null; };
   if (REC.on) await recEnsureStream();
   recPaint();
-  try { applyStudy(await api('/api/study/next' + (deck ? '?deck=' + encodeURIComponent(deck) : ''))); }
+  try { applyStudy(await api(nextUrl())); }
   catch (e) { $('#study-body').innerHTML = `<div class="done-box">${esc(e.message)}</div>`; }
 }
 function renderCounts() {
@@ -432,7 +435,8 @@ async function answer(rating) {
   const c = S.card, dur = Math.round(performance.now() - S.shownAt), flagged = S.flagged;
   const take = recStop();
   try {
-    const res = await api('/api/study/answer', { json: { card_id: c.id, rating, duration_ms: dur, deck: S.deck } });
+    const res = await api('/api/study/answer', { json: { card_id: c.id, rating, duration_ms: dur, deck: S.deck, skip: S.skipped } });
+    S.skipped = S.skipped.filter(x => x !== c.id);
     take.then(t => recUpload(c.id, t, { rating, flagged }));
     S.lastAction = { type: 'answer' };
     const a = res.answered, r = RATINGS[rating - 1];
@@ -441,10 +445,38 @@ async function answer(rating) {
   } catch (e) { toast(esc(e.message)); }
   finally { if (S) S.busy = false; }
 }
+function nextUrl() {
+  const q = new URLSearchParams();
+  if (S.deck) q.set('deck', S.deck);
+  if (S.skipped.length) q.set('skip', S.skipped.join(','));
+  return '/api/study/next' + (q.size ? '?' + q : '');
+}
+/* Skip = "not now": the card goes to the back of today's session. Nothing is rated, so FSRS sees no review. */
+async function skipCard() {
+  if (!S || !S.card || S.busy) return;
+  S.busy = true;
+  const id = S.card.id;
+  S.skipped = [...S.skipped.filter(x => x !== id), id];
+  try {
+    const res = await api(nextUrl());
+    S.lastAction = { type: 'skip', id };
+    applyStudy(res);
+    toast(res.card && res.card.id === id ? 'Skipped · it is the only card left, so here it is again'
+      : '<b>Skipped</b> · comes back at the end of this session · <kbd>U</kbd> to undo');
+  } catch (e) { toast(esc(e.message)); }
+  finally { if (S) S.busy = false; }
+}
 async function undo() {
   if (!S || S.busy) return;
   S.busy = true;
   try {
+    if (S.lastAction && S.lastAction.type === 'skip') {
+      const id = S.lastAction.id; S.lastAction = null;
+      S.skipped = S.skipped.filter(x => x !== id);
+      applyStudy(await api(`/api/study/card/${id}` + (S.deck ? '?deck=' + encodeURIComponent(S.deck) : '')));
+      toast('Skip undone');
+      return;
+    }
     if (S.lastAction && S.lastAction.type === 'suspend') {
       const id = S.lastAction.id; S.lastAction = null;
       await api(`/api/cards/${id}/suspend`, { json: { suspended: false } });
@@ -481,7 +513,7 @@ async function suspendAndNext(reason) {
     await api(`/api/cards/${id}/suspend`, { json: { suspended: true, reason: (reason || '').trim() || null } });
     toggleSuspendPop(false);
     S.lastAction = { type: 'suspend', id };
-    applyStudy(await api('/api/study/next' + (S.deck ? '?deck=' + encodeURIComponent(S.deck) : '')));
+    applyStudy(await api(nextUrl()));
     toast(`<b>Suspended</b>${reason ? ' · ' + esc(reason) : ''} · <kbd>U</kbd> to undo`);
   } catch (e) { toast(esc(e.message)); }
   finally { if (S) S.busy = false; }
@@ -541,7 +573,7 @@ async function openCardInfo(id) {
   const doSuspend = async () => {
     await api(`/api/cards/${id}/suspend`, { json: { suspended: true, reason: $('#m-reason', m).value } });
     toast('Suspended · added to the rewrite list');
-    if (S && S.card && S.card.id === id) { closeModal(); S.lastAction = { type: 'suspend', id }; applyStudy(await api('/api/study/next' + (S.deck ? '?deck=' + encodeURIComponent(S.deck) : ''))); }
+    if (S && S.card && S.card.id === id) { closeModal(); S.lastAction = { type: 'suspend', id }; applyStudy(await api(nextUrl())); }
     else openCardInfo(id);
   };
   $('#m-susp-go', m).onclick = doSuspend;
@@ -771,7 +803,8 @@ function recPaint() {
   b.classList.toggle('on', REC.on);
   b.classList.toggle('live', !!REC.seg);
   if (!REC.seg) b.style.setProperty('--lvl', 0);
-  b.title = REC.on ? 'Recording your answer · M to turn the mic off' : 'Record spoken answers (M)';
+  b.dataset.tip = REC.on ? 'Mic on: each answer is recorded from the moment the card appears until you rate it, then transcribed. Press to turn off'
+    : 'Mic off: press to record your spoken answers. They are transcribed and saved to Answers';
 }
 function meterOn() { return !!(REC.analyser && REC.ctx && REC.ctx.state === 'running'); }
 function recMeter() { // every 100ms: count speech in the current part and animate the mic button
@@ -874,7 +907,12 @@ function toggleFlag() {
   S.flagged = !S.flagged; paintFlag();
   toast(S.flagged ? '<b>Flagged</b> · this answer goes to your dive-into list' : 'Flag removed');
 }
-function paintFlag() { $('#flag-btn')?.classList.toggle('on', !!(S && S.flagged)); }
+function paintFlag() {
+  const b = $('#flag-btn'); if (!b) return;
+  const on = !!(S && S.flagged);
+  b.classList.toggle('on', on);
+  b.dataset.tip = on ? 'Flagged: this answer goes to your "To dive into" list. Press to unflag' : 'Flag this answer to dive into later (it shows up under Answers → To dive into)';
+}
 
 /* ---------------------------------------------------------------- spoken answers (display) */
 const fmtSecs = ms => ms == null ? '' : ms < 60000 ? Math.round(ms / 1000) + 's' : Math.floor(ms / 60000) + 'm ' + String(Math.round(ms / 1000) % 60).padStart(2, '0') + 's';
@@ -1025,7 +1063,7 @@ async function settingsView() {
       <div class="sub" id="s-msg"></div>
     </div></div>
     <div class="panel" style="margin-top:16px"><h2>Keyboard</h2><div class="sub" style="margin:6px 0 0;line-height:2">
-      <kbd>Space</kbd> show answer / Good · <kbd>1</kbd> Again · <kbd>2</kbd> Hard · <kbd>3</kbd> Good · <kbd>4</kbd> Easy · <kbd>U</kbd> undo · <kbd>@</kbd> suspend · <kbd>M</kbd> mic on/off · <kbd>F</kbd> flag answer · <kbd>I</kbd> card info · <kbd>O</kbd> open source note · <kbd>Esc</kbd> back</div></div>
+      <kbd>Space</kbd> show answer / Good · <kbd>1</kbd> Again · <kbd>2</kbd> Hard · <kbd>3</kbd> Good · <kbd>4</kbd> Easy · <kbd>U</kbd> undo · <kbd>S</kbd> skip for now · <kbd>@</kbd> suspend · <kbd>M</kbd> mic on/off · <kbd>F</kbd> flag answer · <kbd>I</kbd> card info · <kbd>O</kbd> open source note · <kbd>Esc</kbd> back</div></div>
     <div class="panel" style="margin-top:16px"><h2>Microphone</h2><div class="sub">For spoken answers (<kbd>M</kbd> in a study session). Saved on this device.</div>
       <div class="mic-row"><select class="input" id="s-mic"></select><button class="btn" id="s-mic-test">Test</button><span class="mic-test" id="s-mic-lvl"><i></i></span></div>
       <div class="sub" id="s-mic-msg" style="margin:8px 0 0"></div></div>`;

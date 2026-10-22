@@ -7,6 +7,7 @@ import os
 import re
 import shutil
 import tempfile
+import threading
 import time
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -18,7 +19,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel
 
-from . import apkg, db, render, responses, sched
+from . import apkg, chat, db, render, responses, sched
 
 STATIC = Path(__file__).resolve().parent.parent / "static"
 CARD_COLS = ("state", "step", "stability", "difficulty", "due", "last_review", "reps", "lapses")
@@ -28,6 +29,7 @@ app.add_middleware(GZipMiddleware, minimum_size=2048)
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
 db.conn()
 responses.resume_pending()
+threading.Thread(target=lambda: chat.resume(), daemon=True).start()
 
 # ---------------------------------------------------------------- auth (single user)
 # Set APP_PASSWORD to require a login (always do this when deployed). Unset = open (local use).
@@ -312,6 +314,8 @@ def card_info(card_id: int):
     p["suspend_reason"] = row["suspend_reason"]
     p["responses"] = [responses.to_dict(r) for r in c.execute(
         "SELECT * FROM responses WHERE card_id = ? ORDER BY ts DESC", (card_id,))]
+    p["chats"] = [chat.to_dict(r) for r in c.execute(
+        "SELECT * FROM chats WHERE card_id = ? AND turns != '[]' ORDER BY started_at DESC", (card_id,))]
     p["history"] = [dict(r) for r in c.execute(
         """SELECT ts, rating, state_before, state_after, stability_before, stability, difficulty, retrievability,
                   elapsed_days, interval_secs, duration_ms, imported FROM revlog WHERE card_id = ? ORDER BY ts""",
@@ -654,11 +658,12 @@ def list_responses(card_id: int | None = None, ids: str | None = None, flagged: 
 class ResponseEdit(BaseModel):
     flagged: bool | None = None
     note: str | None = None
+    rating: int | None = None       # set later when the answer was uploaded before rating (a chat started first)
 
 
 @app.patch("/api/responses/{rid}")
 def edit_response(rid: int, body: ResponseEdit):
-    cols = {k: v for k, v in (("flagged", body.flagged), ("note", body.note)) if v is not None}
+    cols = {k: v for k, v in (("flagged", body.flagged), ("note", body.note), ("rating", body.rating)) if v is not None}
     if cols:
         with db.lock():
             db.conn().execute(f"UPDATE responses SET {', '.join(k + ' = ?' for k in cols)} WHERE id = ?", (*cols.values(), rid))
@@ -687,6 +692,67 @@ def delete_response(rid: int):
             if name:
                 (responses.AUDIO_DIR / name).unlink(missing_ok=True)
         c.execute("DELETE FROM responses WHERE id = ?", (rid,))
+    return {"ok": True}
+
+
+# ---------------------------------------------------------------- voice conversations about a card
+
+class ChatStart(BaseModel):
+    response_id: int | None = None  # the spoken answer just given for this card, if it was recorded
+
+
+@app.post("/api/cards/{card_id}/chat")
+async def chat_start(card_id: int, body: ChatStart | None = None):
+    """Start a voice conversation about this card: returns a short-lived OpenAI key for the browser's WebRTC call."""
+    if not db.conn().execute("SELECT 1 FROM cards WHERE id = ?", (card_id,)).fetchone():
+        raise HTTPException(404)
+    if not responses.api_key():
+        raise HTTPException(400, "The server has no OPENAI_API_KEY")
+    rid = body.response_id if body else None
+    try:
+        secret = await asyncio.to_thread(chat.client_secret, card_id, rid)
+    except RuntimeError as e:
+        raise HTTPException(502, str(e))
+    chat_id = chat.create(card_id, rid, chat.REALTIME_MODEL)
+    return {"chat_id": chat_id, "client_secret": secret["value"], "expires_at": secret.get("expires_at"),
+            "model": chat.REALTIME_MODEL}
+
+
+class ChatTurns(BaseModel):
+    turns: list[dict]               # [{id, role: user|assistant, text, ts}]
+
+
+@app.post("/api/chats/{chat_id}/turns")
+def chat_turns(chat_id: int, body: ChatTurns):
+    try:
+        return {"turns": chat.add_turns(chat_id, body.turns)}
+    except KeyError:
+        raise HTTPException(404)
+
+
+@app.post("/api/chats/{chat_id}/end")
+def chat_end(chat_id: int, body: ChatTurns | None = None):
+    """Store any last turns, then digest the conversation in the background."""
+    if body and body.turns:
+        chat.add_turns(chat_id, body.turns)
+    threading.Thread(target=chat.end_safely, args=(chat_id,), daemon=True).start()
+    return {"ok": True}
+
+
+@app.get("/api/chats")
+def list_chats(card_id: int | None = None, limit: int = 50, offset: int = 0):
+    c = db.conn()
+    where, args = ("WHERE card_id = ?", [card_id]) if card_id is not None else ("WHERE turns != '[]'", [])
+    rows = c.execute(f"SELECT * FROM chats {where} ORDER BY started_at DESC LIMIT ? OFFSET ?",
+                     (*args, min(limit, 200), offset)).fetchall()
+    total = c.execute(f"SELECT COUNT(*) FROM chats {where}", args).fetchone()[0]
+    return {"total": total, "items": [chat.to_dict(r) for r in rows]}
+
+
+@app.delete("/api/chats/{chat_id}")
+def delete_chat(chat_id: int):
+    with db.lock():
+        db.conn().execute("DELETE FROM chats WHERE id = ?", (chat_id,))
     return {"ok": True}
 
 

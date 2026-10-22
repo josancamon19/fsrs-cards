@@ -319,7 +319,7 @@ async function studyView(deck) {
       <div class="progress"><div id="prog" style="width:0"></div></div>
       <div class="susp-pop hidden" id="susp-pop"></div>
       <div id="study-body" class="card-wrap"></div>
-      <div class="answer-bar" id="abar"></div>
+      <div class="answer-bar"><div id="chat-slot"></div><div id="abar"></div></div>
     </div>`;
   $('#undo-btn').onclick = undo;
   $('#susp-btn').onclick = () => S.card && toggleSuspendPop();
@@ -336,7 +336,9 @@ async function studyView(deck) {
     if (typing && e.key !== 'Enter') return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (!$('#susp-pop').classList.contains('hidden')) { if (e.key === 'Escape') toggleSuspendPop(false); return; }
+    if (e.key === 'Escape' && CHAT) { chatEnd(); return; }
     if (e.key === 'Escape') { location.hash = '#/'; return; }
+    if (e.key === 't' && S.card && S.revealed) { e.preventDefault(); CHAT ? chatEnd() : chatStart(); return; }
     if (e.key === '@' && S.card) { e.preventDefault(); toggleSuspendPop(true); return; }
     if (!S.card) return;
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); S.revealed ? answer(3) : showAnswer(); }
@@ -349,7 +351,7 @@ async function studyView(deck) {
     else if (e.key === 'o' && S.revealed && S.card.source_url) location.href = S.card.source_url;
   };
   addEventListener('keydown', onKey);
-  cleanup = () => { removeEventListener('keydown', onKey); recDiscard(); recRelease(); S = null; };
+  cleanup = () => { removeEventListener('keydown', onKey); chatEnd(); recDiscard(); recRelease(); S = null; };
   if (REC.on) await recEnsureStream();
   recPaint();
   try { applyStudy(await api(nextUrl())); }
@@ -367,6 +369,8 @@ function applyStudy(res) {
   S.counts = res.counts;
   S.card = res.card || null;
   S.revealed = false;
+  if (CHAT && (!res.card || res.card.id !== CHAT.cardId)) chatEnd();
+  if (!res.card || res.card.id !== S.pendingResponseCard) { S.pendingResponse = null; S.pendingResponseCard = null; }
   S.flagged = false; paintFlag();
   if (!S.card) {
     recDiscard();
@@ -429,8 +433,10 @@ function showAnswer(restyle) {
   if (!restyle) recMarkReveal();
   $('#src-slot').innerHTML = sourceLink(c);
   $('#abar').innerHTML = `<div class="ratings">${RATINGS.map(r => `
-    <button class="rate ${r.cls}" data-r="${r.n}"><kbd>${r.n}</kbd><div class="lbl">${r.label}</div><div class="ivl">${fmtIvl(c.previews[r.n])}</div></button>`).join('')}</div>`;
+    <button class="rate ${r.cls}" data-r="${r.n}"><kbd>${r.n}</kbd><div class="lbl">${r.label}</div><div class="ivl">${fmtIvl(c.previews[r.n])}</div></button>`).join('')}</div>
+    <button class="talk-btn${CHAT ? ' hidden' : ''}" id="talk-btn"><span class="talk-ic">◉</span> Talk about this card <kbd>T</kbd></button>`;
   $$('.rate').forEach(b => b.onclick = () => answer(+b.dataset.r));
+  $('#talk-btn').onclick = () => chatStart();
   document.activeElement?.blur?.();
 }
 async function answer(rating) {
@@ -441,6 +447,7 @@ async function answer(rating) {
   try {
     const res = await api('/api/study/answer', { json: { card_id: c.id, rating, duration_ms: dur, deck: S.deck, skip: S.skipped } });
     S.skipped = S.skipped.filter(x => x !== c.id);
+    if (S.pendingResponse) { api('/api/responses/' + S.pendingResponse, { method: 'PATCH', json: { rating, flagged } }).catch(() => {}); S.pendingResponse = null; }
     take.then(t => recUpload(c.id, t, { rating, flagged }));
     S.lastAction = { type: 'answer' };
     const a = res.answered, r = RATINGS[rating - 1];
@@ -465,6 +472,7 @@ function toggleMore(show) {
     ['undo-btn', '↶', 'Undo', 'Undo the last rating, skip or suspend'],
     ['info-btn', 'ⓘ', 'Card info', 'History, forgetting curve and spoken answers'],
   ];
+  if ($('#talk-btn') && !CHAT) items.unshift(['talk-btn', '◉', 'Talk about this card', 'Voice chat with a tutor that knows this card and your answers']);
   menu.innerHTML = items.map(([id, ic, label, desc]) =>
     `<button class="more-item${id === 'flag-btn' && flagged ? ' on' : ''}" role="menuitem" data-for="${id}"><span class="mi-ic">${ic}</span><span><b>${label}</b><small>${desc}</small></span></button>`).join('');
   $$('.more-item', menu).forEach(b => b.onclick = () => { toggleMore(false); $('#' + b.dataset.for).click(); });
@@ -579,6 +587,8 @@ async function openCardInfo(id) {
     </div>
     ${c.responses.length ? `<div class="panel" style="margin-bottom:14px"><h2>Spoken answers</h2><div class="sub">${c.responses.length} attempt${c.responses.length > 1 ? 's' : ''}, newest first. Use this to see how your answer changes over time.</div>
       <div class="resp-list" id="m-resp">${c.responses.map(r => responseItem(r)).join('')}</div></div>` : ''}
+    ${c.chats.length ? `<div class="panel" style="margin-bottom:14px"><h2>Conversations</h2><div class="sub">${c.chats.length} voice conversation${c.chats.length > 1 ? 's' : ''} about this card, newest first</div>
+      <div class="resp-list" id="m-chats">${c.chats.map(x => chatItem(x)).join('')}</div></div>` : ''}
     ${c.curve ? `<div class="panel" style="margin-bottom:14px"><h2>Forgetting curve</h2><div class="sub">Predicted recall over time with S = ${fmtDays(c.stability)}. FSRS schedules the next review when R hits your desired retention.</div><div class="chart" id="m-curve"></div></div>` : ''}
     ${hist.length > 1 ? `<div class="panel" style="margin-bottom:14px"><h2>Memory state over reviews</h2><div class="sub">Stability after each review (days)</div><div class="chart" id="m-stab"></div></div>` : ''}
     <div class="panel"><h2>Review history</h2><div class="sub">${hist.length} reviews</div>
@@ -592,6 +602,7 @@ async function openCardInfo(id) {
   paintCard($('#m-card', m), c.answer, c.css);
   $('#m-close', m).onclick = closeModal;
   if ($('#m-resp', m)) { bindResponses($('#m-resp', m), () => openCardInfo(id)); renderMath($('#m-resp', m)); }
+  if ($('#m-chats', m)) { bindResponses($('#m-chats', m), () => openCardInfo(id)); renderMath($('#m-chats', m)); }
   $('#m-susp', m).onclick = async () => {
     if (c.suspended) { await api(`/api/cards/${id}/suspend`, { json: { suspended: false } }); toast('Unsuspended'); return openCardInfo(id); }
     $('#m-susp-form', m).classList.remove('hidden'); $('#m-reason', m).focus();
@@ -906,6 +917,7 @@ async function recUpload(cardId, t, { rating, flagged }) {
     const r = await api(`/api/cards/${cardId}/responses`, { method: 'POST', body: fd });
     if (!r.transcription) return toast('Answer saved, but the server has no OPENAI_API_KEY so it can\'t transcribe yet', 3500);
     pendingResp.add(r.id); pollResponses();
+    return r.id;
   } catch (e) { toast(`Couldn't upload your answer · ${esc(e.message)}`, 3500); }
 }
 let pollT = null;
@@ -923,6 +935,7 @@ function pollResponses() {
           const txt = it.transcript || it.transcript_after || '';
           toast(`<b>Answer saved</b> · ${esc(txt.slice(0, 48))}${txt.length > 48 ? '…' : ''}${n ? ` · ${n} to dive into` : ''}`, 3200);
         } else if (it.status === 'error') toast(`Transcription failed · ${esc(it.error || '')}`, 4000);
+        if (CHAT && CHAT.responseId === it.id && it.status === 'done') chatSendAnswer(it);
         if (current?.name === 'answers' && !$('.modal-bg')) answersReload?.();
       }
       [...pendingResp].forEach(id => { if (!r.items.some(it => it.id === id)) pendingResp.delete(id); });
@@ -940,6 +953,137 @@ function paintFlag() {
   const on = !!(S && S.flagged);
   b.classList.toggle('on', on);
   b.dataset.tip = on ? 'Flagged: this answer goes to your "To dive into" list. Press to unflag' : 'Flag this answer to dive into later (it shows up under Answers → To dive into)';
+}
+
+/* ---------------------------------------------------------------- voice conversation about a card (OpenAI Realtime) */
+/* The server mints a short-lived key with the tutor prompt and the card context baked in; the browser talks to
+   OpenAI over WebRTC. Every transcribed turn is saved as it arrives; ending the chat triggers a digest on the server. */
+let CHAT = null;
+function chime(up) {
+  try {
+    const ctx = new AudioContext(), o = ctx.createOscillator(), g = ctx.createGain(), t = ctx.currentTime;
+    o.type = 'sine'; o.connect(g); g.connect(ctx.destination);
+    o.frequency.setValueAtTime(up ? 587 : 880, t); o.frequency.setValueAtTime(up ? 880 : 587, t + 0.11);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.12, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+    o.start(t); o.stop(t + 0.34); setTimeout(() => ctx.close(), 600);
+  } catch (e) {}
+}
+async function chatStart() {
+  if (!S || !S.card || !S.revealed || CHAT) return;
+  const card = S.card;
+  CHAT = { cardId: card.id, turns: [], seen: new Set(), saved: new Set(), itemTs: {}, partial: '', status: 'connecting' };
+  chatPaint();
+  try {
+    // the answer just given goes up now, so the tutor can see it (its transcript arrives mid-conversation)
+    const t = await recStop();
+    const responseId = t ? await recUpload(card.id, t, { rating: null, flagged: S.flagged }) : null;
+    if (responseId) { S.pendingResponse = responseId; S.pendingResponseCard = card.id; }
+    if (!CHAT) return;
+    CHAT.responseId = responseId || S.pendingResponse || null;
+    const r = await api(`/api/cards/${card.id}/chat`, { json: { response_id: CHAT.responseId } });
+    if (!CHAT) return;
+    CHAT.id = r.chat_id;
+    const dev = micPref(), base = { echoCancellation: true, noiseSuppression: true, autoGainControl: true };
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: dev ? { ...base, deviceId: { ideal: dev } } : base });
+    const pc = new RTCPeerConnection(), audio = new Audio();
+    audio.autoplay = true;
+    pc.ontrack = e => { audio.srcObject = e.streams[0]; };
+    stream.getTracks().forEach(tr => pc.addTrack(tr, stream));
+    const dc = pc.createDataChannel('oai-events');
+    Object.assign(CHAT, { pc, dc, stream, audio });
+    if (!CHAT) return;
+    dc.onmessage = e => { try { chatEvent(JSON.parse(e.data)); } catch (er) {} };
+    dc.onopen = () => {
+      if (!CHAT) return;
+      CHAT.status = 'live'; CHAT.started = Date.now(); chime(true); chatPaint();
+      CHAT.timer = setInterval(chatPaint, 1000);
+      if (CHAT.responseId) api('/api/responses?ids=' + CHAT.responseId).then(x => x.items[0]?.status === 'done' && chatSendAnswer(x.items[0])).catch(() => {});
+    };
+    pc.onconnectionstatechange = () => { if (CHAT && CHAT.pc === pc && ['failed', 'closed'].includes(pc.connectionState)) { toast('Conversation disconnected'); chatEnd(); } };
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    const res = await fetch('https://api.openai.com/v1/realtime/calls', {
+      method: 'POST', body: offer.sdp, headers: { Authorization: `Bearer ${r.client_secret}`, 'Content-Type': 'application/sdp' } });
+    if (!res.ok) throw new Error(`OpenAI ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    if (!CHAT || CHAT.pc !== pc) return;
+    await pc.setRemoteDescription({ type: 'answer', sdp: await res.text() });
+  } catch (e) { toast(`Couldn't start the conversation · ${esc(e.message)}`, 4500); chatEnd(true); }
+}
+function chatEvent(ev) {
+  if (!CHAT) return;
+  const now = Date.now();
+  switch (ev.type) {
+    case 'input_audio_buffer.speech_started': if (ev.item_id) CHAT.itemTs[ev.item_id] ??= now; CHAT.hearing = true; chatPaint(); break;
+    case 'input_audio_buffer.speech_stopped': CHAT.hearing = false; chatPaint(); break;
+    case 'conversation.item.added': case 'conversation.item.created': if (ev.item?.id) CHAT.itemTs[ev.item.id] ??= now; break;
+    case 'conversation.item.input_audio_transcription.completed': chatTurn(ev.item_id, 'user', ev.transcript); break;
+    case 'response.output_audio_transcript.delta': CHAT.partial += ev.delta || ''; chatPaint(); break;
+    case 'response.output_audio_transcript.done': CHAT.partial = ''; chatTurn(ev.item_id, 'assistant', ev.transcript); break;
+    case 'error': toast(`Conversation error · ${esc(ev.error?.message || '')}`, 4000); break;
+  }
+}
+function chatTurn(id, role, text) {
+  text = (text || '').trim();
+  if (!text || !CHAT || CHAT.seen.has(id)) return;
+  CHAT.seen.add(id);
+  const turn = { id, role, text, ts: CHAT.itemTs[id] || Date.now() };
+  CHAT.turns.push(turn); CHAT.turns.sort((a, b) => a.ts - b.ts); chatPaint();
+  const c = CHAT;
+  if (c.id) api(`/api/chats/${c.id}/turns`, { json: { turns: [turn] } }).then(() => c.saved.add(id)).catch(() => {});
+}
+function chatSendAnswer(it) {
+  if (!CHAT || CHAT.answerSent || !CHAT.dc || CHAT.dc.readyState !== 'open') return;
+  CHAT.answerSent = true;
+  const a = it.analysis || {};
+  const text = `Joan's spoken answer for this attempt. Before seeing the answer: "${it.transcript || '(nothing said)'}".`
+    + (it.transcript_after ? ` After seeing it: "${it.transcript_after}".` : '')
+    + (a.unsure?.length ? ` Unsure about: ${a.unsure.join('; ')}.` : '') + (a.missed?.length ? ` Missed: ${a.missed.join('; ')}.` : '');
+  CHAT.dc.send(JSON.stringify({ type: 'conversation.item.create', item: { type: 'message', role: 'system', content: [{ type: 'input_text', text }] } }));
+}
+function chatEnd(failed) {
+  const c = CHAT; if (!c) return;
+  CHAT = null;
+  clearInterval(c.timer);
+  try { c.dc && c.dc.close(); } catch (e) {}
+  try { c.pc && c.pc.close(); } catch (e) {}
+  c.stream && c.stream.getTracks().forEach(t => t.stop());
+  if (c.audio) c.audio.srcObject = null;
+  if (c.id) {
+    const unsaved = c.turns.filter(t => !c.saved.has(t.id));
+    api(`/api/chats/${c.id}/end`, { json: { turns: unsaved } }).catch(() => {});
+  }
+  if (!failed && c.status === 'live') { chime(false); if (c.turns.length) toast('Conversation saved · it will appear in Card info and Answers → Conversations', 3200); }
+  chatPaint();
+}
+addEventListener('pagehide', () => {
+  if (CHAT && CHAT.id) navigator.sendBeacon(`/api/chats/${CHAT.id}/end`, new Blob([JSON.stringify({ turns: CHAT.turns })], { type: 'application/json' }));
+});
+function chatPaint() {
+  const slot = $('#chat-slot'); if (!slot) return;
+  $('#talk-btn')?.classList.toggle('hidden', !!CHAT);
+  if (!CHAT) { slot.innerHTML = ''; return; }
+  const secs = CHAT.started ? Math.floor((Date.now() - CHAT.started) / 1000) : 0;
+  const status = CHAT.status === 'live' ? `<span class="chat-live${CHAT.hearing ? ' hearing' : ''}"></span>Talking about this card · ${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`
+    : 'Connecting…';
+  const turns = CHAT.turns.slice(-6).map(t => `<div class="chat-turn ${t.role}"><b>${t.role === 'user' ? 'You' : 'Tutor'}</b> ${esc(t.text)}</div>`).join('')
+    + (CHAT.partial ? `<div class="chat-turn assistant partial"><b>Tutor</b> ${esc(CHAT.partial)}</div>` : '');
+  slot.innerHTML = `<div class="chat-panel"><div class="chat-head"><span>${status}</span><button class="btn" id="chat-end">End <kbd>T</kbd></button></div>
+    ${turns ? `<div class="chat-turns">${turns}</div>` : CHAT.status === 'live' ? '<div class="sub" style="margin:6px 0 0">Go ahead and ask; the tutor waits for you to speak.</div>' : ''}</div>`;
+  $('#chat-end').onclick = () => chatEnd();
+  const box = $('.chat-turns', slot); if (box) box.scrollTop = box.scrollHeight;
+}
+function chatItem(c, withQuestion = false) {
+  const s = c.summary, mins = c.ended_at ? Math.max(1, Math.round((c.ended_at - c.started_at) / 60000)) : null;
+  const list = (k, label, cls) => s && s[k]?.length ? `<div class="resp-tags"><span class="k">${label}</span>${s[k].map(x => `<span class="tag ${cls}">${esc(x)}</span>`).join('')}</div>` : '';
+  return `<div class="resp chat-item">
+    ${withQuestion ? `<div class="resp-q" data-card="${c.card_id}">${esc(c.question || '')}</div>` : ''}
+    <div class="resp-meta">Conversation · ${fmtDateTime(c.started_at)}${mins ? ` · ${mins} min` : ''} · ${c.turns.length} turns<span class="spacer"></span>
+      <button class="icon-btn" data-delchat="${c.id}" title="Delete this conversation">✕</button></div>
+    ${s ? (s.takeaways?.length ? `<ul class="chat-takeaways">${s.takeaways.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '')
+        : `<div class="resp-text muted">${c.status === 'live' ? 'In progress…' : 'Summarizing…'}</div>`}
+    ${list('topics', 'Asked', 'topic')}${list('follow_ups', 'Open', 'unsure')}
+    <details class="chat-transcript"><summary>Transcript</summary>${c.turns.map(t => `<div class="chat-turn ${t.role}"><b>${t.role === 'user' ? 'You' : 'Tutor'}</b> ${esc(t.text)}</div>`).join('')}</details>
+  </div>`;
 }
 
 /* ---------------------------------------------------------------- spoken answers (display) */
@@ -967,7 +1111,8 @@ function responseItem(r, withQuestion = false) {
 }
 function bindResponses(host, reload) {
   host.onclick = async e => {
-    const t = e.target.closest('[data-flag],[data-del],[data-retry],[data-card]'); if (!t) return;
+    const t = e.target.closest('[data-flag],[data-del],[data-delchat],[data-retry],[data-card]'); if (!t) return;
+    if (t.dataset.delchat) { if (confirm('Delete this conversation?')) { await api('/api/chats/' + t.dataset.delchat, { method: 'DELETE' }); reload(); } return; }
     if (t.dataset.flag) { const on = !t.classList.contains('on'); await api('/api/responses/' + t.dataset.flag, { method: 'PATCH', json: { flagged: on } }); reload(); }
     else if (t.dataset.del) { if (confirm('Delete this answer?')) { await api('/api/responses/' + t.dataset.del, { method: 'DELETE' }); reload(); } }
     else if (t.dataset.retry) { await api(`/api/responses/${t.dataset.retry}/retry`, { method: 'POST' }); pendingResp.add(+t.dataset.retry); pollResponses(); reload(); }
@@ -987,7 +1132,7 @@ async function answersView() {
     <div class="filters">
       <input class="input f-search" id="a-q" type="search" placeholder="Search answers & questions…">
       <select class="input" id="a-deck"><option value="">All decks</option>${decks.map(d => `<option value="${esc(d.name)}">${'  '.repeat(d.depth)}${esc(d.short)}</option>`).join('')}</select>
-      <select class="input" id="a-show"><option value="">All answers</option><option value="gaps">To dive into (flagged or unsure)</option><option value="flagged">Flagged only</option></select>
+      <select class="input" id="a-show"><option value="">All answers</option><option value="gaps">To dive into (flagged or unsure)</option><option value="flagged">Flagged only</option><option value="chats">Conversations</option></select>
     </div>
     <div class="resp-list" id="a-list"></div>
     <div style="display:flex;justify-content:center;margin-top:12px"><button class="btn hidden" id="a-more">Load more</button></div>`;
@@ -998,6 +1143,17 @@ async function answersView() {
     const qs = new URLSearchParams({ q: p.q, limit: 50, offset: p.offset });
     if (p.deck) qs.set('deck', p.deck);
     if (p.show === 'flagged') qs.set('flagged', 'true'); else if (p.show === 'gaps') qs.set('gaps', 'true');
+    if (p.show === 'chats') {
+      const r = await api(`/api/chats?limit=50&offset=${p.offset}`);
+      if (my !== seq || !$('#a-list')) return;
+      $('#a-count').textContent = `${r.total} conversation${r.total === 1 ? '' : 's'} · newest first`;
+      const list = $('#a-list'), html = r.items.map(c => chatItem(c, true)).join('');
+      if (append) list.insertAdjacentHTML('beforeend', html);
+      else list.innerHTML = html || `<div class="empty muted">No conversations yet. Flip a card and press <b>Talk about this card</b> (<kbd>T</kbd>).</div>`;
+      $('#a-more').classList.toggle('hidden', p.offset + r.items.length >= r.total);
+      renderMath(list);
+      return;
+    }
     const r = await api('/api/responses?' + qs);
     if (my !== seq || !$('#a-list')) return;
     $('#a-count').textContent = `${r.total} spoken answer${r.total === 1 ? '' : 's'}${p.show ? '' : ' · newest first'}`;

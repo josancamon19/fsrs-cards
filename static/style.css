@@ -387,3 +387,24 @@ table.data th:last-child, table.data td:last-child { padding-right: 16px; }
   .study-bar #flag-btn, .study-bar #skip-btn, .study-bar #susp-btn, .study-bar #undo-btn, .study-bar #info-btn { display: none; }
   .study-bar .mic-btn { padding: 8px 10px; }
 }
+
+/* voice conversation about a card */
+.talk-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 10px; padding: 10px; border-radius: 12px;
+  border: 1px dashed var(--border-2); background: transparent; color: var(--ink-2); cursor: pointer; font-weight: 600; }
+.talk-btn:hover { background: var(--surface-2); color: var(--ink); }
+.talk-ic { color: var(--easy); }
+.chat-panel { margin-bottom: 10px; padding: 12px 14px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--easy) 45%, var(--border-2));
+  background: color-mix(in srgb, var(--easy) 6%, var(--surface)); animation: slide .14s ease-out; }
+.chat-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-weight: 600; font-size: 13px; }
+.chat-head > span { display: inline-flex; align-items: center; gap: 8px; }
+.chat-live { width: 9px; height: 9px; border-radius: 50%; background: var(--easy); }
+.chat-live.hearing { animation: recpulse 1.2s ease-in-out infinite; box-shadow: 0 0 0 3px color-mix(in srgb, var(--easy) 30%, transparent); }
+.chat-turns { max-height: 150px; overflow: auto; margin-top: 8px; display: grid; gap: 6px; }
+.chat-turn { font-size: 14px; line-height: 1.45; }
+.chat-turn b { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-right: 4px; }
+.chat-turn.assistant { color: var(--ink-2); }
+.chat-turn.partial { opacity: .7; }
+.chat-takeaways { margin: 8px 0 0; padding-left: 20px; } .chat-takeaways li { margin: 3px 0; }
+.tag.topic { background: color-mix(in srgb, var(--easy) 14%, transparent); }
+.chat-transcript { margin-top: 8px; font-size: 13px; } .chat-transcript summary { cursor: pointer; color: var(--muted); font-size: 12px; }
+.chat-transcript .chat-turn { margin-top: 6px; }

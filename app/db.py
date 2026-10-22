@@ -97,6 +97,21 @@ CREATE TABLE IF NOT EXISTS responses (       -- spoken answers (text only; audio
 );
 CREATE INDEX IF NOT EXISTS ix_responses_card ON responses(card_id, ts);
 CREATE INDEX IF NOT EXISTS ix_responses_ts ON responses(ts);
+CREATE TABLE IF NOT EXISTS chats (           -- voice conversations about a card (OpenAI Realtime), text only
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  card_id     INTEGER NOT NULL,
+  note_id     INTEGER,
+  response_id INTEGER,                       -- the spoken answer given right before the chat, if any
+  started_at  INTEGER NOT NULL,              -- unix ms
+  ended_at    INTEGER,
+  question    TEXT,                          -- plain-text snapshot of the card
+  answer      TEXT,
+  turns       TEXT NOT NULL DEFAULT '[]',    -- JSON [{role: user|assistant, text, ts}]; the system prompt is not stored
+  summary     TEXT,                          -- JSON {topics, takeaways, follow_ups}
+  status      TEXT NOT NULL DEFAULT 'live',  -- live, ended, summarized
+  model       TEXT
+);
+CREATE INDEX IF NOT EXISTS ix_chats_card ON chats(card_id, started_at);
 CREATE TABLE IF NOT EXISTS settings (
   key   TEXT PRIMARY KEY,
   value TEXT NOT NULL

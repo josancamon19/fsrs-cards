@@ -368,3 +368,22 @@ table.data th:last-child, table.data td:last-child { padding-right: 16px; }
 .study-bar [data-tip-start]::after { left: 0; transform: translateY(-4px); }
 @media (hover: hover) { .study-bar [data-tip-start]:hover::after { transform: translateY(0); } }
 .study-bar [data-tip-start]:focus-visible::after { transform: translateY(0); }
+
+/* phone: study actions collapse into a ⋯ menu */
+.more-btn { display: none; font-size: 20px; line-height: 1; padding: 4px 12px 8px; }
+.more-btn.on { background: var(--surface-3); color: var(--ink); }
+.study { position: relative; }
+.more-menu { position: absolute; right: 0; top: 44px; z-index: 35; width: min(320px, 100%); padding: 6px; border-radius: 14px;
+  background: var(--surface); border: 1px solid var(--border-2); box-shadow: var(--shadow); animation: slide .14s ease-out; }
+.more-item { display: flex; gap: 12px; align-items: center; width: 100%; min-height: 52px; padding: 8px 10px; border: 0; border-radius: 10px;
+  background: none; text-align: left; cursor: pointer; }
+.more-item:active, .more-item:hover { background: var(--surface-2); }
+.more-item .mi-ic { width: 28px; text-align: center; font-size: 18px; color: var(--ink-2); flex: none; }
+.more-item.on .mi-ic { color: var(--hard); }
+.more-item b { display: block; font-weight: 600; font-size: 15px; }
+.more-item small { display: block; color: var(--muted); font-size: 12px; line-height: 1.35; }
+@media (max-width: 600px) {
+  .more-btn { display: inline-flex; }
+  .study-bar #flag-btn, .study-bar #skip-btn, .study-bar #susp-btn, .study-bar #undo-btn, .study-bar #info-btn { display: none; }
+  .study-bar .mic-btn { padding: 8px 10px; }
+}

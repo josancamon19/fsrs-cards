@@ -313,7 +313,9 @@ async function studyView(deck) {
         <button class="icon-btn" id="susp-btn" aria-label="Suspend" data-tip="Suspend: take the card out of study and add it to the rewrite list, with a reason" data-key="@" data-tip-end>⊘</button>
         <button class="icon-btn" id="undo-btn" aria-label="Undo" data-tip="Undo the last rating, skip or suspend" data-key="U" data-tip-end>↶</button>
         <button class="icon-btn" id="info-btn" aria-label="Card info" data-tip="Card info: review history, forgetting curve and your spoken answers" data-key="I" data-tip-end>ⓘ</button>
+        <button class="icon-btn more-btn" id="more-btn" aria-label="More actions" aria-haspopup="menu">⋯</button>
       </div>
+      <div class="more-menu hidden" id="more-menu" role="menu"></div>
       <div class="progress"><div id="prog" style="width:0"></div></div>
       <div class="susp-pop hidden" id="susp-pop"></div>
       <div id="study-body" class="card-wrap"></div>
@@ -325,8 +327,10 @@ async function studyView(deck) {
   $('#mic-btn').onclick = () => recToggle();
   $('#flag-btn').onclick = () => toggleFlag();
   $('#skip-btn').onclick = () => skipCard();
+  $('#more-btn').onclick = e => { e.stopPropagation(); toggleMore(); };
   const onKey = e => {
     if ($('.modal-bg')) { if (e.key === 'Escape') closeModal(); return; }
+    if (!$('#more-menu').classList.contains('hidden')) { if (e.key === 'Escape') toggleMore(false); return; }
     const tgt = e.composedPath()[0];
     const typing = tgt && (tgt.tagName === 'INPUT' || tgt.tagName === 'TEXTAREA' || tgt.isContentEditable);
     if (typing && e.key !== 'Enter') return;
@@ -444,6 +448,30 @@ async function answer(rating) {
     applyStudy(res);
   } catch (e) { toast(esc(e.message)); }
   finally { if (S) S.busy = false; }
+}
+/* Phone layout: the study-bar actions live in a ⋯ menu with big touch targets. Each item just presses the real button. */
+function toggleMore(show) {
+  const menu = $('#more-menu'); if (!menu) return;
+  const open = show ?? menu.classList.contains('hidden');
+  menu.classList.toggle('hidden', !open);
+  $('#more-btn').classList.toggle('on', open);
+  if (!open) return;
+  const flagged = !!(S && S.flagged);
+  const items = [
+    ['mic-btn', REC.on ? '●' : '○', REC.on ? 'Turn mic off' : 'Turn mic on', REC.on ? 'Stop recording your spoken answers' : 'Record and transcribe your spoken answers'],
+    ['flag-btn', '⚑', flagged ? 'Unflag answer' : 'Flag answer', 'Add it to Answers → To dive into'],
+    ['skip-btn', '↷', 'Skip for now', 'Comes back at the end of the session; no review logged'],
+    ['susp-btn', '⊘', 'Suspend…', 'Take it out of study and add it to the rewrite list'],
+    ['undo-btn', '↶', 'Undo', 'Undo the last rating, skip or suspend'],
+    ['info-btn', 'ⓘ', 'Card info', 'History, forgetting curve and spoken answers'],
+  ];
+  menu.innerHTML = items.map(([id, ic, label, desc]) =>
+    `<button class="more-item${id === 'flag-btn' && flagged ? ' on' : ''}" role="menuitem" data-for="${id}"><span class="mi-ic">${ic}</span><span><b>${label}</b><small>${desc}</small></span></button>`).join('');
+  $$('.more-item', menu).forEach(b => b.onclick = () => { toggleMore(false); $('#' + b.dataset.for).click(); });
+  setTimeout(() => addEventListener('pointerdown', function away(e) {
+    if (!e.target.closest('#more-menu, #more-btn')) toggleMore(false);
+    if ($('#more-menu')?.classList.contains('hidden') !== false) removeEventListener('pointerdown', away);
+  }), 0);
 }
 function nextUrl() {
   const q = new URLSearchParams();

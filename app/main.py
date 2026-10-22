@@ -388,9 +388,9 @@ def browse(q: str = "", deck: str | None = None, state: str | None = None, sort:
     where, args = ["1=1"], []
     if deck:
         where.append(f"c.deck_id IN {sched._in(sched.deck_ids(deck))}")
-    if state == "suspended":
-        where.append("c.suspended = 1")
-    elif state in ("new", "learning", "review", "relearning"):
+    # suspended cards only show up when "Suspended" is picked
+    where.append("c.suspended = 1" if state == "suspended" else "c.suspended = 0")
+    if state in ("new", "learning", "review", "relearning"):
         where.append("c.state = ?")
         args.append({v: k for k, v in sched.STATE_NAMES.items()}[state])
     if q:

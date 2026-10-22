@@ -1,7 +1,7 @@
 """Voice conversations about a card (OpenAI Realtime over WebRTC).
 
 The server builds the tutor's instructions from everything known about the card (text, FSRS state, review history,
-earlier spoken answers and earlier conversations) and mints a short-lived client secret; the browser then talks to
+earlier spoken answers) and mints a short-lived client secret; the browser then talks to
 OpenAI directly. Only the conversation text is stored: turns are appended as they are transcribed, and when the chat
 ends a small model digests it into topics / takeaways / follow-ups.
 """
@@ -20,7 +20,8 @@ def _day(ms: int) -> str:
 
 
 def card_context(card_id: int, response_id: int | None = None) -> str:
-    """Everything the tutor should know about this card, as plain text."""
+    """Everything the tutor should know about this card, as plain text. Earlier conversations are deliberately left out:
+    each conversation starts fresh."""
     c = db.conn()
     row = c.execute("SELECT c.*, d.name AS deck FROM cards c LEFT JOIN decks d ON d.id = c.deck_id WHERE c.id = ?",
                     (card_id,)).fetchone()
@@ -48,13 +49,6 @@ def card_context(card_id: int, response_id: int | None = None) -> str:
         if an.get("missed"):
             part.append("  missed: " + "; ".join(an["missed"]))
         out.append("\n".join(part))
-    chats = c.execute("SELECT started_at, summary FROM chats WHERE card_id = ? AND summary IS NOT NULL "
-                      "ORDER BY started_at DESC LIMIT 5", (card_id,)).fetchall()
-    for ch in chats:
-        s = json.loads(ch["summary"])
-        out.append(f"Earlier conversation about this card ({_day(ch['started_at'])}): topics {', '.join(s.get('topics', []))}; "
-                   f"takeaways: {'; '.join(s.get('takeaways', []))}"
-                   + (f"; still open: {'; '.join(s['follow_ups'])}" if s.get("follow_ups") else ""))
     return "\n\n".join(out)
 
 
@@ -65,7 +59,7 @@ Joan was just studying the card below and wants to talk about a few things relat
 Rules:
 - Do not speak first. Wait for Joan to talk.
 - Answer briefly and concisely: one to three sentences unless Joan asks you to go deeper. Spoken style, no lists read aloud.
-- Use the context: the card, its review history, Joan's earlier answers (what was missed or uncertain), and earlier conversations.
+- Use the context: the card, its review history and Joan's earlier answers (what was missed or uncertain).
   Point out a gap from an earlier answer only when it is relevant to what Joan asks.
 - Be precise about math and ML; say so when something is uncertain instead of guessing.
 - If Joan's answer for this attempt arrives mid-conversation as a system message, take it into account.

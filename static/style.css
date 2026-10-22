@@ -412,3 +412,5 @@ table.data th:last-child, table.data td:last-child { padding-right: 16px; }
 .chat-live.on { background: var(--easy); }
 .chat-panel .mic-bars { display: inline-flex; }
 .chat-panel .mic-bars i { background: var(--easy); }
+.chat-warn { margin-top: 8px; font-size: 13px; color: var(--ink-2); background: color-mix(in srgb, var(--hard) 14%, transparent); padding: 6px 10px; border-radius: 8px; }
+.chat-warn a { color: inherit; }

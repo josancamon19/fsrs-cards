@@ -1006,6 +1006,10 @@ async function chatStart() {
       an.getFloatTimeDomainData(buf); let sum = 0; for (const v of buf) sum += v * v;
       const rms = Math.sqrt(sum / buf.length);
       diag.peak = Math.max(diag.peak, rms); if (rms >= SPEECH_RMS) diag.speechMs += 100;
+      // silent for 4s after connecting: say which mic it is, so a wrong or disabled mic is obvious right away
+      if (rms >= SPEECH_RMS) CHAT.lastSound = Date.now();
+      const quiet = CHAT.status === 'live' && Date.now() - (CHAT.lastSound || CHAT.started) > 4000;
+      if (quiet !== !!CHAT.quiet) { CHAT.quiet = quiet; chatPaint(); }
       CHAT.lvl = Math.max(Math.min(1, Math.sqrt(rms * 6)), (CHAT.lvl || 0) * 0.7);
       $('#chat-slot .chat-panel')?.style.setProperty('--lvl', CHAT.lvl.toFixed(2));
     }, 100);
@@ -1112,12 +1116,15 @@ function chatPaint(full) {
   if (!CHAT) { slot.innerHTML = ''; return; }
   if (full || !$('.chat-panel', slot)) {
     slot.innerHTML = `<div class="chat-panel"><div class="chat-head"><span><span class="chat-live"></span><span class="mic-bars"><i></i><i></i><i></i></span><span id="chat-status"></span></span>
-      <button class="btn" id="chat-end">End <kbd>T</kbd></button></div><div class="chat-turns"></div></div>`;
+      <button class="btn" id="chat-end">End <kbd>T</kbd></button></div><div class="chat-warn hidden" id="chat-warn"></div><div class="chat-turns"></div></div>`;
     $('#chat-end').onclick = () => chatEnd();
   }
   const secs = CHAT.started ? Math.floor((Date.now() - CHAT.started) / 1000) : 0;
   $('#chat-status').textContent = CHAT.status === 'live' ? `Talking about this card · ${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}` : 'Connecting…';
   const dot = $('.chat-live', slot); dot.classList.toggle('on', CHAT.status === 'live'); dot.classList.toggle('hearing', !!CHAT.hearing);
+  const warn = $('#chat-warn', slot);
+  warn.classList.toggle('hidden', !CHAT.quiet);
+  if (CHAT.quiet) warn.innerHTML = `No sound from <b>${esc(CHAT.diag.mic || 'the microphone')}</b>. If it's the wrong mic, change it in <a href="#/settings">Settings → Microphone</a>.`;
   const html = CHAT.turns.slice(-6).map(t => `<div class="chat-turn ${t.role}"><b>${t.role === 'user' ? 'You' : 'Tutor'}</b> ${esc(t.text)}</div>`).join('')
     + (CHAT.partial ? `<div class="chat-turn assistant partial"><b>Tutor</b> ${esc(CHAT.partial)}</div>` : '');
   const box = $('.chat-turns', slot);

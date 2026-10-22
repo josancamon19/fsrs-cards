@@ -11,6 +11,7 @@
   --radius: 12px;
   --font: system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --sat: env(safe-area-inset-top, 0px); /* iPhone status bar when installed as a web app (black-translucent) */
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -48,7 +49,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .hidden { display: none !important; }
 
 /* top bar */
-.top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 4px; padding: 0 16px; height: 52px;
+.top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 4px; padding: var(--sat) 16px 0; height: calc(52px + var(--sat));
   background: color-mix(in srgb, var(--plane) 86%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
 .brand { font-weight: 700; letter-spacing: -.01em; margin-right: 14px; display: flex; align-items: center; gap: 8px; text-decoration: none; }
 .brand-mark { width: 18px; height: 18px; border-radius: 5px; background: conic-gradient(var(--again) 0 25%, var(--hard) 0 50%, var(--good) 0 75%, var(--easy) 0); }
@@ -98,7 +99,7 @@ kbd { font: 11px var(--mono); padding: 1px 5px; border-radius: 4px; border: 1px 
 .empty { text-align: center; padding: 60px 16px; }
 
 /* study */
-.study { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; min-height: calc(100vh - 52px - 24px); }
+.study { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; min-height: calc(100vh - 52px - var(--sat) - 24px); }
 .study-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .study-deck { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .qcounts { display: flex; gap: 10px; font-weight: 700; font-variant-numeric: tabular-nums; margin-left: auto; }
@@ -140,7 +141,7 @@ kbd { font: 11px var(--mono); padding: 1px 5px; border-radius: 4px; border: 1px 
 .meter { height: 4px; border-radius: 2px; background: var(--surface-3); margin-top: 5px; overflow: hidden; }
 .meter > i { display: block; height: 100%; border-radius: 2px; background: var(--seq); }
 
-.toast { position: fixed; left: 50%; top: 62px; transform: translateX(-50%) translateY(-12px); opacity: 0; background: var(--ink); color: var(--plane); padding: 8px 14px; border-radius: 10px; font-size: 13px; pointer-events: none; transition: .18s; z-index: 50; display: flex; gap: 10px; align-items: center; box-shadow: var(--shadow); white-space: nowrap; }
+.toast { position: fixed; left: 50%; top: calc(62px + var(--sat)); transform: translateX(-50%) translateY(-12px); opacity: 0; background: var(--ink); color: var(--plane); padding: 8px 14px; border-radius: 10px; font-size: 13px; pointer-events: none; transition: .18s; z-index: 50; display: flex; gap: 10px; align-items: center; box-shadow: var(--shadow); white-space: nowrap; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast .sw { width: 8px; height: 8px; border-radius: 2px; }
 
@@ -198,7 +199,7 @@ table.data tr.click { cursor: pointer; } table.data tr.click:hover td { backgrou
 
 /* modal */
 .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 40; display: flex; justify-content: flex-end; }
-.modal { width: min(760px, 100%); height: 100%; overflow: auto; background: var(--plane); border-left: 1px solid var(--border); padding: 20px 20px 60px; animation: slide .16s ease-out; }
+.modal { width: min(760px, 100%); height: 100%; overflow: auto; background: var(--plane); border-left: 1px solid var(--border); padding: calc(20px + var(--sat)) 20px 60px; animation: slide .16s ease-out; }
 @keyframes slide { from { transform: translateX(24px); opacity: .5; } }
 .modal-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; margin-bottom: 14px; }
 .chip { display: inline-flex; align-items: center; gap: 5px; padding: 1px 8px; border-radius: 99px; font-size: 12px; font-weight: 600; background: color-mix(in srgb, var(--c) 16%, transparent); color: var(--ink); }
@@ -221,7 +222,7 @@ button, .btn, .rate, .reveal, a { touch-action: manipulation; -webkit-tap-highli
 
 @media (max-width: 600px) {
   body { font-size: 15px; }
-  .top { padding: 0 8px; padding-left: max(8px, env(safe-area-inset-left)); padding-right: max(8px, env(safe-area-inset-right)); height: 48px; }
+  .top { padding: var(--sat) 8px 0; padding-left: max(8px, env(safe-area-inset-left)); padding-right: max(8px, env(safe-area-inset-right)); height: calc(48px + var(--sat)); }
   .brand { font-size: 0; margin-right: 2px; gap: 0; }
   .nav a { padding: 6px 8px; }
   main { padding: 14px 12px 60px; }
@@ -230,7 +231,7 @@ button, .btn, .rate, .reveal, a { touch-action: manipulation; -webkit-tap-highli
   .deck-row > :last-child.row-menu { display: none; }
   .deck-name .tot { display: none; }
 
-  .study { min-height: calc(100dvh - 48px - 14px); }
+  .study { min-height: calc(100dvh - 48px - var(--sat) - 14px); }
   .study-bar { margin-bottom: 10px; gap: 6px; }
   .progress { margin-bottom: 10px; }
   .card-host { border-radius: 10px; min-height: 160px; }
@@ -247,7 +248,7 @@ button, .btn, .rate, .reveal, a { touch-action: manipulation; -webkit-tap-highli
   .rate { padding: 14px 4px 12px; border-radius: 10px; }
   .rate .lbl { font-size: 15px; }
   .reveal { padding: 16px; }
-  .toast { top: 54px; max-width: calc(100vw - 24px); white-space: normal; font-size: 12px; }
+  .toast { top: calc(54px + var(--sat)); max-width: calc(100vw - 24px); white-space: normal; font-size: 12px; }
 
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .kpi { padding: 10px 12px; }
@@ -266,7 +267,7 @@ button, .btn, .rate, .reveal, a { touch-action: manipulation; -webkit-tap-highli
   .filters .input { font-size: 16px; } /* avoids iOS zoom-on-focus */
   .input { font-size: 16px; }
 
-  .modal { width: 100%; border-left: 0; padding: 14px 12px calc(40px + env(safe-area-inset-bottom)); }
+  .modal { width: 100%; border-left: 0; padding: calc(14px + var(--sat)) 12px calc(40px + env(safe-area-inset-bottom)); }
   .modal .fsrs-strip > div:nth-child(5) { display: block; grid-column: span 2; }
   .modal table.data { font-size: 11px; }
 }

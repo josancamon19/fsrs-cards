@@ -971,8 +971,10 @@ function chime(up) {
 async function chatStart() {
   if (!S || !S.card || !S.revealed || CHAT) return;
   const card = S.card;
-  CHAT = { cardId: card.id, turns: [], seen: new Set(), saved: new Set(), itemTs: {}, partial: '', status: 'connecting' };
-  chatPaint();
+  CHAT = { cardId: card.id, turns: [], seen: new Set(), saved: new Set(), itemTs: {}, partial: '', status: 'connecting',
+    diag: { ua: navigator.userAgent, events: {}, errors: [], states: [], peak: 0, speechMs: 0, t0: Date.now() } };
+  chatPaint(true);
+  const diag = CHAT.diag;
   try {
     // the answer just given goes up now, so the tutor can see it (its transcript arrives mid-conversation)
     const t = await recStop();
@@ -983,23 +985,52 @@ async function chatStart() {
     const r = await api(`/api/cards/${card.id}/chat`, { json: { response_id: CHAT.responseId } });
     if (!CHAT) return;
     CHAT.id = r.chat_id;
-    const dev = micPref(), base = { echoCancellation: true, noiseSuppression: true, autoGainControl: true };
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: dev ? { ...base, deviceId: { ideal: dev } } : base });
-    const pc = new RTCPeerConnection(), audio = new Audio();
-    audio.autoplay = true;
-    pc.ontrack = e => { audio.srcObject = e.streams[0]; };
-    stream.getTracks().forEach(tr => pc.addTrack(tr, stream));
+    // one microphone capture only: reuse the card recorder's stream when it is open (some browsers mute a second capture)
+    let stream, ownStream = false;
+    const live = REC.stream && REC.stream.getAudioTracks().find(tr => tr.readyState === 'live');
+    if (live) stream = new MediaStream([live]);
+    else {
+      const dev = micPref(), base = { echoCancellation: true, noiseSuppression: true, autoGainControl: true };
+      stream = await navigator.mediaDevices.getUserMedia({ audio: dev ? { ...base, deviceId: { ideal: dev } } : base });
+      ownStream = true;
+    }
+    const track = stream.getAudioTracks()[0];
+    Object.assign(diag, { mic: track.label, micShared: !ownStream, micSettings: track.getSettings?.() });
+    // local level meter: proves the mic is picking you up
+    const actx = new AudioContext(), an = actx.createAnalyser(); an.fftSize = 1024;
+    actx.createMediaStreamSource(stream).connect(an);
+    actx.resume().catch(() => {});
+    const buf = new Float32Array(an.fftSize);
+    CHAT.meter = setInterval(() => {
+      if (!CHAT) return;
+      an.getFloatTimeDomainData(buf); let sum = 0; for (const v of buf) sum += v * v;
+      const rms = Math.sqrt(sum / buf.length);
+      diag.peak = Math.max(diag.peak, rms); if (rms >= SPEECH_RMS) diag.speechMs += 100;
+      CHAT.lvl = Math.max(Math.min(1, Math.sqrt(rms * 6)), (CHAT.lvl || 0) * 0.7);
+      $('#chat-slot .chat-panel')?.style.setProperty('--lvl', CHAT.lvl.toFixed(2));
+    }, 100);
+    const pc = new RTCPeerConnection();
+    const audio = document.createElement('audio');
+    audio.autoplay = true; audio.setAttribute('playsinline', ''); audio.hidden = true; document.body.append(audio);
+    pc.ontrack = e => {
+      audio.srcObject = e.streams[0]; diag.remoteTrack = true;
+      audio.play().catch(er => { diag.playError = er.message; toast('Tap anywhere to hear the tutor', 4000); addEventListener('pointerdown', () => audio.play().catch(() => {}), { once: true }); });
+    };
+    pc.addTrack(track, stream);
     const dc = pc.createDataChannel('oai-events');
-    Object.assign(CHAT, { pc, dc, stream, audio });
-    if (!CHAT) return;
+    Object.assign(CHAT, { pc, dc, stream, ownStream, audio, actx });
     dc.onmessage = e => { try { chatEvent(JSON.parse(e.data)); } catch (er) {} };
     dc.onopen = () => {
       if (!CHAT) return;
-      CHAT.status = 'live'; CHAT.started = Date.now(); chime(true); chatPaint();
-      CHAT.timer = setInterval(chatPaint, 1000);
+      diag.openedMs = Date.now() - diag.t0;
+      CHAT.status = 'live'; CHAT.started = Date.now(); chime(true); chatPaint(true);
+      CHAT.timer = setInterval(() => chatPaint(), 1000);
       if (CHAT.responseId) api('/api/responses?ids=' + CHAT.responseId).then(x => x.items[0]?.status === 'done' && chatSendAnswer(x.items[0])).catch(() => {});
     };
-    pc.onconnectionstatechange = () => { if (CHAT && CHAT.pc === pc && ['failed', 'closed'].includes(pc.connectionState)) { toast('Conversation disconnected'); chatEnd(); } };
+    pc.onconnectionstatechange = () => {
+      diag.states.push(`${pc.connectionState}@${Date.now() - diag.t0}`);
+      if (CHAT && CHAT.pc === pc && ['failed', 'closed'].includes(pc.connectionState)) { toast('Conversation disconnected'); chatEnd(); }
+    };
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
     const res = await fetch('https://api.openai.com/v1/realtime/calls', {
@@ -1007,19 +1038,22 @@ async function chatStart() {
     if (!res.ok) throw new Error(`OpenAI ${res.status}: ${(await res.text()).slice(0, 200)}`);
     if (!CHAT || CHAT.pc !== pc) return;
     await pc.setRemoteDescription({ type: 'answer', sdp: await res.text() });
-  } catch (e) { toast(`Couldn't start the conversation · ${esc(e.message)}`, 4500); chatEnd(true); }
+  } catch (e) { diag.errors.push(String(e.message || e)); toast(`Couldn't start the conversation · ${esc(e.message)}`, 4500); chatEnd(true); }
 }
 function chatEvent(ev) {
   if (!CHAT) return;
-  const now = Date.now();
+  const now = Date.now(), d = CHAT.diag;
+  d.events[ev.type] = (d.events[ev.type] || 0) + 1;
   switch (ev.type) {
     case 'input_audio_buffer.speech_started': if (ev.item_id) CHAT.itemTs[ev.item_id] ??= now; CHAT.hearing = true; chatPaint(); break;
     case 'input_audio_buffer.speech_stopped': CHAT.hearing = false; chatPaint(); break;
     case 'conversation.item.added': case 'conversation.item.created': if (ev.item?.id) CHAT.itemTs[ev.item.id] ??= now; break;
     case 'conversation.item.input_audio_transcription.completed': chatTurn(ev.item_id, 'user', ev.transcript); break;
+    case 'conversation.item.input_audio_transcription.failed': d.errors.push('transcription: ' + (ev.error?.message || '')); break;
     case 'response.output_audio_transcript.delta': CHAT.partial += ev.delta || ''; chatPaint(); break;
     case 'response.output_audio_transcript.done': CHAT.partial = ''; chatTurn(ev.item_id, 'assistant', ev.transcript); break;
-    case 'error': toast(`Conversation error · ${esc(ev.error?.message || '')}`, 4000); break;
+    case 'response.done': if (ev.response?.status && ev.response.status !== 'completed') d.errors.push('response ' + ev.response.status + ': ' + JSON.stringify(ev.response.status_details || '').slice(0, 200)); break;
+    case 'error': d.errors.push(ev.error?.message || 'error'); toast(`Conversation error · ${esc(ev.error?.message || '')}`, 4000); break;
   }
 }
 function chatTurn(id, role, text) {
@@ -1040,37 +1074,55 @@ function chatSendAnswer(it) {
     + (a.unsure?.length ? ` Unsure about: ${a.unsure.join('; ')}.` : '') + (a.missed?.length ? ` Missed: ${a.missed.join('; ')}.` : '');
   CHAT.dc.send(JSON.stringify({ type: 'conversation.item.create', item: { type: 'message', role: 'system', content: [{ type: 'input_text', text }] } }));
 }
+function chatMeta(c) {
+  const d = c.diag, tr = c.stream && c.stream.getAudioTracks()[0];
+  return { ...d, durationMs: Date.now() - d.t0, peak: +d.peak.toFixed(4), track: tr ? { muted: tr.muted, enabled: tr.enabled, state: tr.readyState } : null,
+    pc: c.pc?.connectionState, ice: c.pc?.iceConnectionState, dc: c.dc?.readyState };
+}
 function chatEnd(failed) {
   const c = CHAT; if (!c) return;
   CHAT = null;
-  clearInterval(c.timer);
+  clearInterval(c.timer); clearInterval(c.meter);
+  const meta = chatMeta(c);
   try { c.dc && c.dc.close(); } catch (e) {}
   try { c.pc && c.pc.close(); } catch (e) {}
-  c.stream && c.stream.getTracks().forEach(t => t.stop());
-  if (c.audio) c.audio.srcObject = null;
+  if (c.ownStream) c.stream.getTracks().forEach(t => t.stop());  // a shared stream belongs to the card recorder
+  c.actx && c.actx.close().catch(() => {});
+  if (c.audio) { c.audio.srcObject = null; c.audio.remove(); }
   if (c.id) {
     const unsaved = c.turns.filter(t => !c.saved.has(t.id));
-    api(`/api/chats/${c.id}/end`, { json: { turns: unsaved } }).catch(() => {});
+    api(`/api/chats/${c.id}/end`, { json: { turns: unsaved, meta } }).catch(() => {});
   }
-  if (!failed && c.status === 'live') { chime(false); if (c.turns.length) toast('Conversation saved · it will appear in Card info and Answers → Conversations', 3200); }
-  chatPaint();
+  console.info('conversation diagnostics', meta);
+  if (!failed && c.status === 'live') {
+    chime(false);
+    if (c.turns.length) toast('Conversation saved · it will appear in Card info and Answers → Conversations', 3200);
+    else if (!meta.events['input_audio_buffer.speech_started']) toast(meta.peak < SPEECH_RMS ? 'The mic picked up no sound. Check the microphone in Settings' : 'OpenAI heard no speech from your mic', 4500);
+  }
+  chatPaint(true);
 }
 addEventListener('pagehide', () => {
-  if (CHAT && CHAT.id) navigator.sendBeacon(`/api/chats/${CHAT.id}/end`, new Blob([JSON.stringify({ turns: CHAT.turns })], { type: 'application/json' }));
+  if (CHAT && CHAT.id) navigator.sendBeacon(`/api/chats/${CHAT.id}/end`, new Blob([JSON.stringify({ turns: CHAT.turns, meta: chatMeta(CHAT) })], { type: 'application/json' }));
 });
-function chatPaint() {
+/* The panel is built once per conversation (full); later calls only update the timer, status dot and transcript,
+   so its slide-in animation never replays. */
+function chatPaint(full) {
   const slot = $('#chat-slot'); if (!slot) return;
   $('#talk-btn')?.classList.toggle('hidden', !!CHAT);
   if (!CHAT) { slot.innerHTML = ''; return; }
+  if (full || !$('.chat-panel', slot)) {
+    slot.innerHTML = `<div class="chat-panel"><div class="chat-head"><span><span class="chat-live"></span><span class="mic-bars"><i></i><i></i><i></i></span><span id="chat-status"></span></span>
+      <button class="btn" id="chat-end">End <kbd>T</kbd></button></div><div class="chat-turns"></div></div>`;
+    $('#chat-end').onclick = () => chatEnd();
+  }
   const secs = CHAT.started ? Math.floor((Date.now() - CHAT.started) / 1000) : 0;
-  const status = CHAT.status === 'live' ? `<span class="chat-live${CHAT.hearing ? ' hearing' : ''}"></span>Talking about this card · ${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`
-    : 'Connecting…';
-  const turns = CHAT.turns.slice(-6).map(t => `<div class="chat-turn ${t.role}"><b>${t.role === 'user' ? 'You' : 'Tutor'}</b> ${esc(t.text)}</div>`).join('')
+  $('#chat-status').textContent = CHAT.status === 'live' ? `Talking about this card · ${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}` : 'Connecting…';
+  const dot = $('.chat-live', slot); dot.classList.toggle('on', CHAT.status === 'live'); dot.classList.toggle('hearing', !!CHAT.hearing);
+  const html = CHAT.turns.slice(-6).map(t => `<div class="chat-turn ${t.role}"><b>${t.role === 'user' ? 'You' : 'Tutor'}</b> ${esc(t.text)}</div>`).join('')
     + (CHAT.partial ? `<div class="chat-turn assistant partial"><b>Tutor</b> ${esc(CHAT.partial)}</div>` : '');
-  slot.innerHTML = `<div class="chat-panel"><div class="chat-head"><span>${status}</span><button class="btn" id="chat-end">End <kbd>T</kbd></button></div>
-    ${turns ? `<div class="chat-turns">${turns}</div>` : CHAT.status === 'live' ? '<div class="sub" style="margin:6px 0 0">Go ahead and ask; the tutor waits for you to speak.</div>' : ''}</div>`;
-  $('#chat-end').onclick = () => chatEnd();
-  const box = $('.chat-turns', slot); if (box) box.scrollTop = box.scrollHeight;
+  const box = $('.chat-turns', slot);
+  if (box.dataset.html !== html) { box.innerHTML = html; box.dataset.html = html; box.scrollTop = box.scrollHeight; }
+  box.classList.toggle('hidden', !html);
 }
 function chatItem(c, withQuestion = false) {
   const s = c.summary, mins = c.ended_at ? Math.max(1, Math.round((c.ended_at - c.started_at) / 60000)) : null;

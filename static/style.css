@@ -408,3 +408,7 @@ table.data th:last-child, table.data td:last-child { padding-right: 16px; }
 .tag.topic { background: color-mix(in srgb, var(--easy) 14%, transparent); }
 .chat-transcript { margin-top: 8px; font-size: 13px; } .chat-transcript summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 .chat-transcript .chat-turn { margin-top: 6px; }
+.chat-live { background: var(--muted); }
+.chat-live.on { background: var(--easy); }
+.chat-panel .mic-bars { display: inline-flex; }
+.chat-panel .mic-bars i { background: var(--easy); }

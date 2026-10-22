@@ -719,7 +719,8 @@ async def chat_start(card_id: int, body: ChatStart | None = None):
 
 
 class ChatTurns(BaseModel):
-    turns: list[dict]               # [{id, role: user|assistant, text, ts}]
+    turns: list[dict] = []          # [{id, role: user|assistant, text, ts}]
+    meta: dict | None = None        # browser diagnostics, sent when the chat ends
 
 
 @app.post("/api/chats/{chat_id}/turns")
@@ -735,6 +736,9 @@ def chat_end(chat_id: int, body: ChatTurns | None = None):
     """Store any last turns, then digest the conversation in the background."""
     if body and body.turns:
         chat.add_turns(chat_id, body.turns)
+    if body and body.meta:
+        with db.lock():
+            db.conn().execute("UPDATE chats SET meta = ? WHERE id = ?", (json.dumps(body.meta)[:20000], chat_id))
     threading.Thread(target=chat.end_safely, args=(chat_id,), daemon=True).start()
     return {"ok": True}
 

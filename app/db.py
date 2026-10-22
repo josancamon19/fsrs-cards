@@ -109,7 +109,8 @@ CREATE TABLE IF NOT EXISTS chats (           -- voice conversations about a card
   turns       TEXT NOT NULL DEFAULT '[]',    -- JSON [{role: user|assistant, text, ts}]; the system prompt is not stored
   summary     TEXT,                          -- JSON {topics, takeaways, follow_ups}
   status      TEXT NOT NULL DEFAULT 'live',  -- live, ended, summarized
-  model       TEXT
+  model       TEXT,
+  meta        TEXT                           -- JSON diagnostics from the browser (mic, levels, events)
 );
 CREATE INDEX IF NOT EXISTS ix_chats_card ON chats(card_id, started_at);
 CREATE TABLE IF NOT EXISTS settings (
@@ -155,6 +156,8 @@ def conn() -> sqlite3.Connection:
         for col, typ in (("suspended_at", "INTEGER"), ("suspend_reason", "TEXT")):
             if col not in ccols:
                 c.execute(f"ALTER TABLE cards ADD COLUMN {col} {typ}")
+        if "meta" not in {r[1] for r in c.execute("PRAGMA table_info(chats)")}:
+            c.execute("ALTER TABLE chats ADD COLUMN meta TEXT")
         rcols = {r[1] for r in c.execute("PRAGMA table_info(responses)")}
         for col in ("transcript_after", "transcript_after_raw", "audio_after_path"):
             if col not in rcols:

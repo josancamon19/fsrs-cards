@@ -85,7 +85,7 @@ def client_secret(card_id: int, response_id: int | None) -> dict:
         "type": "realtime", "model": REALTIME_MODEL, "instructions": instructions(card_id, response_id),
         "audio": {
             "input": {"transcription": {"model": responses.TRANSCRIBE_MODEL},
-                      "noise_reduction": {"type": "near_field"},
+                      "noise_reduction": {"type": "far_field"},  # laptop / desk mics, not just headsets
                       # answers only after Joan speaks; never opens on its own (no idle timeout)
                       "turn_detection": {"type": "semantic_vad", "eagerness": "auto", "create_response": True,
                                          "interrupt_response": True}},
@@ -162,7 +162,7 @@ def end(chat_id: int) -> None:
 def to_dict(r) -> dict:
     return {"id": r["id"], "card_id": r["card_id"], "note_id": r["note_id"], "response_id": r["response_id"],
             "started_at": r["started_at"], "ended_at": r["ended_at"], "question": r["question"], "status": r["status"],
-            "model": r["model"], "turns": json.loads(r["turns"]),
+            "model": r["model"], "turns": json.loads(r["turns"]), "meta": json.loads(r["meta"]) if r["meta"] else None,
             "summary": json.loads(r["summary"]) if r["summary"] else None}
 
 

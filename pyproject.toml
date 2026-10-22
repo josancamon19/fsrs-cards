@@ -1,0 +1,14 @@
+[project]
+name = "anki-fsrs"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.159.1",
+    "fsrs>=6.3.2",
+    "python-multipart>=0.0.32",
+    "uvicorn>=0.54.0",
+    "zstandard>=0.25.0",
+]
+
+[project.optional-dependencies]
+optimizer = ["fsrs[optimizer]>=6.3.2"]

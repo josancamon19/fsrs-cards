@@ -1,0 +1,14 @@
+{
+  "00 Map": ["Probability", "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence"],
+  "01 Foundations": ["1. Etymology", "2.2 Terminology"],
+  "02 Distributions": ["2.1 Distributions", "2.2 Terminology"],
+  "03 Bayes": ["2.2 Terminology", "1. Etymology"],
+  "04 Expectation": ["2.2 Terminology"],
+  "05 Mode": ["2.2 Terminology"],
+  "06 Normalization": ["3. Normalization", "3.1. Probability normalization", "3.2. Scale normalization"],
+  "07 Covariance": ["4. More Definitions"],
+  "08 Loss": ["2.2 Terminology", "5.3 Cross-Entropy Loss == Negative Log Likelihood"],
+  "09 Information": ["5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence", "5.2 Logs and bits", "5.3 Cross-Entropy Loss == Negative Log Likelihood"],
+  "10 Likelihood": ["5.3 Cross-Entropy Loss == Negative Log Likelihood"],
+  "11 Algebra": ["Algebraic Relationships", "5.2 Logs and bits"]
+}

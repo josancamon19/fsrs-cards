@@ -1,0 +1,2546 @@
+[
+ {
+  "id": 1792650963062,
+  "deck": "RL for LLMs::00 Big Picture",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Big_Picture RL::level::1_core RL::type::map",
+  "fields": {
+   "Front": "Knowledge tree: how do REINFORCE, baseline, TRPO, GAE, PPO, RLHF, DPO and GRPO connect?",
+   "Back": "<ul>\n<li><b>REINFORCE</b>: push up tokens in proportion to the return.</li>\n<li><b>+ Baseline</b>: subtract \\(V(s)\\) → relative updates, less noise.</li>\n<li><b>TRPO</b>: importance ratio to reuse a batch + KL fence so one update can't wreck the policy.</li>\n<li><b>PPO</b>: same safety, but clip the ratio → first-order, cheap.</li>\n<li><b>GAE</b>: a better advantage estimate that plugs into any of the above.</li>\n<li><b>RLHF</b>: reward model from preferences + PPO + KL to \\(\\pi_{ref}\\).</li>\n<li><b>DPO</b>: skip the RM and rollouts; train on pairs directly.</li>\n<li><b>GRPO</b>: PPO without the critic; group average is the baseline.</li>\n</ul>",
+   "Image": "<img src=\"rl_tree.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "map",
+   "Topic": "Big Picture"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Building%20RL%20Bottoms%20Up",
+  "source_label": "RL › Building RL Bottoms Up",
+  "suspended": null
+ },
+ {
+  "id": 1792650963064,
+  "deck": "RL for LLMs::00 Big Picture",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Big_Picture RL::level::1_core RL::type::formula",
+  "fields": {
+   "Front": "Write the objective that REINFORCE, PPO and GRPO all maximize, for an LLM answering prompts.",
+   "Back": "\\[ J(\\theta) = \\mathbb{E}_{x \\sim \\mathcal{D},\\; y \\sim \\pi_\\theta(\\cdot \\mid x)}\\big[\\, r(x, y) \\,\\big] \\]\n\\(x\\): a prompt from the dataset · \\(y\\): the full sampled response (the trajectory) · \\(r(x, y)\\): its reward (verifier, tests, or a reward model).",
+   "Image": "<img src=\"rl_mindmap.png\">",
+   "Extra": "The algorithms differ only in <i>how they estimate</i> \\(\\nabla_\\theta J\\) and <i>how they keep each step safe</i>.",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "formula",
+   "Topic": "Big Picture"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963066,
+  "deck": "RL for LLMs::00 Big Picture",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Big_Picture RL::level::1_core RL::type::map",
+  "fields": {
+   "Front": "Mind map: what are the 7 main branches of RL for LLMs?",
+   "Back": "Terminology · Value &amp; Advantage · Policy Gradient · Trust Region · Preferences · Group Methods · Empirical Facts",
+   "Image": "<img src=\"rl_mindmap.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "map",
+   "Topic": "Big Picture"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Building%20RL%20Bottoms%20Up",
+  "source_label": "RL › Building RL Bottoms Up",
+  "suspended": null
+ },
+ {
+  "id": 1792650963068,
+  "deck": "RL for LLMs::00 Big Picture",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Big_Picture RL::level::2_working RL::type::map",
+  "fields": {
+   "Front": "The universal update rule hidden inside every policy-gradient algorithm?",
+   "Back": "For each sampled token, push its log-probability in the direction of its <b>advantage</b>:\npositive → more likely, negative → less likely.\n<br><br>Algorithms differ in three choices:\n<ol><li>how \\(\\hat A\\) is estimated (raw return, critic, GAE, group mean)</li>\n<li>how the step size is limited (none, KL fence, clip)</li>\n<li>where the reward comes from (verifier, reward model, preferences)</li></ol>",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "map",
+   "Topic": "Big Picture"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963070,
+  "deck": "RL for LLMs::00 Big Picture",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Big_Picture RL::level::2_working RL::type::map",
+  "fields": {
+   "Front": "Name the problem each step fixes: baseline, TRPO, PPO, GAE, RLHF, DPO, GRPO.",
+   "Back": "<table class=\"t\">\n<tr><td><b>Baseline</b></td><td>raw returns are noisy and all-positive rewards push bad answers up</td></tr>\n<tr><td><b>TRPO</b></td><td>one big update can wreck the policy (and its future data)</td></tr>\n<tr><td><b>PPO</b></td><td>TRPO's second-order constraint is too expensive</td></tr>\n<tr><td><b>GAE</b></td><td>need control over bias vs variance of the advantage</td></tr>\n<tr><td><b>RLHF</b></td><td>no checkable answer → learn a reward from human preferences</td></tr>\n<tr><td><b>DPO</b></td><td>RLHF is complex (RM + critic + rollouts)</td></tr>\n<tr><td><b>GRPO</b></td><td>the critic is a whole extra model to train and store</td></tr>\n</table>",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "map",
+   "Topic": "Big Picture"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Building%20RL%20Bottoms%20Up",
+  "source_label": "RL › Building RL Bottoms Up",
+  "suspended": null
+ },
+ {
+  "id": 1792650963072,
+  "deck": "RL for LLMs::00 Big Picture",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Big_Picture RL::level::2_working RL::type::compare",
+  "fields": {
+   "Front": "Which methods need a critic, a reward model, and online rollouts? (REINFORCE+baseline, PPO-RLHF, DPO, GRPO)",
+   "Back": "<table class=\"t\">\n<tr><th></th><th>Critic</th><th>Reward model</th><th>Online rollouts</th></tr>\n<tr><td>REINFORCE + baseline</td><td>usually</td><td>if no verifier</td><td>yes</td></tr>\n<tr><td>PPO (RLHF)</td><td>yes</td><td>yes</td><td>yes</td></tr>\n<tr><td>DPO</td><td>no</td><td>no (implicit)</td><td>no (offline pairs)</td></tr>\n<tr><td>GRPO</td><td>no (group mean)</td><td>verifier or RM</td><td>yes (G per prompt)</td></tr>\n</table>",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "compare",
+   "Topic": "Big Picture"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Building%20RL%20Bottoms%20Up",
+  "source_label": "RL › Building RL Bottoms Up",
+  "suspended": null
+ },
+ {
+  "id": 1792702924832,
+  "deck": "RL for LLMs::00 Big Picture",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Big_Picture RL::level::1_core RL::type::exercise",
+  "fields": {
+   "Front": "A policy solves a math prompt 30% of the time; reward is 1 if correct, 0 if wrong. What is \\(J\\) for this prompt? After training it solves it 50% of the time. What is \\(J\\) now, and what changed inside \\(\\pi_\\theta\\)?",
+   "Back": "\\(J = 0.3\\) → \\(J = 0.5\\). With 0/1 rewards, \\(J\\) is just the <b>success rate</b>. Training moved probability mass in \\(\\pi_\\theta(y \\mid x)\\) toward correct responses and away from wrong ones; nothing else about the objective changed.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "exercise",
+   "Topic": "Big Picture"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963074,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::1_core RL::type::definition",
+  "fields": {
+   "Front": "Reward vs return: what's the difference?",
+   "Back": "<b>Reward</b> \\(r_t\\): scalar score from a <i>single step</i> (e.g. +10 for killing a monster).<br>\n<b>Return</b> \\(G_t\\): the sum of rewards from step \\(t\\) to the end of the trajectory.\n\\[ G_t = \\sum_{t'=t}^{T} \\gamma^{t'-t}\\, r_{t'} \\]",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "definition",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963076,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "Why measure the return from step \\(t\\) onward instead of the whole trajectory?",
+   "Back": "Credit assignment: an action at step 5 <b>cannot have caused</b> rewards at steps 1–4.\nSo when judging an action, only count rewards that come after it.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963078,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "Why does a discount \\(\\gamma \\lt 1\\) make nearby rewards count more?",
+   "Back": "Standing at step 5, a reward at step 6 is much more likely to be <i>your action's doing</i> than a reward at step 50.\n\\(\\gamma\\) shrinks far-off rewards because their link to this action is weaker.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Creating%20a%20Value%20Function",
+  "source_label": "RL › Creating a Value Function",
+  "suspended": null
+ },
+ {
+  "id": 1792650963080,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::1_core RL::type::exercise",
+  "fields": {
+   "Front": "What does the return look like with \\(\\gamma = 0\\)? With \\(\\gamma = 1\\)?",
+   "Back": "\\(\\gamma=0\\): \\(G_t = r_t\\), only the immediate reward counts (fully myopic).<br>\n\\(\\gamma=1\\): every future reward counts equally, no discounting.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "exercise",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Creating%20a%20Value%20Function",
+  "source_label": "RL › Creating a Value Function",
+  "suspended": null
+ },
+ {
+  "id": 1792650963082,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "Why do 'reward' and 'return' mean almost the same thing in LLM RL? What is \\(\\gamma\\) usually?",
+   "Back": "The reward usually arrives <b>once, at the very end</b> (answer correct? RM score?).\nSo every token's return equals that final score, and \\(\\gamma\\) is typically <b>1</b>.\nDiscounting matters in general RL (games, robots) where rewards arrive all along the way.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963084,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::1_core RL::type::definition",
+  "fields": {
+   "Front": "Policy vs \\(\\theta\\) for a language model.",
+   "Back": "\\(\\theta\\) = the weights (the knobs).<br>\nPolicy \\(\\pi_\\theta(a_t\\mid s_t)\\) = the behaviour they produce: a <b>probability distribution over the next token</b> given the state.\nIn practice people use the two interchangeably (\"the policy model\").",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "definition",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963086,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "Why must the policy be a distribution you sample from, not a fixed argmax choice?",
+   "Back": "Exploration. If the model always gave the same answer, a wrong answer could never be improved:\nthere'd be nothing different to compare against. Sampling tries different answers, sees which score better, and shifts probability toward them.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963088,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::1_core RL::type::formula",
+  "fields": {
+   "Front": "Write the expected return \\(J(\\pi)\\).",
+   "Back": "\\[ J(\\pi) = \\int_\\tau P(\\tau\\mid\\pi)\\,R(\\tau) = \\mathbb{E}_{\\tau\\sim\\pi}[R(\\tau)] \\]\nEach trajectory's return weighted by how likely the policy is to produce it. Use \\(\\sum\\) for discrete spaces.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "formula",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963090,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::1_core RL::type::definition",
+  "fields": {
+   "Front": "What is the Monte Carlo method, and how is it used in RL?",
+   "Back": "Estimate an expectation by <b>sampling many times and averaging</b>.<br>\nIn RL: sample many rollouts from a state and average their returns to estimate the expected return.",
+   "Image": "<img src=\"monte_carlo.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "definition",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963092,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::1_core RL::type::exercise",
+  "fields": {
+   "Front": "You sample one prompt twice: returns +1 and 0. Estimate the expected return. How good is that estimate?",
+   "Back": "Average: \\((1+0)/2 = 0.5\\). Very rough with 2 samples; with 100 samples the average gets much closer to the truth (variance shrinks like \\(1/n\\)).",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "exercise",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963094,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Cloze",
+  "tags": "RL::topic::Terminology RL::level::1_core RL::type::definition",
+  "fields": {
+   "Text": "In LLM RL, the <b>state</b> is {{c1::the prompt plus all tokens generated so far}}, the <b>action</b> is {{c2::choosing the next token}}, and a <b>trajectory</b> is {{c3::the full completion from first token to end}}.",
+   "Extra": "Quirk: the state already contains the history, so the final state basically <i>is</i> the trajectory.",
+   "Image": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "definition",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963098,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::2_working RL::type::intuition",
+  "fields": {
+   "Front": "An expectation is \\(\\sum_x P(x)F(x)\\). Why do you never multiply by \\(P(x)\\) when estimating it from rollouts?",
+   "Back": "Sampling does the weighting for you: likely answers appear more often in the samples, so a plain average already weights them by probability.<br><br>\nToy example: answer A has \\(P=0.9\\), B has \\(P=0.1\\). Exact: \\(0.9F(A)+0.1F(B)\\). Sample 10 times → ~9 A's and 1 B, so the plain average ≈ the same number.",
+   "Image": "<img src=\"monte_carlo.png\">",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "intuition",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963100,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::2_working RL::type::definition",
+  "fields": {
+   "Front": "For a whole generated response, what is \\(P(x)\\)?",
+   "Back": "The product of the probabilities of each chosen token (chain rule):\n\\[ \\pi_\\theta(y\\mid x) = \\prod_t \\pi_\\theta(y_t \\mid x, y_{\\lt t}), \\quad \\log\\pi_\\theta(y\\mid x)=\\sum_t \\log\\pi_\\theta(y_t\\mid x,y_{\\lt t}) \\]",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "definition",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963102,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::2_working RL::type::compare",
+  "fields": {
+   "Front": "Online vs offline RL, and on-policy vs off-policy: what's the difference?",
+   "Back": "<b>Online</b>: keep generating new data during training. <b>Offline</b>: learn from a fixed dataset, no new interaction.<br>\n<b>On-policy</b>: data comes from the <i>current</i> policy. <b>Off-policy</b>: from some other/older policy.<br><br>\nPPO is <i>slightly</i> off-policy during its extra epochs, which is exactly why the importance ratio exists.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "compare",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963104,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::2_working RL::type::intuition",
+  "fields": {
+   "Front": "Token-level example: why is training on month-old samples a problem?",
+   "Back": "Last month the model started maths answers with \"I think the answer is\" 60% of the time (usually wrong). Today it does that 1% of the time and opens with \"Let's compute step by step.\"<br>\nTraining on old data spends effort pushing down a phrase it barely uses, and never tests whether its <i>new</i> opening works. Old returns also describe the old model, not this one.",
+   "Image": "",
+   "Extra": "Analogy: a tennis coach working from year-old footage fixes a backhand you've already sorted and misses your new bad habits.",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "intuition",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963106,
+  "deck": "RL for LLMs::01 Terminology",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Terminology RL::level::2_working RL::type::definition",
+  "fields": {
+   "Front": "What is a surrogate loss, and why is its value meaningless in RL?",
+   "Back": "A loss built only so that its <b>gradient</b> points toward higher expected return.\nIts numeric value means little because the data is the model's own samples and changes every step (unlike fixed pre-training text).\nMonitor the <b>reward curve</b>, not the loss.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "definition",
+   "Topic": "Terminology"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
+  "source_label": "RL › Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792650963108,
+  "deck": "RL for LLMs::02 Value Functions & Advantage",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Value_Functions_Advantage RL::level::1_core RL::type::definition",
+  "fields": {
+   "Front": "Define \\(V^\\pi(s)\\) and \\(Q^\\pi(s,a)\\).",
+   "Back": "\\(V^\\pi(s)\\): expected return from state \\(s\\), then following \\(\\pi\\). (\"How good is it here, on average?\")<br>\n\\(Q^\\pi(s,a)\\): expected return from \\(s\\) taking the specific action \\(a\\) first, then following \\(\\pi\\).",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "definition",
+   "Topic": "Value Functions & Advantage"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Value%20Functions",
+  "source_label": "RL › Value Functions",
+  "suspended": null
+ },
+ {
+  "id": 1792650963110,
+  "deck": "RL for LLMs::02 Value Functions & Advantage",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Value_Functions_Advantage RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "The model is halfway through a maths problem. What's the brute-force way to estimate \\(V(s)\\) there?",
+   "Back": "Monte Carlo: from that exact state, sample many completions and average their final rewards.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "Value Functions & Advantage"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Creating%20a%20Value%20Function",
+  "source_label": "RL › Creating a Value Function",
+  "suspended": null
+ },
+ {
+  "id": 1792650963112,
+  "deck": "RL for LLMs::02 Value Functions & Advantage",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Value_Functions_Advantage RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "Why train a value network (critic) instead of just Monte Carlo sampling every state?",
+   "Back": "Cost: you'd need many rollouts <b>for every token position</b>. A critic learns to predict that average in one forward pass.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "Value Functions & Advantage"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Creating%20a%20Value%20Function",
+  "source_label": "RL › Creating a Value Function",
+  "suspended": null
+ },
+ {
+  "id": 1792650963114,
+  "deck": "RL for LLMs::02 Value Functions & Advantage",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Value_Functions_Advantage RL::level::1_core RL::type::compare",
+  "fields": {
+   "Front": "Monte Carlo returns vs a trained critic: bias and variance?",
+   "Back": "<b>Monte Carlo \\(G_t\\)</b>: unbiased (its average is the true value) but <b>high variance</b>, since each rollout is one noisy sample.<br>\n<b>Critic \\(V_\\phi(s)\\)</b>: steady, same input gives the same answer (<b>low variance</b>), but can be consistently wrong (<b>biased</b>).",
+   "Image": "<img src=\"bias_variance.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "compare",
+   "Topic": "Value Functions & Advantage"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Creating%20a%20Value%20Function",
+  "source_label": "RL › Creating a Value Function",
+  "suspended": null
+ },
+ {
+  "id": 1792650963116,
+  "deck": "RL for LLMs::02 Value Functions & Advantage",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Value_Functions_Advantage RL::level::1_core RL::type::definition",
+  "fields": {
+   "Front": "Bias vs variance of an estimator?",
+   "Back": "<b>Bias</b>: the average estimate is off from the truth (systematic error).<br>\n<b>Variance</b>: estimates scatter from sample to sample (random error).<br>You can usually reduce one at the cost of the other.",
+   "Image": "<img src=\"bias_variance.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "definition",
+   "Topic": "Value Functions & Advantage"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Creating%20a%20Value%20Function",
+  "source_label": "RL › Creating a Value Function",
+  "suspended": null
+ },
+ {
+  "id": 1792650963118,
+  "deck": "RL for LLMs::02 Value Functions & Advantage",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Value_Functions_Advantage RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "Why must the critic keep training throughout RL?",
+   "Back": "As the policy improves, the expected return from each state changes. The critic has to keep chasing a moving target.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "Value Functions & Advantage"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Creating%20a%20Value%20Function",
+  "source_label": "RL › Creating a Value Function",
+  "suspended": null
+ },
+ {
+  "id": 1792650963120,
+  "deck": "RL for LLMs::02 Value Functions & Advantage",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Value_Functions_Advantage RL::level::1_core RL::type::exercise",
+  "fields": {
+   "Front": "From a state the model succeeds 50% of the time (V). If the next token is 'therefore' it succeeds 80% (Q). Advantage? What if Q were 30%?",
+   "Back": "\\(A = Q - V = 0.8-0.5 = +0.3\\) → push 'therefore' <b>up</b>.<br>\nIf \\(Q = 0.3\\): \\(A = -0.2\\) → push it <b>down</b>.<br><br>\nThis sign rule is the core of nearly every algorithm.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "exercise",
+   "Topic": "Value Functions & Advantage"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963122,
+  "deck": "RL for LLMs::02 Value Functions & Advantage",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Value_Functions_Advantage RL::level::1_core RL::type::definition",
+  "fields": {
+   "Front": "Define the advantage in words and symbols.",
+   "Back": "How much better a specific action is than average from this state:\n\\[ A(s,a) = Q(s,a) - V(s) \\;\\approx\\; G_t - V(s_t) \\]",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "definition",
+   "Topic": "Value Functions & Advantage"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963124,
+  "deck": "RL for LLMs::02 Value Functions & Advantage",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Value_Functions_Advantage RL::level::2_working RL::type::definition",
+  "fields": {
+   "Front": "What do \\(V^*(s)\\) and \\(Q^*(s,a)\\) mean?",
+   "Back": "The same quantities, but acting according to the <b>optimal</b> policy after \\(s\\) (or after \\(s,a\\)) instead of the current \\(\\pi\\).",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "definition",
+   "Topic": "Value Functions & Advantage"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Value%20Functions",
+  "source_label": "RL › Value Functions",
+  "suspended": null
+ },
+ {
+  "id": 1792650963126,
+  "deck": "RL for LLMs::02 Value Functions & Advantage",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Value_Functions_Advantage RL::level::2_working RL::type::formula",
+  "fields": {
+   "Front": "How is the critic trained? What is its per-token target in LLM RL?",
+   "Back": "Regression (MSE) toward observed returns:\n\\[ \\min_\\phi \\sum_t \\big(V_\\phi(s_t) - G_t\\big)^2 \\]\nWith \\(\\gamma=1\\) and a single terminal reward, every token position's target is just the <b>final reward</b>: one rollout of 100 tokens = 100 training examples.\nTrain it <i>after</i> the rollout finishes.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "formula",
+   "Topic": "Value Functions & Advantage"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Creating%20a%20Value%20Function",
+  "source_label": "RL › Creating a Value Function",
+  "suspended": null
+ },
+ {
+  "id": 1792650963128,
+  "deck": "RL for LLMs::02 Value Functions & Advantage",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Value_Functions_Advantage RL::level::2_working RL::type::pitfall",
+  "fields": {
+   "Front": "\\\"Monte Carlo is unbiased because it's the true value.\\\" What's wrong?",
+   "Back": "It's not the true value; it's a single noisy <b>sample</b> whose <i>average</i> equals the true value. Unbiased estimate ≠ exact value.\nSimilarly \\(G_t\\) is a one-sample estimate of \\(Q(s_t,a_t)\\).",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "pitfall",
+   "Topic": "Value Functions & Advantage"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Creating%20a%20Value%20Function",
+  "source_label": "RL › Creating a Value Function",
+  "suspended": null
+ },
+ {
+  "id": 1792650963130,
+  "deck": "RL for LLMs::02 Value Functions & Advantage",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Value_Functions_Advantage RL::level::2_working RL::type::definition",
+  "fields": {
+   "Front": "What is bootstrapping in RL?",
+   "Back": "Using an estimate as (part of) the target for another estimate, e.g. TD errors use \\(V(s_{t+1})\\), the critic's own guess, to judge step \\(t\\). GAE is built on this.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "definition",
+   "Topic": "Value Functions & Advantage"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Creating%20a%20Value%20Function",
+  "source_label": "RL › Creating a Value Function",
+  "suspended": null
+ },
+ {
+  "id": 1792650963132,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::1_core RL::type::formula",
+  "fields": {
+   "Front": "Write the REINFORCE policy gradient.",
+   "Back": "\\[ \\nabla_\\theta J(\\theta) = \\mathbb{E}_{\\tau\\sim\\pi_\\theta}\\Big[\\sum_t \\nabla_\\theta \\log\\pi_\\theta(a_t\\mid s_t)\\, G_t\\Big] \\]\nThe gradient of the expected return: the direction that makes expected return go up (gradient <b>ascent</b>).",
+   "Image": "<img src=\"reinforce_loop.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "formula",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963134,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "Explain REINFORCE in plain words (no baseline).",
+   "Back": "The model writes an answer and gets a score. Make <b>every token in that answer more likely</b>, and the higher the score, the bigger the push.\n\\(\\nabla_\\theta\\log\\pi\\) is just the knob for \"make this token more likely\".",
+   "Image": "<img src=\"reinforce_loop.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963136,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::1_core RL::type::definition",
+  "fields": {
+   "Front": "In \\(\\nabla_\\theta \\log\\pi_\\theta(a_t\\mid s_t)\\), what is 'the gradient'?",
+   "Back": "A vector over <b>all the weights</b> \\(\\theta\\): for each weight, which way and how much to nudge it so that the chosen token becomes more likely. Computed with ordinary backprop.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "definition",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963138,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "How many samples does the REINFORCE expectation need?",
+   "Back": "No magic number: the expectation is estimated by a batch average. More samples → less noisy gradient, more cost. LLM updates typically average over hundreds of rollouts (many prompts × a few answers each).",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963140,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::1_core RL::type::pitfall",
+  "fields": {
+   "Front": "In plain REINFORCE, what happens to the tokens of a rollout with return 0?",
+   "Back": "They are multiplied by 0 → <b>no direct push at all</b>. They only lose probability indirectly as other tokens gain it (probabilities sum to 1). The model never actively learns from its mistakes.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "pitfall",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963142,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::1_core RL::type::exercise",
+  "fields": {
+   "Front": "All returns are positive: answer A scores 10, answer B scores 9. What does REINFORCE do, and how does a baseline fix it?",
+   "Back": "REINFORCE pushes <b>both</b> up (B slightly less), even though B is worse.<br>\nSubtract a baseline of 9.5: A → +0.5 (pushed up), B → −0.5 (pushed <b>down</b>). Now the update is relative.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "exercise",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963144,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "An easy prompt usually scores 9, a hard one usually scores 1. Same baseline for both?",
+   "Back": "No. Each needs its own reference point; a 5 is great on the hard prompt and terrible on the easy one. The natural choice is \\(b(s)=V(s)\\), the expected return from that state.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963146,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::1_core RL::type::formula",
+  "fields": {
+   "Front": "REINFORCE with a baseline: formula and the meaning of the weight.",
+   "Back": "\\[ \\nabla_\\theta J = \\mathbb{E}\\Big[\\sum_t \\nabla_\\theta\\log\\pi_\\theta(a_t\\mid s_t)\\,\\big(G_t - V(s_t)\\big)\\Big] \\]\n\\(G_t - V(s_t) = \\hat A_t\\): did this rollout do better or worse than usual from here?",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "formula",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963148,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::1_core RL::type::pitfall",
+  "fields": {
+   "Front": "In REINFORCE, does the score come from the value model?",
+   "Back": "No. The score comes from a <b>verifier</b> (e.g. maths checker, unit tests) or a <b>reward model</b>. The value model (critic) only enters as the baseline.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "pitfall",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963150,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::2_working RL::type::exercise",
+  "fields": {
+   "Front": "You have 64 prompts × 4 samples. Walk through one REINFORCE update: what is summed and what is averaged?",
+   "Back": "<ol><li>Sample 256 rollouts from the current policy; score each → \\(G\\).</li>\n<li>For each rollout, <b>sum</b> over its chosen tokens: \\(\\nabla\\log\\pi(a_t\\mid s_t)\\cdot G\\) (only the token actually picked at each step).</li>\n<li><b>Average</b> over the 256 rollouts → one gradient estimate.</li>\n<li>Step the weights, throw the data away, resample.</li></ol>",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "exercise",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963152,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::2_working RL::type::formula",
+  "fields": {
+   "Front": "How do you implement REINFORCE in code (one backward pass)?",
+   "Back": "Build a surrogate loss and call backward once:\n\\[ \\mathcal{L} = -\\frac{1}{N}\\sum_{i=1}^{N} G_i \\sum_t \\log\\pi_\\theta(a_{i,t}\\mid s_{i,t}) \\]\nOrder doesn't matter: the average of gradients = gradient of the average.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "formula",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963154,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::2_working RL::type::intuition",
+  "fields": {
+   "Front": "Why must the baseline depend only on the state, never on the action taken?",
+   "Back": "If the baseline peeked at what actually happened, e.g. baseline = this rollout's own return, then \\(G - b = 0\\) every time and nothing is learned.\nA state-only baseline doesn't change the gradient's direction on average; it only reduces noise.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "intuition",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963156,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::2_working RL::type::definition",
+  "fields": {
+   "Front": "In practice, where does \\(V(s)\\) for the baseline come from? Is it a frozen policy?",
+   "Back": "A separate, <b>trained</b> critic network (often a copy of the LM with a scalar head instead of a token head). Not frozen: it keeps training.\nIt predicts at <b>every token position</b>: given prompt + tokens so far, what's the average return from here?",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "definition",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963158,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::2_working RL::type::intuition",
+  "fields": {
+   "Front": "Why compute a baseline at every token, not just once per prompt?",
+   "Back": "Each token is its own action in its own situation. If the critic sat at 0.7 until token 40 then fell to 0.1 and the answer failed:\ntokens 41+ get \\(A \\approx 0-0.1=-0.1\\) (stuck in a bad spot, did as expected), tokens before get \\(A\\approx -0.7\\).\nA per-token baseline judges each token against the situation it was in.",
+   "Image": "<img src=\"token40.png\">",
+   "Extra": "Without GAE this mainly spares later tokens and cuts noise. Pinpointing token 40 itself is what TD errors/GAE add.",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "intuition",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963160,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::2_working RL::type::compare",
+  "fields": {
+   "Front": "Vanilla REINFORCE vs + baseline vs + per-token critic vs GRPO's group baseline.",
+   "Back": "<b>Vanilla</b>: every token × the same raw return.<br>\n<b>+ baseline</b>: updates become <i>relative</i> (can go negative).<br>\n<b>+ per-token critic</b>: relative <i>and</i> per-token (each token has its own reference).<br>\n<b>GRPO</b>: relative via group mean, but the <i>same</i> advantage for every token in a response.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "compare",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963162,
+  "deck": "RL for LLMs::03 REINFORCE & Baseline",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::REINFORCE_Baseline RL::level::3_deep RL::type::formula",
+  "fields": {
+   "Front": "Prove a state-only baseline adds no bias to the policy gradient.",
+   "Back": "\\[ \\mathbb{E}_{a\\sim\\pi}\\big[\\nabla_\\theta\\log\\pi_\\theta(a\\mid s)\\, b(s)\\big] = b(s)\\sum_a \\pi_\\theta(a\\mid s)\\frac{\\nabla_\\theta\\pi_\\theta(a\\mid s)}{\\pi_\\theta(a\\mid s)} = b(s)\\,\\nabla_\\theta\\!\\sum_a\\pi_\\theta(a\\mid s) = b(s)\\,\\nabla_\\theta 1 = 0 \\]",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "formula",
+   "Topic": "REINFORCE & Baseline"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
+  "source_label": "RL › 1. REINFORCE / Vanilla,1992",
+  "suspended": null
+ },
+ {
+  "id": 1792650963164,
+  "deck": "RL for LLMs::04 TRPO & Importance Ratio",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::TRPO_Importance_Ratio RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "Even with a baseline, why is a big policy update dangerous in RL specifically?",
+   "Back": "Your next batch of data comes from the policy itself. One bad update → broken policy → bad data → worse updates → downward spiral.\nSupervised learning doesn't have this: its dataset never changes.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "TRPO & Importance Ratio"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=2.%20TRPO%2C%202015",
+  "source_label": "RL › 2. TRPO, 2015",
+  "suspended": null
+ },
+ {
+  "id": 1792650963166,
+  "deck": "RL for LLMs::04 TRPO & Importance Ratio",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::TRPO_Importance_Ratio RL::level::1_core RL::type::formula",
+  "fields": {
+   "Front": "Define the importance ratio.",
+   "Back": "\\[ r_t(\\theta) = \\frac{\\pi_\\theta(a_t\\mid s_t)}{\\pi_{\\theta_{old}}(a_t\\mid s_t)} = \\exp\\big(\\log\\pi_\\theta - \\log\\pi_{\\theta_{old}}\\big) \\]\nFor the single token that was actually sampled. Computed from log-probs in code for numerical stability.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "formula",
+   "Topic": "TRPO & Importance Ratio"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=2.%20TRPO%2C%202015",
+  "source_label": "RL › 2. TRPO, 2015",
+  "suspended": null
+ },
+ {
+  "id": 1792650963168,
+  "deck": "RL for LLMs::04 TRPO & Importance Ratio",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::TRPO_Importance_Ratio RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "Why does TRPO/PPO need the importance ratio at all?",
+   "Back": "To <b>take several gradient steps on one expensive batch</b>. After the first step the policy has shifted, but the samples still come from \\(\\pi_{old}\\): slightly stale.\nThe ratio reweights each old sample to reflect how the <i>new</i> policy would treat it. (With one step per batch, the ratio is exactly 1 and does nothing, which is why REINFORCE doesn't need it.)",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "TRPO & Importance Ratio"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=2.%20TRPO%2C%202015",
+  "source_label": "RL › 2. TRPO, 2015",
+  "suspended": null
+ },
+ {
+  "id": 1792650963170,
+  "deck": "RL for LLMs::04 TRPO & Importance Ratio",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::TRPO_Importance_Ratio RL::level::1_core RL::type::exercise",
+  "fields": {
+   "Front": "The model sampled 'therefore'. Old policy gave it 20%, new gives 40%. Ratio? Meaning?",
+   "Back": "\\(r = 0.4/0.2 = 2\\): this sample now counts <b>twice</b> as much in the objective.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "exercise",
+   "Topic": "TRPO & Importance Ratio"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=2.%20TRPO%2C%202015",
+  "source_label": "RL › 2. TRPO, 2015",
+  "suspended": null
+ },
+ {
+  "id": 1792650963172,
+  "deck": "RL for LLMs::04 TRPO & Importance Ratio",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::TRPO_Importance_Ratio RL::level::1_core RL::type::compare",
+  "fields": {
+   "Front": "Importance ratio vs KL: what does each measure, and what job does it do?",
+   "Back": "<b>Ratio</b>: one number per <i>sampled token</i>, new prob / old prob. Job: <b>reweight</b> stale samples.<br>\n<b>KL</b>: one distance per <i>state</i> over the <i>whole next-token distribution</i>. Job: <b>speed limit</b> on how far the policy moves.<br>\nRelated (KL ≈ average log-ratio under old policy) but different jobs. They actually pull in opposite directions: maximizing ratio × A pushes change; KL brakes it.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "compare",
+   "Topic": "TRPO & Importance Ratio"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=2.%20TRPO%2C%202015",
+  "source_label": "RL › 2. TRPO, 2015",
+  "suspended": null
+ },
+ {
+  "id": 1792650963174,
+  "deck": "RL for LLMs::04 TRPO & Importance Ratio",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::TRPO_Importance_Ratio RL::level::1_core RL::type::pitfall",
+  "fields": {
+   "Front": "\\\"TRPO's KL constraint keeps the advantage from exploding.\\\" Correct it.",
+   "Back": "The KL limits how far the <b>policy</b> moves per update, not the advantage.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "pitfall",
+   "Topic": "TRPO & Importance Ratio"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=2.%20TRPO%2C%202015",
+  "source_label": "RL › 2. TRPO, 2015",
+  "suspended": null
+ },
+ {
+  "id": 1792650963176,
+  "deck": "RL for LLMs::04 TRPO & Importance Ratio",
+  "notetype": "RL for LLMs · Cloze",
+  "tags": "RL::topic::TRPO_Importance_Ratio RL::level::1_core RL::type::formula",
+  "fields": {
+   "Text": "TRPO: the {{c1::importance ratio × advantage}} goes in the objective you maximize; the {{c2::average KL between old and new policy}} is the constraint (the \"fence\").",
+   "Extra": "",
+   "Image": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "formula",
+   "Topic": "TRPO & Importance Ratio"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=2.%20TRPO%2C%202015",
+  "source_label": "RL › 2. TRPO, 2015",
+  "suspended": null
+ },
+ {
+  "id": 1792650963179,
+  "deck": "RL for LLMs::04 TRPO & Importance Ratio",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::TRPO_Importance_Ratio RL::level::2_working RL::type::formula",
+  "fields": {
+   "Front": "Show that at \\(\\theta=\\theta_{old}\\), the ratio objective's gradient equals REINFORCE's.",
+   "Back": "\\[ \\nabla_\\theta\\, r_t(\\theta) = r_t(\\theta)\\,\\nabla_\\theta\\log\\pi_\\theta(a_t\\mid s_t) \\]\nAt \\(\\theta=\\theta_{old}\\), \\(r_t=1\\), so \\(\\nabla(r_t\\hat A_t) = \\nabla\\log\\pi_\\theta(a_t\\mid s_t)\\,\\hat A_t\\), exactly REINFORCE with an advantage.\nTRPO's objective is REINFORCE rewritten so you can keep stepping on the same batch.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "formula",
+   "Topic": "TRPO & Importance Ratio"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=2.%20TRPO%2C%202015",
+  "source_label": "RL › 2. TRPO, 2015",
+  "suspended": null
+ },
+ {
+  "id": 1792650963181,
+  "deck": "RL for LLMs::04 TRPO & Importance Ratio",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::TRPO_Importance_Ratio RL::level::2_working RL::type::formula",
+  "fields": {
+   "Front": "Write TRPO's full optimization problem.",
+   "Back": "Maximize\n\\[ \\mathbb{E}_t\\Big[\\frac{\\pi_\\theta(a_t\\mid s_t)}{\\pi_{\\theta_{old}}(a_t\\mid s_t)}\\hat A_t\\Big] \\]\nsubject to\n\\[ \\mathbb{E}_t\\Big[\\mathrm{KL}\\big(\\pi_{\\theta_{old}}(\\cdot\\mid s_t)\\,\\|\\,\\pi_\\theta(\\cdot\\mid s_t)\\big)\\Big] \\le \\delta \\quad(\\delta\\approx 0.01) \\]",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "formula",
+   "Topic": "TRPO & Importance Ratio"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=2.%20TRPO%2C%202015",
+  "source_label": "RL › 2. TRPO, 2015",
+  "suspended": null
+ },
+ {
+  "id": 1792650963183,
+  "deck": "RL for LLMs::04 TRPO & Importance Ratio",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::TRPO_Importance_Ratio RL::level::2_working RL::type::definition",
+  "fields": {
+   "Front": "How is TRPO's KL computed, step by step?",
+   "Back": "<ol><li>Take a state from the batch (prompt + tokens so far).</li>\n<li>Run old and new models → each gives probabilities over the <b>whole vocabulary</b>.</li>\n<li>\\(\\mathrm{KL}=\\sum_{v} p_{old}(v)\\log\\frac{p_{old}(v)}{p_{new}(v)}\\) for that state.</li>\n<li>Average over all states; must stay ≤ δ, else shrink the step.</li></ol>",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "definition",
+   "Topic": "TRPO & Importance Ratio"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=2.%20TRPO%2C%202015",
+  "source_label": "RL › 2. TRPO, 2015",
+  "suspended": null
+ },
+ {
+  "id": 1792650963185,
+  "deck": "RL for LLMs::04 TRPO & Importance Ratio",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::TRPO_Importance_Ratio RL::level::2_working RL::type::intuition",
+  "fields": {
+   "Front": "Why can't you trust ratio × advantage once the new policy moves far from the old one?",
+   "Back": "The advantages were measured with the old policy's rollouts. Far away, the new policy would behave differently, so those samples and advantages no longer describe it, and the ratio can explode.\nThe surrogate is only a good local approximation; hence the trust region.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "intuition",
+   "Topic": "TRPO & Importance Ratio"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=2.%20TRPO%2C%202015",
+  "source_label": "RL › 2. TRPO, 2015",
+  "suspended": null
+ },
+ {
+  "id": 1792650963187,
+  "deck": "RL for LLMs::04 TRPO & Importance Ratio",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::TRPO_Importance_Ratio RL::level::2_working RL::type::intuition",
+  "fields": {
+   "Front": "Why have both a ratio and a KL constraint?",
+   "Back": "The ratio alone has <b>no brakes</b>: for a token with positive advantage the objective just says \"make the ratio bigger\", so the optimizer would shove its probability way up.\nThe KL fence keeps old and new close enough that the ratio stays a fair correction.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "intuition",
+   "Topic": "TRPO & Importance Ratio"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=2.%20TRPO%2C%202015",
+  "source_label": "RL › 2. TRPO, 2015",
+  "suspended": null
+ },
+ {
+  "id": 1792650963189,
+  "deck": "RL for LLMs::04 TRPO & Importance Ratio",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::TRPO_Importance_Ratio RL::level::3_deep RL::type::intuition",
+  "fields": {
+   "Front": "Why is TRPO expensive? Why can't you just use Adam?",
+   "Back": "Adam follows the gradient; it has no way to \"stop at a fence\". The gradient tells direction but not how far you can go before KL is violated, and KL grows unevenly across weight directions.\nTRPO needs the curvature of the KL (Fisher matrix = Hessian of KL): it solves \\(F^{-1}g\\) with ~10 conjugate-gradient iterations of Fisher-vector products, then a backtracking line search. Lots of extra passes per update; awkward with minibatches and shared policy/value weights.",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "intuition",
+   "Topic": "TRPO & Importance Ratio"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=2.%20TRPO%2C%202015",
+  "source_label": "RL › 2. TRPO, 2015",
+  "suspended": null
+ },
+ {
+  "id": 1792650963191,
+  "deck": "RL for LLMs::05 GAE & TD Error",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GAE_TD_Error RL::level::1_core RL::type::formula",
+  "fields": {
+   "Front": "Define the TD (temporal-difference) error.",
+   "Back": "\\[ \\delta_t = r_t + \\gamma V(s_{t+1}) - V(s_t) \\]\n\"How surprised was I\": the reward at this step plus the critic's new guess, minus its old guess. It measures how much step \\(t\\) moved the expected return.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "formula",
+   "Topic": "GAE & TD Error"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=3.%20Generalized%20Advantage%20Estimator%20%28GAE%29%2C%202016",
+  "source_label": "RL › 3. Generalized Advantage Estimator (GAE), 2016",
+  "suspended": null
+ },
+ {
+  "id": 1792650963193,
+  "deck": "RL for LLMs::05 GAE & TD Error",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GAE_TD_Error RL::level::1_core RL::type::exercise",
+  "fields": {
+   "Front": "Critic says 0.7 before token 40 and 0.1 after. No reward at that step, \\(\\gamma=1\\). TD error? Meaning?",
+   "Back": "\\(\\delta_{40} = 0 + 0.1 - 0.7 = -0.6\\): token 40 hurt; it's where the answer went wrong.",
+   "Image": "<img src=\"token40.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "exercise",
+   "Topic": "GAE & TD Error"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=3.%20Generalized%20Advantage%20Estimator%20%28GAE%29%2C%202016",
+  "source_label": "RL › 3. Generalized Advantage Estimator (GAE), 2016",
+  "suspended": null
+ },
+ {
+  "id": 1792650963195,
+  "deck": "RL for LLMs::05 GAE & TD Error",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GAE_TD_Error RL::level::1_core RL::type::compare",
+  "fields": {
+   "Front": "Judging token 40 by its TD error alone vs by \\(G - V\\): what's the risk of each?",
+   "Back": "<b>TD error only</b> (−0.6): built entirely from the critic's guesses → <b>biased</b> if the critic is wrong; you punish token 40 on the critic's word.<br>\n<b>\\(G - V\\)</b> (wait for real reward): honest but <b>noisy</b>; the final outcome also depends on tokens 41–100 (lucky later tokens could fix the mistake and token 40 gets unearned credit).",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "compare",
+   "Topic": "GAE & TD Error"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=3.%20Generalized%20Advantage%20Estimator%20%28GAE%29%2C%202016",
+  "source_label": "RL › 3. Generalized Advantage Estimator (GAE), 2016",
+  "suspended": null
+ },
+ {
+  "id": 1792650963197,
+  "deck": "RL for LLMs::05 GAE & TD Error",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GAE_TD_Error RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "What does GAE's \\(\\lambda\\) control?",
+   "Back": "A bias–variance slider: how far ahead you look at real rewards before trusting the critic's guess.<br>\n\\(\\lambda=0\\): trust the critic (one-step TD) → low variance, biased.<br>\n\\(\\lambda=1\\): trust real rewards (\\(G-V\\)) → unbiased, noisy.<br>\nIn between: a blend with nearby steps weighted more.",
+   "Image": "<img src=\"gae_weights.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "GAE & TD Error"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=3.%20Generalized%20Advantage%20Estimator%20%28GAE%29%2C%202016",
+  "source_label": "RL › 3. Generalized Advantage Estimator (GAE), 2016",
+  "suspended": null
+ },
+ {
+  "id": 1792650963199,
+  "deck": "RL for LLMs::05 GAE & TD Error",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GAE_TD_Error RL::level::1_core RL::type::compare",
+  "fields": {
+   "Front": "Which algorithms use TD errors / GAE: PPO? GRPO?",
+   "Back": "<b>PPO</b> (incl. RLHF-PPO): yes, advantages are usually computed with GAE.<br>\n<b>GRPO</b>: no; it drops the critic, and with it TD errors and GAE.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "compare",
+   "Topic": "GAE & TD Error"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=3.%20Generalized%20Advantage%20Estimator%20%28GAE%29%2C%202016",
+  "source_label": "RL › 3. Generalized Advantage Estimator (GAE), 2016",
+  "suspended": null
+ },
+ {
+  "id": 1792650963201,
+  "deck": "RL for LLMs::05 GAE & TD Error",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GAE_TD_Error RL::level::2_working RL::type::formula",
+  "fields": {
+   "Front": "Write the GAE advantage.",
+   "Back": "\\[ \\hat A_t^{\\mathrm{GAE}(\\gamma,\\lambda)} = \\sum_{l=0}^{T-t} (\\gamma\\lambda)^l\\,\\delta_{t+l}, \\qquad \\delta_t = r_t+\\gamma V(s_{t+1})-V(s_t) \\]\nToken \\(t\\)'s own TD error at full weight, the next at \\(\\gamma\\lambda\\), the next at \\((\\gamma\\lambda)^2\\), …",
+   "Image": "<img src=\"gae_weights.png\">",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "formula",
+   "Topic": "GAE & TD Error"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=3.%20Generalized%20Advantage%20Estimator%20%28GAE%29%2C%202016",
+  "source_label": "RL › 3. Generalized Advantage Estimator (GAE), 2016",
+  "suspended": null
+ },
+ {
+  "id": 1792650963203,
+  "deck": "RL for LLMs::05 GAE & TD Error",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GAE_TD_Error RL::level::2_working RL::type::exercise",
+  "fields": {
+   "Front": "What is the GAE advantage when \\(\\lambda = 0\\)?",
+   "Back": "Only the first term survives: \\(\\hat A_t = \\delta_t = r_t + \\gamma V(s_{t+1}) - V(s_t)\\). One real reward, the rest is the critic's guess.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "exercise",
+   "Topic": "GAE & TD Error"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=3.%20Generalized%20Advantage%20Estimator%20%28GAE%29%2C%202016",
+  "source_label": "RL › 3. Generalized Advantage Estimator (GAE), 2016",
+  "suspended": null
+ },
+ {
+  "id": 1792650963205,
+  "deck": "RL for LLMs::05 GAE & TD Error",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GAE_TD_Error RL::level::2_working RL::type::compare",
+  "fields": {
+   "Front": "\\(\\gamma\\) vs \\(\\lambda\\): what does each knob do? Typical values?",
+   "Back": "<b>\\(\\gamma\\)</b> discounts future <i>rewards</i> themselves (part of the problem definition). General RL ~0.99; LLMs usually <b>1</b>.<br>\n<b>\\(\\lambda\\)</b> is the GAE bias–variance slider (part of the estimator). Typically <b>0.95</b>.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "compare",
+   "Topic": "GAE & TD Error"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=3.%20Generalized%20Advantage%20Estimator%20%28GAE%29%2C%202016",
+  "source_label": "RL › 3. Generalized Advantage Estimator (GAE), 2016",
+  "suspended": null
+ },
+ {
+  "id": 1792650963207,
+  "deck": "RL for LLMs::05 GAE & TD Error",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GAE_TD_Error RL::level::2_working RL::type::exercise",
+  "fields": {
+   "Front": "Early in training the critic is barely trained. Which way should \\(\\lambda\\) lean?",
+   "Back": "Toward <b>1</b>: rely on real rewards rather than a critic you can't trust yet (accept more variance to avoid bias).",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "exercise",
+   "Topic": "GAE & TD Error"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=3.%20Generalized%20Advantage%20Estimator%20%28GAE%29%2C%202016",
+  "source_label": "RL › 3. Generalized Advantage Estimator (GAE), 2016",
+  "suspended": null
+ },
+ {
+  "id": 1792650963209,
+  "deck": "RL for LLMs::05 GAE & TD Error",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GAE_TD_Error RL::level::2_working RL::type::pitfall",
+  "fields": {
+   "Front": "\\\"GAE was built to fix TRPO.\\\" Correct it.",
+   "Back": "GAE is <b>orthogonal</b>: a way to compute the advantage that plugs into REINFORCE, TRPO or PPO. (Same author as TRPO, whose experiments used TRPO, but it answers \"what \\(\\hat A\\) do I plug in?\", not \"how big a step?\")",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "pitfall",
+   "Topic": "GAE & TD Error"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=3.%20Generalized%20Advantage%20Estimator%20%28GAE%29%2C%202016",
+  "source_label": "RL › 3. Generalized Advantage Estimator (GAE), 2016",
+  "suspended": null
+ },
+ {
+  "id": 1792650963211,
+  "deck": "RL for LLMs::05 GAE & TD Error",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GAE_TD_Error RL::level::2_working RL::type::intuition",
+  "fields": {
+   "Front": "Is GAE a compute optimization?",
+   "Back": "No. Computing it is cheap (one backward pass over the tokens). It's about <b>sample efficiency</b>: a lower-noise advantage means fewer rollouts to learn the same thing.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "intuition",
+   "Topic": "GAE & TD Error"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=3.%20Generalized%20Advantage%20Estimator%20%28GAE%29%2C%202016",
+  "source_label": "RL › 3. Generalized Advantage Estimator (GAE), 2016",
+  "suspended": null
+ },
+ {
+  "id": 1792650963213,
+  "deck": "RL for LLMs::05 GAE & TD Error",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GAE_TD_Error RL::level::2_working RL::type::exercise",
+  "fields": {
+   "Front": "Walk through one actor-critic iteration with GAE for a 100-token rollout.",
+   "Back": "<ol><li>Generate 100 tokens; the critic gives \\(V(s_t)\\) at each position.</li>\n<li>Rollout ends → reward (e.g. 1).</li>\n<li>Compute TD errors \\(\\delta_t\\) and GAE advantages \\(\\hat A_t\\) per token.</li>\n<li>Policy update: push each token by its \\(\\hat A_t\\) (PPO clip).</li>\n<li>Critic update: MSE between \\(V(s_t)\\) and the return target.</li></ol>",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "exercise",
+   "Topic": "GAE & TD Error"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=3.%20Generalized%20Advantage%20Estimator%20%28GAE%29%2C%202016",
+  "source_label": "RL › 3. Generalized Advantage Estimator (GAE), 2016",
+  "suspended": null
+ },
+ {
+  "id": 1792650963215,
+  "deck": "RL for LLMs::05 GAE & TD Error",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GAE_TD_Error RL::level::3_deep RL::type::exercise",
+  "fields": {
+   "Front": "Show that GAE with \\(\\lambda=1\\) (and \\(\\gamma=1\\), \\(V(s_{T+1})=0\\)) equals \\(G_t - V(s_t)\\).",
+   "Back": "Telescoping sum:\n\\[ \\sum_{l}\\delta_{t+l} = \\sum_l \\big(r_{t+l} + V(s_{t+l+1}) - V(s_{t+l})\\big) = \\sum_l r_{t+l} - V(s_t) = G_t - V(s_t) \\]\nEvery intermediate \\(V\\) cancels; only the start remains. With \\(\\gamma\\lt 1\\) the same works with discounting.",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "exercise",
+   "Topic": "GAE & TD Error"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=3.%20Generalized%20Advantage%20Estimator%20%28GAE%29%2C%202016",
+  "source_label": "RL › 3. Generalized Advantage Estimator (GAE), 2016",
+  "suspended": null
+ },
+ {
+  "id": 1792650963217,
+  "deck": "RL for LLMs::06 PPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::PPO RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "What is PPO's core idea relative to TRPO?",
+   "Back": "Keep TRPO's safety (small policy changes per batch) <b>without second-order maths</b>: drop the KL constraint and <b>clip the ratio</b> inside the objective, so plain Adam on minibatches works.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "PPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=4.%20PPO%2C%202017",
+  "source_label": "RL › 4. PPO, 2017",
+  "suspended": null
+ },
+ {
+  "id": 1792650963219,
+  "deck": "RL for LLMs::06 PPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::PPO RL::level::1_core RL::type::formula",
+  "fields": {
+   "Front": "Write the PPO clipped objective.",
+   "Back": "\\[ L^{\\mathrm{CLIP}}(\\theta) = \\mathbb{E}_t\\Big[\\min\\big(r_t(\\theta)\\hat A_t,\\;\\mathrm{clip}(r_t(\\theta),1-\\epsilon,1+\\epsilon)\\,\\hat A_t\\big)\\Big] \\]\n\\(r_t = \\pi_\\theta/\\pi_{\\theta_{old}}\\), \\(\\epsilon \\approx 0.2\\) → ratio kept in [0.8, 1.2].",
+   "Image": "<img src=\"ppo_clip.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "formula",
+   "Topic": "PPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=4.%20PPO%2C%202017",
+  "source_label": "RL › 4. PPO, 2017",
+  "suspended": null
+ },
+ {
+  "id": 1792650963221,
+  "deck": "RL for LLMs::06 PPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::PPO RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "What does clipping the ratio to [0.8, 1.2] stop the optimizer from doing?",
+   "Back": "Once a token's probability has moved ~20% from the old policy (in the direction that improves the objective), there's <b>no more credit</b> for pushing further → zero gradient for that token.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "PPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=4.%20PPO%2C%202017",
+  "source_label": "RL › 4. PPO, 2017",
+  "suspended": null
+ },
+ {
+  "id": 1792650963223,
+  "deck": "RL for LLMs::06 PPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::PPO RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "Why is clipping so much cheaper than TRPO's KL fence?",
+   "Back": "It's just a <code>min</code> and a <code>clip</code> on numbers you already have (log-probs). No curvature, no conjugate gradient, no line search; standard first-order Adam.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "PPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=4.%20PPO%2C%202017",
+  "source_label": "RL › 4. PPO, 2017",
+  "suspended": null
+ },
+ {
+  "id": 1792650963225,
+  "deck": "RL for LLMs::06 PPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::PPO RL::level::1_core RL::type::compare",
+  "fields": {
+   "Front": "The two KLs in RLHF-style training: KL to \\(\\pi_{old}\\) vs KL to \\(\\pi_{ref}\\).",
+   "Back": "<b>KL to \\(\\pi_{old}\\)</b> (changes every iteration) = <b>trust region</b>: don't move too far in one update. PPO handles it with clipping; TRPO with a hard constraint.<br>\n<b>KL to \\(\\pi_{ref}\\)</b> (frozen SFT model) = <b>anchor</b>: don't drift too far overall / reward-hack. RLHF puts it in the reward; GRPO puts it in the loss; DPO has it built in.",
+   "Image": "<img src=\"two_kls.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "compare",
+   "Topic": "PPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=4.%20PPO%2C%202017",
+  "source_label": "RL › 4. PPO, 2017",
+  "suspended": null
+ },
+ {
+  "id": 1792650963227,
+  "deck": "RL for LLMs::06 PPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::PPO RL::level::2_working RL::type::intuition",
+  "fields": {
+   "Front": "Why does PPO take the <b>min</b> of the clipped and unclipped terms?",
+   "Back": "It picks the more pessimistic value, so clipping <b>caps gains but never blocks corrections</b>.\nIf a good token's ratio passes 1.2 → clipped term wins → gradient stops.\nIf an update accidentally made a good token <i>less</i> likely (ratio \\(\\lt\\) 0.8, \\(A>0\\)) → raw term is lower → min keeps it → gradient pushes back.",
+   "Image": "<img src=\"ppo_clip.png\">",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "intuition",
+   "Topic": "PPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=4.%20PPO%2C%202017",
+  "source_label": "RL › 4. PPO, 2017",
+  "suspended": null
+ },
+ {
+  "id": 1792650963229,
+  "deck": "RL for LLMs::06 PPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::PPO RL::level::2_working RL::type::exercise",
+  "fields": {
+   "Front": "ε = 0.2. Gradient or not? (a) A>0, r=1.3  (b) A>0, r=0.7  (c) A<0, r=0.7  (d) A<0, r=1.4",
+   "Back": "(a) <b>zero</b>: gain already capped.<br>\n(b) <b>yes</b>: good token became less likely; min keeps raw term → push up.<br>\n(c) <b>zero</b>: bad token already pushed down enough.<br>\n(d) <b>yes</b>: bad token became more likely; min keeps raw term → push down.",
+   "Image": "<img src=\"ppo_clip.png\">",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "exercise",
+   "Topic": "PPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=4.%20PPO%2C%202017",
+  "source_label": "RL › 4. PPO, 2017",
+  "suspended": null
+ },
+ {
+  "id": 1792650963231,
+  "deck": "RL for LLMs::06 PPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::PPO RL::level::2_working RL::type::compare",
+  "fields": {
+   "Front": "PPO-clip vs PPO-KL-penalty: which won, and is β learned?",
+   "Back": "KL variant: \\(\\mathbb{E}_t[r_t\\hat A_t - \\beta\\,\\mathrm{KL}(\\pi_{old}\\|\\pi_\\theta)]\\): straying costs but isn't forbidden.<br>\nβ is <b>adapted by a rule</b>, not learned: KL > 1.5×target → β×2; KL \\(\\lt\\) target/1.5 → β/2.<br>\nThe paper found <b>clipping worked better</b>; it's the default.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "compare",
+   "Topic": "PPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=4.%20PPO%2C%202017",
+  "source_label": "RL › 4. PPO, 2017",
+  "suspended": null
+ },
+ {
+  "id": 1792650963233,
+  "deck": "RL for LLMs::06 PPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::PPO RL::level::2_working RL::type::definition",
+  "fields": {
+   "Front": "Besides clip + min, what else is in a practical PPO update?",
+   "Back": "<ul><li>Reuse each batch for a few <b>epochs</b> of <b>minibatch</b> updates (why ratio/clip matter).</li>\n<li>A <b>critic MSE</b> term trained on the same batch.</li>\n<li>Sometimes an <b>entropy bonus</b> to keep exploring.</li>\n<li>\\(\\epsilon\\approx0.2\\); advantages from GAE.</li></ul>",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "definition",
+   "Topic": "PPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=4.%20PPO%2C%202017",
+  "source_label": "RL › 4. PPO, 2017",
+  "suspended": null
+ },
+ {
+  "id": 1792650963235,
+  "deck": "RL for LLMs::06 PPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::PPO RL::level::3_deep RL::type::formula",
+  "fields": {
+   "Front": "PPO's combined loss (policy + value + entropy).",
+   "Back": "\\[ \\mathcal{L} = -L^{\\mathrm{CLIP}} + c_1\\,\\mathbb{E}_t\\big[(V_\\phi(s_t)-\\hat R_t)^2\\big] - c_2\\,\\mathbb{E}_t\\big[\\mathcal{H}(\\pi_\\theta(\\cdot\\mid s_t))\\big] \\]\n\\(\\hat R_t = \\hat A_t + V(s_t)\\) (GAE return target).",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "formula",
+   "Topic": "PPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.2%20Optimizing%20via%20PPO",
+  "source_label": "RL › 5.2 Optimizing via PPO",
+  "suspended": null
+ },
+ {
+  "id": 1792650963237,
+  "deck": "RL for LLMs::06 PPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::PPO RL::level::3_deep RL::type::pitfall",
+  "fields": {
+   "Front": "\\\"Inside the clip range PPO behaves the same as TRPO.\\\" Correct it.",
+   "Back": "Inside the range it behaves like the <b>unclipped surrogate</b> \\(r_t\\hat A_t\\), i.e. TRPO's objective <i>without</i> the KL constraint. The clip is the only brake.",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "pitfall",
+   "Topic": "PPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=4.%20PPO%2C%202017",
+  "source_label": "RL › 4. PPO, 2017",
+  "suspended": null
+ },
+ {
+  "id": 1792650963239,
+  "deck": "RL for LLMs::07 RLHF & Reward Models",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::RLHF_Reward_Models RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "How do you get a reward for 'write a kind email', where nothing can be checked?",
+   "Back": "Ask humans to <b>compare</b>: show two answers and have them pick the better one. Pairwise preferences are much easier and more consistent than absolute scores.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "RLHF & Reward Models"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.%20RLHF%202020",
+  "source_label": "RL › 5. RLHF 2020",
+  "suspended": null
+ },
+ {
+  "id": 1792650963241,
+  "deck": "RL for LLMs::07 RLHF & Reward Models",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::RLHF_Reward_Models RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "Why train a reward model instead of using the human labels directly in PPO?",
+   "Back": "PPO needs a score for <b>every rollout</b>, millions of them. A reward model learns from the comparisons and stands in for the human, scoring any response instantly.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "RLHF & Reward Models"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.1%20Training%20a%20Reward%20Model",
+  "source_label": "RL › 5.1 Training a Reward Model",
+  "suspended": null
+ },
+ {
+  "id": 1792650963243,
+  "deck": "RL for LLMs::07 RLHF & Reward Models",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::RLHF_Reward_Models RL::level::1_core RL::type::pitfall",
+  "fields": {
+   "Front": "Reward model vs value model (critic): same thing?",
+   "Back": "No. <b>Reward model</b>: scores a full response; trained on human preferences; <b>frozen</b> during PPO.<br>\n<b>Critic</b>: predicts expected future reward at each token; trained during PPO to give the baseline.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "pitfall",
+   "Topic": "RLHF & Reward Models"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.1%20Training%20a%20Reward%20Model",
+  "source_label": "RL › 5.1 Training a Reward Model",
+  "suspended": null
+ },
+ {
+  "id": 1792650963245,
+  "deck": "RL for LLMs::07 RLHF & Reward Models",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::RLHF_Reward_Models RL::level::1_core RL::type::formula",
+  "fields": {
+   "Front": "Bradley–Terry model.",
+   "Back": "\\[ P(A\\succ B) = \\frac{e^{r_A}}{e^{r_A}+e^{r_B}} = \\sigma(r_A - r_B) \\]\nThe sigmoid of the <b>score difference</b> is the probability A is preferred.",
+   "Image": "<img src=\"bradley_terry.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "formula",
+   "Topic": "RLHF & Reward Models"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.%20RLHF%202020",
+  "source_label": "RL › 5. RLHF 2020",
+  "suspended": null
+ },
+ {
+  "id": 1792650963247,
+  "deck": "RL for LLMs::07 RLHF & Reward Models",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::RLHF_Reward_Models RL::level::1_core RL::type::exercise",
+  "fields": {
+   "Front": "RM scores A = 3, B = 1. P(A preferred)?",
+   "Back": "\\(\\sigma(3-1)=\\sigma(2)\\approx 0.88\\).",
+   "Image": "<img src=\"bradley_terry.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "exercise",
+   "Topic": "RLHF & Reward Models"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.%20RLHF%202020",
+  "source_label": "RL › 5. RLHF 2020",
+  "suspended": null
+ },
+ {
+  "id": 1792650963249,
+  "deck": "RL for LLMs::07 RLHF & Reward Models",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::RLHF_Reward_Models RL::level::1_core RL::type::formula",
+  "fields": {
+   "Front": "Reward-model training loss.",
+   "Back": "\\[ \\mathcal{L}_{RM} = -\\log\\sigma\\big(r_\\phi(x,y_w) - r_\\phi(x,y_l)\\big) \\]\nMaximum likelihood under Bradley–Terry = binary cross-entropy on the preference. Pushes the chosen score up and the rejected one down.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "formula",
+   "Topic": "RLHF & Reward Models"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.1%20Training%20a%20Reward%20Model",
+  "source_label": "RL › 5.1 Training a Reward Model",
+  "suspended": null
+ },
+ {
+  "id": 1792650963251,
+  "deck": "RL for LLMs::07 RLHF & Reward Models",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::RLHF_Reward_Models RL::level::1_core RL::type::definition",
+  "fields": {
+   "Front": "Reward-model architecture.",
+   "Back": "Start from the SFT model, replace the token head with a <b>linear head outputting one scalar</b>. Run each response through it separately to get its score.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "definition",
+   "Topic": "RLHF & Reward Models"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.1%20Training%20a%20Reward%20Model",
+  "source_label": "RL › 5.1 Training a Reward Model",
+  "suspended": null
+ },
+ {
+  "id": 1792650963253,
+  "deck": "RL for LLMs::07 RLHF & Reward Models",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::RLHF_Reward_Models RL::level::1_core RL::type::map",
+  "fields": {
+   "Front": "The full RLHF pipeline, start to finish.",
+   "Back": "<b>Stage 1 (RM)</b>: sample several answers per prompt from the SFT model → humans pick A ≻ B → train RM with Bradley–Terry loss.<br>\n<b>Stage 2 (PPO)</b>: policy (init from SFT) generates rollouts → reward = RM score − β·KL to \\(\\pi_{ref}\\) → critic + GAE advantages → PPO clip update → repeat.<br>\nRM <b>frozen</b>; critic <b>keeps training</b>.",
+   "Image": "<img src=\"rlhf_pipeline.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "map",
+   "Topic": "RLHF & Reward Models"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.%20RLHF%202020",
+  "source_label": "RL › 5. RLHF 2020",
+  "suspended": null
+ },
+ {
+  "id": 1792650963255,
+  "deck": "RL for LLMs::07 RLHF & Reward Models",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::RLHF_Reward_Models RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "The reward model is just a model. What goes wrong, and what stops it? (Not clipping. Why not?)",
+   "Back": "<b>Reward hacking</b>: the policy finds weird outputs that score high but are garbage.<br>\nFix: a KL penalty to the frozen SFT model \\(\\pi_{ref}\\), subtracted from the reward, keeps text SFT-like.<br>\nClipping only limits <i>each step</i>; over many steps the policy can still drift anywhere.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "RLHF & Reward Models"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.2%20Optimizing%20via%20PPO",
+  "source_label": "RL › 5.2 Optimizing via PPO",
+  "suspended": null
+ },
+ {
+  "id": 1792650963257,
+  "deck": "RL for LLMs::07 RLHF & Reward Models",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::RLHF_Reward_Models RL::level::2_working RL::type::intuition",
+  "fields": {
+   "Front": "Why does Bradley–Terry use the score difference, not the raw scores?",
+   "Back": "Humans only said which was better, never by how much or on what scale. Only the <b>gap</b> is identifiable: add 100 to both scores and nothing changes.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "intuition",
+   "Topic": "RLHF & Reward Models"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.%20RLHF%202020",
+  "source_label": "RL › 5. RLHF 2020",
+  "suspended": null
+ },
+ {
+  "id": 1792650963259,
+  "deck": "RL for LLMs::07 RLHF & Reward Models",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::RLHF_Reward_Models RL::level::2_working RL::type::pitfall",
+  "fields": {
+   "Front": "\\\"The reward model outputs a value in [0, 1].\\\" Correct it.",
+   "Back": "The RM outputs an <b>unbounded scalar</b> (a logit). \\(\\sigma(r_A-r_B)\\) of the <i>difference</i> is what lies in [0,1]. The loss is fully differentiable; binary labels are just targets.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "pitfall",
+   "Topic": "RLHF & Reward Models"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.1%20Training%20a%20Reward%20Model",
+  "source_label": "RL › 5.1 Training a Reward Model",
+  "suspended": null
+ },
+ {
+  "id": 1792650963261,
+  "deck": "RL for LLMs::07 RLHF & Reward Models",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::RLHF_Reward_Models RL::level::2_working RL::type::formula",
+  "fields": {
+   "Front": "Per-token reward used in RLHF-PPO.",
+   "Back": "\\[ r_t = -\\beta\\log\\frac{\\pi_\\theta(y_t\\mid x,y_{\\lt t})}{\\pi_{ref}(y_t\\mid x,y_{\\lt t})} \\;+\\; \\mathbb{1}[t=T]\\cdot r_{RM}(x,y) \\]\nKL penalty on every token; RM score added at the final token.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "formula",
+   "Topic": "RLHF & Reward Models"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.2%20Optimizing%20via%20PPO",
+  "source_label": "RL › 5.2 Optimizing via PPO",
+  "suspended": null
+ },
+ {
+  "id": 1792650963263,
+  "deck": "RL for LLMs::07 RLHF & Reward Models",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::RLHF_Reward_Models RL::level::3_deep RL::type::definition",
+  "fields": {
+   "Front": "In InstructGPT-style RLHF, how is the critic usually initialized? Is the backbone shared with the policy?",
+   "Back": "Often a <b>separate</b> model initialized from the <b>reward model</b> (InstructGPT). Shared-backbone variants exist, but it's implementation-dependent; the critic is generally trained fully, not just its head.",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "definition",
+   "Topic": "RLHF & Reward Models"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.1%20Training%20a%20Reward%20Model",
+  "source_label": "RL › 5.1 Training a Reward Model",
+  "suspended": null
+ },
+ {
+  "id": 1792650963265,
+  "deck": "RL for LLMs::07 RLHF & Reward Models",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::RLHF_Reward_Models RL::level::3_deep RL::type::definition",
+  "fields": {
+   "Front": "RLHF history in three papers.",
+   "Back": "Christiano et al. 2017 (deep RL from human preferences) → Stiennon et al. 2020 (summarization from human feedback, first LM-scale) → InstructGPT 2022 (general instruction following; popularized the term).",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "definition",
+   "Topic": "RLHF & Reward Models"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=5.%20RLHF%202020",
+  "source_label": "RL › 5. RLHF 2020",
+  "suspended": null
+ },
+ {
+  "id": 1792650963267,
+  "deck": "RL for LLMs::08 DPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::DPO RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "DPO's core idea.",
+   "Back": "Train the policy <b>directly on preference pairs</b> with a Bradley–Terry loss: no reward model, no critic, no rollouts (offline). The policy itself plays the role of the reward model.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "DPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=6.%20DPO%2C%202022",
+  "source_label": "RL › 6. DPO, 2022",
+  "suspended": null
+ },
+ {
+  "id": 1792650963269,
+  "deck": "RL for LLMs::08 DPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::DPO RL::level::1_core RL::type::definition",
+  "fields": {
+   "Front": "In DPO there's no reward model. What number plays each response's 'score' in Bradley–Terry?",
+   "Back": "The <b>implicit reward</b>: how much more likely the policy makes the response than the frozen reference does\n\\[ \\hat r(x,y) = \\beta\\log\\frac{\\pi_\\theta(y\\mid x)}{\\pi_{ref}(y\\mid x)} \\]",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "definition",
+   "Topic": "DPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=6.1%20From%20DPO%20to%20PPO",
+  "source_label": "RL › 6.1 From DPO to PPO",
+  "suspended": null
+ },
+ {
+  "id": 1792650963271,
+  "deck": "RL for LLMs::08 DPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::DPO RL::level::1_core RL::type::formula",
+  "fields": {
+   "Front": "DPO loss.",
+   "Back": "\\[ \\mathcal{L}_{DPO} = -\\log\\sigma\\Big(\\beta\\Big[\\log\\frac{\\pi_\\theta(y_w\\mid x)}{\\pi_{ref}(y_w\\mid x)} - \\log\\frac{\\pi_\\theta(y_l\\mid x)}{\\pi_{ref}(y_l\\mid x)}\\Big]\\Big) \\]\n\\(y_w\\) preferred, \\(y_l\\) rejected, \\(\\pi_{ref}\\) frozen.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "formula",
+   "Topic": "DPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=6.%20DPO%2C%202022",
+  "source_label": "RL › 6. DPO, 2022",
+  "suspended": null
+ },
+ {
+  "id": 1792650963273,
+  "deck": "RL for LLMs::08 DPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::DPO RL::level::1_core RL::type::pitfall",
+  "fields": {
+   "Front": "In DPO, is \\(\\pi_{ref}\\) the policy from the previous step?",
+   "Back": "No. It's the <b>frozen model from before DPO started</b> (usually SFT) and never changes. Same role as \\(\\pi_{ref}\\) in RLHF's KL penalty: it keeps the policy from drifting far.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "pitfall",
+   "Topic": "DPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=6.%20DPO%2C%202022",
+  "source_label": "RL › 6. DPO, 2022",
+  "suspended": null
+ },
+ {
+  "id": 1792650963275,
+  "deck": "RL for LLMs::08 DPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::DPO RL::level::2_working RL::type::intuition",
+  "fields": {
+   "Front": "Why is the cancellation of \\(Z(x)\\) the key trick in DPO?",
+   "Back": "\\(Z(x)=\\sum_y \\pi_{ref}(y\\mid x)e^{r/\\beta}\\) sums over every possible response: intractable. Because preferences compare two responses to the <b>same prompt</b>, it cancels in the difference, leaving only computable log-probs.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "intuition",
+   "Topic": "DPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=6.1%20From%20DPO%20to%20PPO",
+  "source_label": "RL › 6.1 From DPO to PPO",
+  "suspended": null
+ },
+ {
+  "id": 1792650963277,
+  "deck": "RL for LLMs::08 DPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::DPO RL::level::2_working RL::type::intuition",
+  "fields": {
+   "Front": "During DPO training, do the preferred response's log-probs always go up?",
+   "Back": "Not necessarily. DPO only raises the preferred log-ratio <b>relative</b> to the rejected one. Often both go down; the rejected one just falls faster.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "intuition",
+   "Topic": "DPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=6.%20DPO%2C%202022",
+  "source_label": "RL › 6. DPO, 2022",
+  "suspended": null
+ },
+ {
+  "id": 1792650963279,
+  "deck": "RL for LLMs::08 DPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::DPO RL::level::2_working RL::type::definition",
+  "fields": {
+   "Front": "What does β mean in DPO?",
+   "Back": "The strength of the KL regularization from the RLHF objective it's derived from: larger β = stay closer to \\(\\pi_{ref}\\). Common values ~0.1 (range ~0.01–0.5).",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "definition",
+   "Topic": "DPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=6.%20DPO%2C%202022",
+  "source_label": "RL › 6. DPO, 2022",
+  "suspended": null
+ },
+ {
+  "id": 1792650963281,
+  "deck": "RL for LLMs::08 DPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::DPO RL::level::2_working RL::type::compare",
+  "fields": {
+   "Front": "When DPO vs RLHF-PPO?",
+   "Back": "Start with <b>DPO</b>: simpler, stable, offline. When it saturates, or you have many unlabeled prompts and a good RM, <b>RLHF-PPO</b> can scale beyond the labeled pairs (online data), at the cost of more infrastructure.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "compare",
+   "Topic": "DPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=6.2%20PPO%20vs%20DPO",
+  "source_label": "RL › 6.2 PPO vs DPO",
+  "suspended": null
+ },
+ {
+  "id": 1792650963283,
+  "deck": "RL for LLMs::08 DPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::DPO RL::level::2_working RL::type::pitfall",
+  "fields": {
+   "Front": "\\\"DPO (2022) isn't differentiable under Bradley–Terry.\\\" Correct both mistakes.",
+   "Back": "DPO is from <b>2023</b> (arXiv 2305.18290), and its loss is <b>fully differentiable</b>. Binary preference labels are just the targets of a logistic loss.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "pitfall",
+   "Topic": "DPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=6.%20DPO%2C%202022",
+  "source_label": "RL › 6. DPO, 2022",
+  "suspended": null
+ },
+ {
+  "id": 1792650963285,
+  "deck": "RL for LLMs::08 DPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::DPO RL::level::3_deep RL::type::formula",
+  "fields": {
+   "Front": "DPO derivation, step 1: what is the optimum of the KL-regularized RLHF objective?",
+   "Back": "Objective: \\(\\max_\\pi \\mathbb{E}[r(x,y)] - \\beta\\,\\mathrm{KL}(\\pi\\|\\pi_{ref})\\). Closed-form optimum:\n\\[ \\pi^*(y\\mid x) = \\frac{1}{Z(x)}\\,\\pi_{ref}(y\\mid x)\\,\\exp\\!\\big(r(x,y)/\\beta\\big) \\]",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "formula",
+   "Topic": "DPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=6.1%20From%20DPO%20to%20PPO",
+  "source_label": "RL › 6.1 From DPO to PPO",
+  "suspended": null
+ },
+ {
+  "id": 1792650963287,
+  "deck": "RL for LLMs::08 DPO",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::DPO RL::level::3_deep RL::type::formula",
+  "fields": {
+   "Front": "DPO derivation, step 2: solve the optimum for the reward and plug into Bradley–Terry.",
+   "Back": "\\[ r(x,y) = \\beta\\log\\frac{\\pi^*(y\\mid x)}{\\pi_{ref}(y\\mid x)} + \\beta\\log Z(x) \\]\nBradley–Terry: \\(P(y_w\\succ y_l)=\\sigma(r_w-r_l)\\). Both responses share \\(x\\) → <b>\\(\\beta\\log Z(x)\\) cancels</b>. Replace \\(\\pi^*\\) with \\(\\pi_\\theta\\) and do MLE → the DPO loss.",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "formula",
+   "Topic": "DPO"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=6.1%20From%20DPO%20to%20PPO",
+  "source_label": "RL › 6.1 From DPO to PPO",
+  "suspended": null
+ },
+ {
+  "id": 1792650963289,
+  "deck": "RL for LLMs::09 GRPO & Variants",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GRPO_Variants RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "GRPO in one sentence.",
+   "Back": "PPO with the critic thrown out: sample a <b>group</b> of answers per prompt and use the group's mean (÷ std) as the baseline.\n\\[ \\hat A_i = \\frac{r_i - \\mathrm{mean}(r_1..r_G)}{\\mathrm{std}(r_1..r_G)} \\]",
+   "Image": "<img src=\"grpo_group.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "GRPO & Variants"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=7.%20GRPO%2C%202024",
+  "source_label": "RL › 7. GRPO, 2024",
+  "suspended": null
+ },
+ {
+  "id": 1792650963291,
+  "deck": "RL for LLMs::09 GRPO & Variants",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GRPO_Variants RL::level::1_core RL::type::exercise",
+  "fields": {
+   "Front": "8 samples for one prompt, 3 correct (reward 1/0). Advantages before ÷std?",
+   "Back": "Mean = 3/8 = 0.375. Correct answers: 1 − 0.375 = <b>+0.625</b>. Wrong: 0 − 0.375 = <b>−0.375</b>.",
+   "Image": "<img src=\"grpo_group.png\">",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "exercise",
+   "Topic": "GRPO & Variants"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=7.%20GRPO%2C%202024",
+  "source_label": "RL › 7. GRPO, 2024",
+  "suspended": null
+ },
+ {
+  "id": 1792650963293,
+  "deck": "RL for LLMs::09 GRPO & Variants",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GRPO_Variants RL::level::1_core RL::type::exercise",
+  "fields": {
+   "Front": "What happens in GRPO if all 8 answers are correct (or all wrong)?",
+   "Back": "Every advantage = 0 → <b>no signal</b>, wasted compute. Std = 0 too, so implementations add a small ε before dividing. (DAPO's dynamic sampling filters these prompts out.)",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "exercise",
+   "Topic": "GRPO & Variants"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=7.%20GRPO%2C%202024",
+  "source_label": "RL › 7. GRPO, 2024",
+  "suspended": null
+ },
+ {
+  "id": 1792650963295,
+  "deck": "RL for LLMs::09 GRPO & Variants",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GRPO_Variants RL::level::1_core RL::type::compare",
+  "fields": {
+   "Front": "What does GRPO keep from PPO, and what does it change?",
+   "Back": "<b>Keeps</b>: importance ratio, clip + min, multiple steps per batch.<br>\n<b>Changes</b>: no critic / no GAE (group-relative advantage); the KL to \\(\\pi_{ref}\\) moves from the reward into the <b>loss</b>; every token in a response gets the <b>same</b> advantage.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "compare",
+   "Topic": "GRPO & Variants"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=7.%20GRPO%2C%202024",
+  "source_label": "RL › 7. GRPO, 2024",
+  "suspended": null
+ },
+ {
+  "id": 1792650963297,
+  "deck": "RL for LLMs::09 GRPO & Variants",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GRPO_Variants RL::level::2_working RL::type::exercise",
+  "fields": {
+   "Front": "Only 1 of 8 is correct. Compute the normalized advantages. What's the effect of ÷std?",
+   "Back": "Mean = 0.125, std = \\(\\sqrt{0.125\\cdot0.875}\\approx0.331\\).<br>\nCorrect: \\(0.875/0.331\\approx\\) <b>+2.65</b>. Wrong: \\(-0.125/0.331\\approx\\) <b>−0.38</b>.<br>\nSmall std <b>inflates</b> advantages on very hard (or very easy) prompts; this is Dr. GRPO's critique.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "exercise",
+   "Topic": "GRPO & Variants"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=7.%20GRPO%2C%202024",
+  "source_label": "RL › 7. GRPO, 2024",
+  "suspended": null
+ },
+ {
+  "id": 1792650963299,
+  "deck": "RL for LLMs::09 GRPO & Variants",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GRPO_Variants RL::level::2_working RL::type::pitfall",
+  "fields": {
+   "Front": "Does GRPO require verifiable rewards?",
+   "Back": "No. DeepSeekMath's GRPO used a <b>reward model</b>. It became famous with verifiable rewards (RLVR, e.g. maths checkers), but any scalar reward works.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "pitfall",
+   "Topic": "GRPO & Variants"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=7.%20GRPO%2C%202024",
+  "source_label": "RL › 7. GRPO, 2024",
+  "suspended": null
+ },
+ {
+  "id": 1792650963301,
+  "deck": "RL for LLMs::09 GRPO & Variants",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GRPO_Variants RL::level::3_deep RL::type::formula",
+  "fields": {
+   "Front": "Write the GRPO objective.",
+   "Back": "\\[ \\frac{1}{G}\\sum_{i=1}^{G}\\frac{1}{|o_i|}\\sum_{t=1}^{|o_i|}\\Big[\\min\\big(r_{i,t}\\hat A_{i,t},\\ \\mathrm{clip}(r_{i,t},1-\\epsilon,1+\\epsilon)\\hat A_{i,t}\\big) - \\beta\\,D_{KL}(\\pi_\\theta\\|\\pi_{ref})\\Big] \\]\n\\(r_{i,t}=\\frac{\\pi_\\theta(o_{i,t}\\mid q,o_{i,\\lt t})}{\\pi_{\\theta_{old}}(o_{i,t}\\mid q,o_{i,\\lt t})}\\).",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "formula",
+   "Topic": "GRPO & Variants"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=7.%20GRPO%2C%202024",
+  "source_label": "RL › 7. GRPO, 2024",
+  "suspended": null
+ },
+ {
+  "id": 1792650963303,
+  "deck": "RL for LLMs::09 GRPO & Variants",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GRPO_Variants RL::level::3_deep RL::type::definition",
+  "fields": {
+   "Front": "Dr. GRPO: what two terms does it remove, and why?",
+   "Back": "<b>÷ std</b>: inflates advantages on too-easy / too-hard prompts (question-difficulty bias).<br>\n<b>÷ |o_i|</b> (per-response length normalization): a long <i>wrong</i> answer gets a smaller per-token penalty, so length drifts up on failures.<br>\nPaper: \"Understanding R1-Zero-Like Training\", arXiv 2503.20783.",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "definition",
+   "Topic": "GRPO & Variants"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=7.1%20DR%20GRPO%2C%202025",
+  "source_label": "RL › 7.1 DR GRPO, 2025",
+  "suspended": null
+ },
+ {
+  "id": 1792650963305,
+  "deck": "RL for LLMs::09 GRPO & Variants",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GRPO_Variants RL::level::3_deep RL::type::definition",
+  "fields": {
+   "Front": "DAPO's four changes to GRPO.",
+   "Back": "<ol><li><b>Clip-higher</b>: \\(\\epsilon_{low}=0.2,\\ \\epsilon_{high}=0.28\\).</li>\n<li><b>Dynamic sampling</b>: drop prompts with accuracy 0 or 1; keep sampling until the batch has signal.</li>\n<li><b>Token-level loss</b>: normalize by total tokens in the group so long responses weigh more.</li>\n<li><b>Overlong handling</b>: mask truncated samples + soft length penalty.</li></ol>\nAlso drops the KL-to-ref term. arXiv 2503.14476 (March 2025, about a week <i>before</i> Dr. GRPO).",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "definition",
+   "Topic": "GRPO & Variants"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=7.2%20DAPO%2C%2005%2F2025",
+  "source_label": "RL › 7.2 DAPO, 05/2025",
+  "suspended": null
+ },
+ {
+  "id": 1792650963307,
+  "deck": "RL for LLMs::09 GRPO & Variants",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GRPO_Variants RL::level::3_deep RL::type::intuition",
+  "fields": {
+   "Front": "Why does DAPO raise only the <i>upper</i> clip bound?",
+   "Back": "The upper clip limits how much a token's probability can rise per update. For <b>low-probability tokens</b> a 20% cap is a tiny absolute increase, so rare exploratory tokens can never grow → <b>entropy collapse</b>. Raising \\(\\epsilon_{high}\\) lets them grow.",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "intuition",
+   "Topic": "GRPO & Variants"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=7.2%20DAPO%2C%2005%2F2025",
+  "source_label": "RL › 7.2 DAPO, 05/2025",
+  "suspended": null
+ },
+ {
+  "id": 1792650963309,
+  "deck": "RL for LLMs::09 GRPO & Variants",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::GRPO_Variants RL::level::3_deep RL::type::compare",
+  "fields": {
+   "Front": "REINFORCE++, GSPO, GFPO: one line each.",
+   "Back": "<b>REINFORCE++</b>: normalize advantages over the whole <b>batch</b> instead of per group (less overfitting to easy prompts).<br>\n<b>GSPO</b>: <b>sequence-level</b> importance ratio and clipping; more stable for MoE.<br>\n<b>GFPO</b>: oversample, then filter by length / reward-per-token to train shorter CoT.",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "compare",
+   "Topic": "GRPO & Variants"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=7.3%20Other%20Methods",
+  "source_label": "RL › 7.3 Other Methods",
+  "suspended": null
+ },
+ {
+  "id": 1792650963311,
+  "deck": "RL for LLMs::10 Empirical Facts & FAQ",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Empirical_Facts_FAQ RL::level::1_core RL::type::intuition",
+  "fields": {
+   "Front": "A prompt is so hard that all G answers fail. What does the model learn?",
+   "Back": "Nothing: all advantages are zero. You need prompts the model <b>sometimes</b> solves (a minimal pass rate) to get signal.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "intuition",
+   "Topic": "Empirical Facts & FAQ"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=FAQ%20and%20some%20Facts",
+  "source_label": "RL › FAQ and some Facts",
+  "suspended": null
+ },
+ {
+  "id": 1792650963313,
+  "deck": "RL for LLMs::10 Empirical Facts & FAQ",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Empirical_Facts_FAQ RL::level::1_core RL::type::definition",
+  "fields": {
+   "Front": "What is RLVR?",
+   "Back": "RL with <b>verifiable rewards</b>: the reward comes from a deterministic check (maths answer, unit tests, format), not a learned reward model, so it's much harder to hack.",
+   "Image": "",
+   "Extra": "",
+   "Level": "1",
+   "LevelLabel": "L1 · Core",
+   "Type": "definition",
+   "Topic": "Empirical Facts & FAQ"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=FAQ%20and%20some%20Facts",
+  "source_label": "RL › FAQ and some Facts",
+  "suspended": null
+ },
+ {
+  "id": 1792650963315,
+  "deck": "RL for LLMs::10 Empirical Facts & FAQ",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Empirical_Facts_FAQ RL::level::2_working RL::type::intuition",
+  "fields": {
+   "Front": "Why did random rewards still improve Qwen2.5-Math, but not Llama or OLMo?",
+   "Back": "Random rewards cancel out on average, but the <b>clip is asymmetric</b> in effect: rare tokens hit the clip quickly, so on balance the model leans harder into what it <b>already likes</b>.\nQwen-Math already had good maths habits (e.g. reasoning in code), so sharpening them helped; the others lacked those habits. It says more about the base model's priors than about RL.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "intuition",
+   "Topic": "Empirical Facts & FAQ"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=FAQ%20and%20some%20Facts",
+  "source_label": "RL › FAQ and some Facts",
+  "suspended": null
+ },
+ {
+  "id": 1792650963317,
+  "deck": "RL for LLMs::10 Empirical Facts & FAQ",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Empirical_Facts_FAQ RL::level::2_working RL::type::intuition",
+  "fields": {
+   "Front": "RL's Razor: why does RL forget less than SFT?",
+   "Back": "RL trains on the model's <b>own samples</b>, so it only moves toward answers it could already produce → it implicitly picks low-KL solutions. SFT drags it toward someone else's answers, which can be far away.\nForgetting tracks \\(\\mathbb{E}_{x\\sim\\tau}[\\mathrm{KL}(\\pi_0\\|\\pi)]\\) on the new task; worth logging. The paper credits on-policy sampling more than negative rewards.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "intuition",
+   "Topic": "Empirical Facts & FAQ"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=FAQ%20and%20some%20Facts",
+  "source_label": "RL › FAQ and some Facts",
+  "suspended": null
+ },
+ {
+  "id": 1792650963319,
+  "deck": "RL for LLMs::10 Empirical Facts & FAQ",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Empirical_Facts_FAQ RL::level::2_working RL::type::exercise",
+  "fields": {
+   "Front": "SFT on answers your own model wrote (filtered for correct ones): forget more or less than normal SFT? What's it called?",
+   "Back": "<b>Less</b>: it stays close to the model's own distribution, like RL. This is rejection-sampling fine-tuning. Suggests \"on-policy\" matters more than whether you call it RL or SFT.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "exercise",
+   "Topic": "Empirical Facts & FAQ"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=FAQ%20and%20some%20Facts",
+  "source_label": "RL › FAQ and some Facts",
+  "suspended": null
+ },
+ {
+  "id": 1792650963321,
+  "deck": "RL for LLMs::10 Empirical Facts & FAQ",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Empirical_Facts_FAQ RL::level::2_working RL::type::intuition",
+  "fields": {
+   "Front": "Why does RL for LLMs need large batch sizes?",
+   "Back": "<ul><li>One sparse scalar spread over thousands of tokens → high-variance gradients.</li>\n<li>Many prompts contribute zero (all-correct / all-wrong groups), so the effective batch is smaller.</li>\n<li>Normalization statistics (group/batch mean, std) need enough samples.</li>\n<li>Systems: rollouts are expensive; generating many in parallel is efficient, then reuse via ratio/clip.</li></ul>",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "intuition",
+   "Topic": "Empirical Facts & FAQ"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=FAQ%20and%20some%20Facts",
+  "source_label": "RL › FAQ and some Facts",
+  "suspended": null
+ },
+ {
+  "id": 1792650963323,
+  "deck": "RL for LLMs::10 Empirical Facts & FAQ",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Empirical_Facts_FAQ RL::level::2_working RL::type::pitfall",
+  "fields": {
+   "Front": "\\\"Models don't learn in RL, and you always need SFT CoT first.\\\" How true?",
+   "Back": "Overstated. DeepSeek-R1-Zero got long CoT from RL on a <b>base model with no SFT</b>. Whether RL only <i>sharpens</i> pretrained skills or adds new ones is an open debate (pass@k studies vs longer-horizon RL). Treat it as a hypothesis.",
+   "Image": "",
+   "Extra": "",
+   "Level": "2",
+   "LevelLabel": "L2 · Working",
+   "Type": "pitfall",
+   "Topic": "Empirical Facts & FAQ"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=FAQ%20and%20some%20Facts",
+  "source_label": "RL › FAQ and some Facts",
+  "suspended": null
+ },
+ {
+  "id": 1792650963325,
+  "deck": "RL for LLMs::10 Empirical Facts & FAQ",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Empirical_Facts_FAQ RL::level::3_deep RL::type::intuition",
+  "fields": {
+   "Front": "Why does LoRA work well for RL?",
+   "Back": "Each episode conveys very few bits (one scalar reward), so the update needs little capacity. LoRA matches full fine-tuning even at very low rank (Thinking Machines, \"LoRA Without Regret\"). Speedups come from memory and cheaper weight syncs to the inference engine.",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "intuition",
+   "Topic": "Empirical Facts & FAQ"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=FAQ%20and%20some%20Facts",
+  "source_label": "RL › FAQ and some Facts",
+  "suspended": null
+ },
+ {
+  "id": 1792650963327,
+  "deck": "RL for LLMs::10 Empirical Facts & FAQ",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Empirical_Facts_FAQ RL::level::3_deep RL::type::definition",
+  "fields": {
+   "Front": "Process vs outcome reward models.",
+   "Back": "<b>ORM</b>: scores the final answer. <b>PRM</b>: scores intermediate steps. PRMs promise better credit assignment but are costly to label and in practice often underperform outcome rewards.",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "definition",
+   "Topic": "Empirical Facts & FAQ"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=FAQ%20and%20some%20Facts",
+  "source_label": "RL › FAQ and some Facts",
+  "suspended": null
+ },
+ {
+  "id": 1792650963329,
+  "deck": "RL for LLMs::10 Empirical Facts & FAQ",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RL::topic::Empirical_Facts_FAQ RL::level::3_deep RL::type::definition",
+  "fields": {
+   "Front": "Empirical tips from 'Tricks or Traps' (2508.08221) on advantage normalization and clipping.",
+   "Back": "<ul><li>Group-level mean + <b>batch-level std</b> is most robust (batch std is rarely tiny).</li>\n<li>Remove ÷std when it's near 0 (very easy/hard data).</li>\n<li>Clip-higher helps when the base model reasons well; small models may like \\(\\epsilon_{high}\\approx0.32\\).</li>\n<li>Token-level loss helps base models most.</li></ul>",
+   "Image": "",
+   "Extra": "",
+   "Level": "3",
+   "LevelLabel": "L3 · Deep",
+   "Type": "definition",
+   "Topic": "Empirical Facts & FAQ"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=FAQ%20and%20some%20Facts",
+  "source_label": "RL › FAQ and some Facts",
+  "suspended": null
+ }
+]

@@ -1,0 +1,7 @@
+data/
+.venv/
+__pycache__/
+.app-password
+.fly-app-name
+.admin-token
+.env

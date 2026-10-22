@@ -1,0 +1,797 @@
+{
+ "bear_note": "BE5759A7-C98C-40E8-A3FC-A2E20506195A",
+ "notes": {
+  "1792626439628": {
+   "header": "Probability",
+   "front": "Knowledge tree: name the <b>8 branches</b> of probability-for-ML covered in this"
+  },
+  "1792626439630": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Trace the chain from a probability \\(p(x)\\) to <b>KL divergence</b>, naming the "
+  },
+  "1792626439632": {
+   "header": "2.2 Terminology",
+   "front": "Many things are “just an expectation” \\(\\mathbb{E}[f(X)]\\). Name 6 and their \\(f"
+  },
+  "1792626439634": {
+   "header": "2.2 Terminology",
+   "front": "Which four quantities all measure <b>spread / uncertainty</b>, and of what?"
+  },
+  "1792626439636": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "Name the four things that turn out to be the <b>same optimisation goal</b> when "
+  },
+  "1792626439638": {
+   "header": "3.2. Scale normalization",
+   "front": "Where does <b>squaring</b> show up, why, and how do we undo it?"
+  },
+  "1792626439640": {
+   "header": "Probability",
+   "front": "What are probability theory and information theory each <b>for</b>?"
+  },
+  "1792626439642": {
+   "header": "1. Etymology",
+   "front": "<b>Frequentist</b> reading of “P = 0.7”?"
+  },
+  "1792626439644": {
+   "header": "1. Etymology",
+   "front": "<b>Bayesian</b> reading of “P = 0.7”?"
+  },
+  "1792626439646": {
+   "header": "1. Etymology",
+   "front": "Do frequentists and Bayesians use different <b>maths</b>?"
+  },
+  "1792626439648": {
+   "header": "1. Etymology",
+   "front": "A coin has already been flipped and is covered by a hand. What's P(heads)? Which"
+  },
+  "1792626439650": {
+   "header": "1. Etymology",
+   "front": "What was the probability of rain in Paris on 1 March 1850? How do the two school"
+  },
+  "1792626439652": {
+   "header": "1. Etymology",
+   "front": "Why is “1 in 20 startups succeed” an <b>ambiguous</b> frequentist answer for one"
+  },
+  "1792626439654": {
+   "header": "1. Etymology",
+   "front": "Define <b>odds</b>. Convert odds 3:1 to a probability."
+  },
+  "1792626439656": {
+   "header": "1. Etymology",
+   "front": "Convert \\(p = 0.2\\) to odds."
+  },
+  "1792626439658": {
+   "header": "1. Etymology",
+   "front": "<b>Possible</b> vs <b>probable</b>?"
+  },
+  "1792626439660": {
+   "header": "1. Etymology",
+   "front": "Does “chance” mean “very likely”?"
+  },
+  "1792626439662": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "In statistics, is “likelihood” a synonym for “probability”?"
+  },
+  "1792626439664": {
+   "header": "2.1 Distributions",
+   "front": "What is a <b>PMF</b>? Give its two constraints."
+  },
+  "1792626439666": {
+   "header": "2.1 Distributions",
+   "front": "What is a <b>PDF</b>? Give its constraints."
+  },
+  "1792626439668": {
+   "header": "2.1 Distributions",
+   "front": "For a continuous height, why is P(X = 1.75 exactly) = 0? Does 0 mean impossible?"
+  },
+  "1792626439670": {
+   "header": "2.1 Distributions",
+   "front": "Can a PDF value be greater than 1?"
+  },
+  "1792626439672": {
+   "header": "2.1 Distributions",
+   "front": "Uniform distribution: discrete vs continuous formula?"
+  },
+  "1792626439674": {
+   "header": "2.1 Distributions",
+   "front": "X is uniform on [2, 6]. What's the density, and \\(P(3 \\le X \\le 4)\\)?"
+  },
+  "1792626439676": {
+   "header": "2.1 Distributions",
+   "front": "Roll two fair dice. What is P(sum = 7)?"
+  },
+  "1792626439678": {
+   "header": "2.1 Distributions",
+   "front": "Two dice: P(sum = 2)? P(sum ≥ 10)?"
+  },
+  "1792626439680": {
+   "header": "2.2 Terminology",
+   "front": "What is the <b>joint</b> probability \\(P(x, y)\\)?"
+  },
+  "1792626439682": {
+   "header": "2.2 Terminology",
+   "front": "Conditional probability: {{c1::\\( P(y \\mid x) = \\frac{P(x, y)}{P(x)} \\)}}, defin"
+  },
+  "1792626439685": {
+   "header": "2.2 Terminology",
+   "front": "Why must it be \\(P(x) > 0\\), not \\(\\ge 0\\), in \\(P(y\\mid x) = P(x,y)/P(x)\\)?"
+  },
+  "1792626439687": {
+   "header": "2.2 Terminology",
+   "front": "Marginal (sum rule): {{c1::\\( P(x) = \\sum_y P(x, y) \\)}}  (continuous: {{c2::\\( "
+  },
+  "1792626439690": {
+   "header": "2.2 Terminology",
+   "front": "Intuitively, what does <b>marginalising</b> out y do?"
+  },
+  "1792626439692": {
+   "header": "2.2 Terminology",
+   "front": "Product rule: {{c1::\\( P(x, y) = P(y \\mid x)\\,P(x) \\)}}"
+  },
+  "1792626439694": {
+   "header": "2.2 Terminology",
+   "front": "Chain rule: {{c1::\\( P(a, b, c) = P(a)\\,P(b \\mid a)\\,P(c \\mid a, b) \\)}}"
+  },
+  "1792626439696": {
+   "header": "2.2 Terminology",
+   "front": "Where does the <b>chain rule</b> show up in LLMs?"
+  },
+  "1792626439698": {
+   "header": "2.2 Terminology",
+   "front": "Independence: {{c1::\\( P(x, y) = P(x)\\,P(y) \\)}}, equivalently {{c2::\\( P(x \\mid"
+  },
+  "1792626439701": {
+   "header": "2.2 Terminology",
+   "front": "Conditional independence given z: {{c1::\\( P(x, y \\mid z) = P(x \\mid z)\\,P(y \\mi"
+  },
+  "1792626439703": {
+   "header": "2.2 Terminology",
+   "front": "Give an example of two variables that are dependent but conditionally independen"
+  },
+  "1792626439705": {
+   "header": null,
+   "front": "Bayes' rule: {{c1::\\( P(A \\mid B) = \\frac{P(B \\mid A)\\,P(A)}{P(B)} \\)}}"
+  },
+  "1792626439707": {
+   "header": null,
+   "front": "Name the four parts of Bayes' rule \\(P(A\\mid B) = P(B\\mid A)P(A)/P(B)\\)."
+  },
+  "1792626439709": {
+   "header": null,
+   "front": "In one sentence, what is Bayes' rule <b>for</b>?"
+  },
+  "1792626439711": {
+   "header": "2.2 Terminology",
+   "front": "Derive Bayes' rule from the product rule."
+  },
+  "1792626439713": {
+   "header": null,
+   "front": "What's the <b>counting</b> way to think about Bayes?"
+  },
+  "1792626439715": {
+   "header": null,
+   "front": "Name 4 real situations where you reach for Bayes' rule."
+  },
+  "1792626439717": {
+   "header": null,
+   "front": "What is the <b>base-rate effect</b> (base-rate fallacy)?"
+  },
+  "1792626439719": {
+   "header": null,
+   "front": "1,000 startups: 50 succeed. 100 have repeat founders, and 20 of the 50 winners h"
+  },
+  "1792626439721": {
+   "header": null,
+   "front": "1,000 essays, 100 written by AI. A detector catches 90% of AI essays and wrongly"
+  },
+  "1792626439723": {
+   "header": null,
+   "front": "Same detector (90% catch, 10% false flags), but only <b>1%</b> of 1,000 essays a"
+  },
+  "1792626439725": {
+   "header": null,
+   "front": "A disease affects 1% of people. The test catches 99% of sick people and gives 5%"
+  },
+  "1792626439727": {
+   "header": null,
+   "front": "40% of email is spam. “free” appears in 30% of spam and 2% of non-spam. An email"
+  },
+  "1792626439729": {
+   "header": null,
+   "front": "Most common slip in Bayes count problems?"
+  },
+  "1792626439731": {
+   "header": null,
+   "front": "Startup example: prior 5%, then you learn the founders built two successful comp"
+  },
+  "1792626439733": {
+   "header": "2.2 Terminology",
+   "front": "Expectation of a function: {{c1::\\( \\mathbb{E}[f(X)] = \\sum_x P(x)\\,f(x) \\)}}  ("
+  },
+  "1792626439736": {
+   "header": "2.2 Terminology",
+   "front": "Why is \\(\\mathbb{E}[X] = \\sum_x P(x)\\,x\\) “the mean”?"
+  },
+  "1792626439738": {
+   "header": "2.2 Terminology",
+   "front": "A die's expected value is 3.5, yet you can never roll 3.5. Why is that fine?"
+  },
+  "1792626439740": {
+   "header": "2.2 Terminology",
+   "front": "Expected value of one fair die?"
+  },
+  "1792626439742": {
+   "header": "2.2 Terminology",
+   "front": "A die is loaded: 6 comes up half the time; the other five faces share the rest e"
+  },
+  "1792626439744": {
+   "header": "2.2 Terminology",
+   "front": "Free game: win $10 with probability 0.2, otherwise nothing. Expected winnings?"
+  },
+  "1792626439746": {
+   "header": "2.2 Terminology",
+   "front": "Win $10 with probability 0.2, lose $5 with probability 0.8. Worth playing?"
+  },
+  "1792626439748": {
+   "header": "2.2 Terminology",
+   "front": "Fair die: compute \\(\\mathbb{E}[X^2]\\)."
+  },
+  "1792626439750": {
+   "header": "2.2 Terminology",
+   "front": "Is \\(\\mathbb{E}[X^2] = (\\mathbb{E}[X])^2\\)?"
+  },
+  "1792626439752": {
+   "header": "2.2 Terminology",
+   "front": "Variance: {{c1::\\( \\mathrm{Var}(X) = \\mathbb{E}[(X-\\mu)^2] \\)}} = {{c2::\\( \\math"
+  },
+  "1792626439755": {
+   "header": "2.2 Terminology",
+   "front": "Why do we <b>square</b> the distances in variance?"
+  },
+  "1792626439757": {
+   "header": "2.2 Terminology",
+   "front": "Units of variance? What do we do about it?"
+  },
+  "1792626439759": {
+   "header": "2.2 Terminology",
+   "front": "Standard deviation: {{c1::\\( \\sigma = \\sqrt{\\mathrm{Var}(X)} \\)}}"
+  },
+  "1792626439761": {
+   "header": "2.2 Terminology",
+   "front": "What does a standard deviation tell you in practice?"
+  },
+  "1792626439763": {
+   "header": "2.2 Terminology",
+   "front": "Why do maths texts prefer variance and practitioners std?"
+  },
+  "1792626439765": {
+   "header": "2.2 Terminology",
+   "front": "Game A always pays 5. Game B pays 0 or 10, 50/50. Mean and variance of each?"
+  },
+  "1792626439767": {
+   "header": "2.2 Terminology",
+   "front": "App A delivers in 28 or 32 min (50/50); App B in 10 or 50 min (50/50). Variance "
+  },
+  "1792626439769": {
+   "header": "2.2 Terminology",
+   "front": "Sign-ups: 0 or 10 per day, 50/50. Find E, Var, σ."
+  },
+  "1792626439771": {
+   "header": "2.2 Terminology",
+   "front": "Sign-ups: 0 w.p. 0.2, 5 w.p. 0.5, 10 w.p. 0.3. Find E, Var, σ."
+  },
+  "1792626439773": {
+   "header": "2.2 Terminology",
+   "front": "Two classic slips when computing a weighted variance?"
+  },
+  "1792626439775": {
+   "header": "2.2 Terminology",
+   "front": "Define the <b>mode</b> of a distribution."
+  },
+  "1792626439777": {
+   "header": "2.2 Terminology",
+   "front": "Define the <b>median</b> of a distribution."
+  },
+  "1792626439779": {
+   "header": "2.2 Terminology",
+   "front": "Sign-ups: 0 (0.2), 5 (0.5), 10 (0.3). Mode, median, mean?"
+  },
+  "1792626439781": {
+   "header": "2.2 Terminology",
+   "front": "Values 2, 5, 3, each with probability 1/3. Median?"
+  },
+  "1792626439783": {
+   "header": "2.2 Terminology",
+   "front": "Which of mean / median / mode work for <b>names or colours</b>, and why?"
+  },
+  "1792626439785": {
+   "header": "2.2 Terminology",
+   "front": "Why can the mean differ from the median?"
+  },
+  "1792626439787": {
+   "header": "3. Normalization",
+   "front": "What does “normalized” mean? Give 5 example constraints."
+  },
+  "1792626439789": {
+   "header": "3. Normalization",
+   "front": "What are the two families of normalization?"
+  },
+  "1792626439791": {
+   "header": "3.1. Probability normalization",
+   "front": "Softmax: {{c1::\\( \\mathrm{softmax}(x)_i = \\frac{e^{x_i} }{\\sum_j e^{x_j} } \\)}}"
+  },
+  "1792626439793": {
+   "header": "3.1. Probability normalization",
+   "front": "Scores [2, 1, 1]. Normalise by (a) dividing by the sum, (b) softmax."
+  },
+  "1792626439795": {
+   "header": "3.1. Probability normalization",
+   "front": "What is softmax's <b>shift invariance</b>, and why does it hold?"
+  },
+  "1792626439797": {
+   "header": "3.1. Probability normalization",
+   "front": "Why does every implementation subtract max(x) before softmax?"
+  },
+  "1792626439799": {
+   "header": "3.1. Probability normalization",
+   "front": "Softmax ignores shifts. What happens if you <b>multiply</b> the logits by 10?"
+  },
+  "1792626439801": {
+   "header": "3.1. Probability normalization",
+   "front": "Two logits differ by 1. By 5. What's the ratio of their softmax probabilities?"
+  },
+  "1792626439803": {
+   "header": "3.1. Probability normalization",
+   "front": "Temperature: {{c1::\\( \\mathrm{softmax}(x / T) \\)}}. Small T → {{c2::sharper / mo"
+  },
+  "1792626439807": {
+   "header": "3.1. Probability normalization",
+   "front": "Why is it called <b>soft</b>max?"
+  },
+  "1792626439809": {
+   "header": "3.1. Probability normalization",
+   "front": "Why softmax instead of just dividing scores by their sum? (3 reasons)"
+  },
+  "1792626439811": {
+   "header": "4. More Definitions",
+   "front": "Does softmax make distributions truly sparse?"
+  },
+  "1792626439813": {
+   "header": "3.1. Probability normalization",
+   "front": "Derive the gradient of cross-entropy loss through softmax (target index i)."
+  },
+  "1792626439815": {
+   "header": "3.2. Scale normalization",
+   "front": "Why do we need <b>scale</b> normalization at all? (features + deep nets)"
+  },
+  "1792626439817": {
+   "header": "3.2. Scale normalization",
+   "front": "z-score: {{c1::\\( z = \\frac{x - \\mu}{\\sigma} \\)}}"
+  },
+  "1792626439819": {
+   "header": "3.2. Scale normalization",
+   "front": "What question does a z-score answer, and how does it reframe the value?"
+  },
+  "1792626439821": {
+   "header": "3.2. Scale normalization",
+   "front": "What does <b>centring</b> (subtracting the mean) achieve, and when is it useful?"
+  },
+  "1792626439823": {
+   "header": "3.2. Scale normalization",
+   "front": "Standardise [2, 4, 6]."
+  },
+  "1792626439825": {
+   "header": "3.2. Scale normalization",
+   "front": "Check that [−1.22, 0, 1.22] has std 1."
+  },
+  "1792626439827": {
+   "header": "3.2. Scale normalization",
+   "front": "LayerNorm: {{c1::\\( \\mathrm{LN}(x) = \\gamma \\odot \\frac{x - \\mu}{\\sqrt{\\sigma^2 "
+  },
+  "1792626439829": {
+   "header": "3.2. Scale normalization",
+   "front": "LayerNorm vs classic standardization: same formula, different <b>axis</b>. Expla"
+  },
+  "1792626439831": {
+   "header": "3.2. Scale normalization",
+   "front": "What does LayerNorm make the network focus on?"
+  },
+  "1792626439833": {
+   "header": "3.2. Scale normalization",
+   "front": "RMSNorm: {{c1::\\( \\frac{x}{\\mathrm{RMS}(x) + \\epsilon}\\,\\gamma \\)}}, with {{c2::"
+  },
+  "1792626439836": {
+   "header": "3.2. Scale normalization",
+   "front": "RMSNorm vs LayerNorm: the key difference and why it's used."
+  },
+  "1792626439838": {
+   "header": "3.2. Scale normalization",
+   "front": "RMSNorm of [2, 4, 6] (γ = 1, ε = 0)."
+  },
+  "1792626439840": {
+   "header": "3.2. Scale normalization",
+   "front": "L2 normalization: {{c1::\\( \\hat x = \\frac{x}{\\lVert x \\rVert_2} \\)}}, where {{c2"
+  },
+  "1792626439843": {
+   "header": "3.2. Scale normalization",
+   "front": "L2-normalise [3, 4]."
+  },
+  "1792626439845": {
+   "header": "3.2. Scale normalization",
+   "front": "L2 normalization keeps what and discards what? When do you use it?"
+  },
+  "1792626439847": {
+   "header": "3.2. Scale normalization",
+   "front": "How are RMS and the L2 norm related? What does each normalization produce?"
+  },
+  "1792626439849": {
+   "header": "3. Normalization",
+   "front": "Invariances: which of softmax / LayerNorm / RMSNorm ignore <b>shifting</b> the i"
+  },
+  "1792626439851": {
+   "header": "4. More Definitions",
+   "front": "Covariance: {{c1::\\( \\mathrm{Cov}(X,Y) = \\mathbb{E}[(X-\\mu_X)(Y-\\mu_Y)] \\)}}"
+  },
+  "1792626439853": {
+   "header": "4. More Definitions",
+   "front": "How do you read the <b>sign</b> of covariance?"
+  },
+  "1792626439855": {
+   "header": "4. More Definitions",
+   "front": "Units of covariance? Why is its magnitude hard to read?"
+  },
+  "1792626439857": {
+   "header": "4. More Definitions",
+   "front": "Relationship between variance and covariance?"
+  },
+  "1792626439859": {
+   "header": "4. More Definitions",
+   "front": "Independent ⇒ Cov = 0. Does Cov = 0 ⇒ independent?"
+  },
+  "1792626439861": {
+   "header": "4. More Definitions",
+   "front": "Correlation: {{c1::\\( \\rho = \\frac{\\mathrm{Cov}(X,Y)}{\\sigma_X\\,\\sigma_Y} \\)}}, "
+  },
+  "1792626439864": {
+   "header": "4. More Definitions",
+   "front": "Interpret ρ = 0.8."
+  },
+  "1792626439866": {
+   "header": "4. More Definitions",
+   "front": "You switch study time from hours to minutes. What happens to Cov(hours, score)? "
+  },
+  "1792626439868": {
+   "header": "4. More Definitions",
+   "front": "(X, Y) takes values (1,2), (2,4), (3,6), each with probability 1/3. Compute Cov "
+  },
+  "1792626439870": {
+   "header": "4. More Definitions",
+   "front": "Give an example of a strong relationship with correlation ≈ 0."
+  },
+  "1792626439872": {
+   "header": "4. More Definitions",
+   "front": "What is <b>causation</b>, formally? How does it differ from conditioning?"
+  },
+  "1792626439874": {
+   "header": "4. More Definitions",
+   "front": "Ice-cream sales and drownings are correlated. Does banning ice cream save lives?"
+  },
+  "1792626439876": {
+   "header": "4. More Definitions",
+   "front": "Sparse vs dense distribution? How does it relate to entropy?"
+  },
+  "1792626439878": {
+   "header": "4. More Definitions",
+   "front": "A normalized sparsity score: {{c1::\\( 1 - \\frac{H(p)}{\\log n} \\)}}"
+  },
+  "1792626439880": {
+   "header": "4. More Definitions",
+   "front": "Sparsity score \\(1 - H(p)/\\log n\\) of (a) a uniform distribution, (b) a one-hot "
+  },
+  "1792626439882": {
+   "header": "2.2 Terminology",
+   "front": "Expected loss: {{c1::\\( \\mathbb{E}_{(x,y)\\sim \\mathcal{D} }\\left[\\ell(f(x), y)\\r"
+  },
+  "1792626439884": {
+   "header": "2.2 Terminology",
+   "front": "What is “the loss” conceptually, and what does training do with it?"
+  },
+  "1792626439886": {
+   "header": "2.2 Terminology",
+   "front": "Mean squared error: {{c1::\\( \\mathrm{MSE} = \\frac{1}{N}\\sum_i (\\hat y_i - y_i)^2"
+  },
+  "1792626439888": {
+   "header": "2.2 Terminology",
+   "front": "Three equally likely houses; the model is off by 10, 0 and 20 (k$). MSE?"
+  },
+  "1792626439890": {
+   "header": "2.2 Terminology",
+   "front": "Model predicts 300k, house is worth 310k. Squared error (in thousands)?"
+  },
+  "1792626439892": {
+   "header": "2.2 Terminology",
+   "front": "Why does MSE punish big misses so hard?"
+  },
+  "1792626439894": {
+   "header": "2.2 Terminology",
+   "front": "How is MSE related to variance?"
+  },
+  "1792626439896": {
+   "header": "2.2 Terminology",
+   "front": "Squared vs absolute vs cross-entropy loss: when to use each?"
+  },
+  "1792626439898": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Surprise (self-information): {{c1::\\( I(x) = -\\log p(x) = \\log\\frac{1}{p(x)} \\)}"
+  },
+  "1792626439900": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Three properties surprise should have, and that \\(-\\log p\\) satisfies."
+  },
+  "1792626439902": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Why define surprise with \\(\\log\\), not \\(1/p\\)?"
+  },
+  "1792626439904": {
+   "header": "5.2 Logs and bits",
+   "front": "Why the <b>minus</b> sign in \\(-\\log p\\)?"
+  },
+  "1792626439906": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Surprise in bits for p = 1, 1/2, 1/4, 1/8?"
+  },
+  "1792626439908": {
+   "header": "5.2 Logs and bits",
+   "front": "Surprise of p = 0.9 in bits and in nats?"
+  },
+  "1792626439910": {
+   "header": "5.2 Logs and bits",
+   "front": "What is a <b>bit</b>, intuitively?"
+  },
+  "1792626439912": {
+   "header": "5.2 Logs and bits",
+   "front": "Guess a number from 1 to 8 with yes/no questions. How many? What are good questi"
+  },
+  "1792626439914": {
+   "header": "5.2 Logs and bits",
+   "front": "Numbers 1 to 1,024: how many yes/no questions?"
+  },
+  "1792626439916": {
+   "header": "5.2 Logs and bits",
+   "front": "Bits vs nats? Convert between them."
+  },
+  "1792626439918": {
+   "header": "5.2 Logs and bits",
+   "front": "Why does ML default to <b>nats</b>?"
+  },
+  "1792626439920": {
+   "header": "5.2 Logs and bits",
+   "front": "Why do we use log-probabilities in ML? (3 reasons)"
+  },
+  "1792626439922": {
+   "header": "5.2 Logs and bits",
+   "front": "Why does \\(\\log(ab) = \\log a + \\log b\\)?"
+  },
+  "1792626439924": {
+   "header": "5.2 Logs and bits",
+   "front": "What does “log is monotonic” mean, and why does it matter?"
+  },
+  "1792626439926": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Entropy: {{c1::\\( H(p) = -\\sum_x p(x)\\log p(x) \\)}} = {{c2::expected surprise}}"
+  },
+  "1792626439929": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Entropy conceptually?"
+  },
+  "1792626439931": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Entropy of (a) a fair coin, (b) a coin that always lands heads?"
+  },
+  "1792626439933": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Weather truth P: sunny 0.5, cloudy 0.25, rainy 0.25. Entropy in bits?"
+  },
+  "1792626439935": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Entropy of a uniform distribution over 8 outcomes? Over n?"
+  },
+  "1792626439937": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Cross-entropy: {{c1::\\( H(p, q) = -\\sum_x p(x)\\log q(x) \\)}}"
+  },
+  "1792626439939": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Cross-entropy conceptually?"
+  },
+  "1792626439941": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Model Q's own entropy \\(H(q)\\) vs cross-entropy \\(H(p,q)\\): what's the differenc"
+  },
+  "1792626439943": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Weather truth P = (0.5, 0.25, 0.25); model Q = (0.25, 0.5, 0.25). Cross-entropy "
+  },
+  "1792626439945": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Truth P(2) = 0.9 but the model says Q(2) = 0.1. What's the x = 2 term of the cro"
+  },
+  "1792626439947": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "KL divergence: {{c1::\\( D_{KL}(p \\Vert q) = H(p, q) - H(p) \\)}} = {{c2::\\( \\sum_"
+  },
+  "1792626439950": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "KL divergence conceptually?"
+  },
+  "1792626439952": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Decompose cross-entropy into two parts."
+  },
+  "1792626439954": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Can KL be negative? What follows?"
+  },
+  "1792626439956": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Is KL symmetric? Illustrate with a 1% event."
+  },
+  "1792626439958": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Why do trained models (almost) never assign exactly 0 to any token?"
+  },
+  "1792626439960": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Cross-entropy loss with a one-hot label: {{c1::\\( \\mathcal{L} = -\\log q(y_{\\text"
+  },
+  "1792626439962": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "With a one-hot label, how do cross-entropy and KL relate?"
+  },
+  "1792626439964": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "True class is “cat”. Model gives cat probability 1/2, 1/8, 0.9. CE loss for each"
+  },
+  "1792626439966": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Three behaviours that make surprise a good classification loss."
+  },
+  "1792626439968": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Perplexity: {{c1::\\( 2^{H(p,q)} \\)}} if H is in bits, or {{c2::\\( e^{H(p,q)} \\)}"
+  },
+  "1792626439971": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Perplexity conceptually?"
+  },
+  "1792626439973": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "A language model averages 3 bits of surprise per token. Perplexity?"
+  },
+  "1792626439975": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Weather model with CE = 1.75 bits. Perplexity?"
+  },
+  "1792626439977": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "CE = 2.0 nats. Perplexity?"
+  },
+  "1792626439979": {
+   "header": "5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+   "front": "Can a model's perplexity go below \\(2^{H(p)}\\)? What does perplexity 1 mean?"
+  },
+  "1792626439981": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "Probability vs likelihood: same formula \\(P(x\\mid\\theta)\\), read two ways. Expla"
+  },
+  "1792626439983": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "Why write the likelihood as \\(P(x\\mid\\theta)\\) or \\(P(x;\\theta)\\), not \\(P(x,\\th"
+  },
+  "1792626439985": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "Is \\(L(\\theta)\\) a probability distribution over θ?"
+  },
+  "1792626439987": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "Probability or likelihood? “A fair die is rolled. How likely is a six?”"
+  },
+  "1792626439989": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "Probability or likelihood? “A model got 9/10 test questions right. How well does"
+  },
+  "1792626439991": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "Probability or likelihood? “The LM's weights are fixed. How likely is the next w"
+  },
+  "1792626439993": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "Probability or likelihood? “During training, compare weight settings by how much"
+  },
+  "1792626439995": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "Probability or likelihood? “A spam filter is set to 30% spam. How likely is the "
+  },
+  "1792626439997": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "Likelihood of i.i.d. data: {{c1::\\( L(\\theta) = \\prod_i P(x_i \\mid \\theta) \\)}};"
+  },
+  "1792626440000": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "Maximum likelihood estimation: {{c1::\\( \\theta^* = \\arg\\max_\\theta \\log L(\\theta"
+  },
+  "1792626440002": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "Negative log-likelihood: {{c1::\\( \\mathrm{NLL} = -\\frac{1}{N}\\sum_i \\log P(x_i \\"
+  },
+  "1792626440004": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "Why is minimising cross-entropy loss the same as MLE?"
+  },
+  "1792626440006": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "10 flips, 7 heads. Compare \\(L(0.5)\\) and \\(L(0.7)\\). Which does MLE pick?"
+  },
+  "1792626440008": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "MLE estimate of a coin's heads-probability?"
+  },
+  "1792626440010": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "How can MLE <b>overfit</b>? Give the coin example."
+  },
+  "1792626440012": {
+   "header": "5.3 Cross-Entropy Loss == Negative Log Likelihood",
+   "front": "How does a <b>prior</b> fix MLE's overfitting? Name the estimator and its ML cou"
+  },
+  "1792626440014": {
+   "header": "Algebraic Relationships",
+   "front": "Negative power: {{c1::\\( a^{-n} = \\frac{1}{a^n} \\)}}"
+  },
+  "1792626440016": {
+   "header": "Algebraic Relationships",
+   "front": "Product of powers: {{c1::\\( a^m a^n = a^{m+n} \\)}}"
+  },
+  "1792626440018": {
+   "header": "Algebraic Relationships",
+   "front": "Roots as powers: {{c1::\\( \\sqrt[n]{a} = a^{1/n} \\)}}, so {{c2::\\( \\frac{1}{\\sqrt"
+  },
+  "1792626440021": {
+   "header": "Algebraic Relationships",
+   "front": "Definition of log: {{c1::\\( \\log_b a = x \\iff b^x = a \\)}}"
+  },
+  "1792626440023": {
+   "header": "Algebraic Relationships",
+   "front": "Exp and ln undo each other: {{c1::\\( \\ln(e^x) = x \\)}} and {{c2::\\( e^{\\ln x} = "
+  },
+  "1792626440026": {
+   "header": "Algebraic Relationships",
+   "front": "Log of a product: {{c1::\\( \\log(ab) = \\log a + \\log b \\)}}; of a quotient: {{c2:"
+  },
+  "1792626440029": {
+   "header": "Algebraic Relationships",
+   "front": "Log of a power: {{c1::\\( \\log_b(a^n) = n\\log_b a \\)}}"
+  },
+  "1792626440031": {
+   "header": "5.2 Logs and bits",
+   "front": "Change of base: {{c1::\\( \\log_2 x = \\frac{\\ln x}{\\ln 2} \\)}}"
+  },
+  "1792626440033": {
+   "header": "Algebraic Relationships",
+   "front": "Derivatives: {{c1::\\( \\frac{d}{dx}e^x = e^x \\)}} and {{c2::\\( \\frac{d}{dx}\\ln x "
+  },
+  "1792626440036": {
+   "header": "Algebraic Relationships",
+   "front": "Evaluate: \\(\\log_2(1/8)\\), \\(\\log_2 0.5\\), \\(\\ln 1\\), \\(\\log_2(2^5 \\cdot 2^3)\\)"
+  },
+  "1792626440038": {
+   "header": "Algebraic Relationships",
+   "front": "Simplify \\(e^{\\ln(4x^2)}\\) and \\(8^{1/3}\\)."
+  },
+  "1792626440040": {
+   "header": "Algebraic Relationships",
+   "front": "Why is \\(\\log_2(1/2) = -1\\)?"
+  }
+ }
+}

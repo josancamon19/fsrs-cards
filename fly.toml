@@ -1,0 +1,32 @@
+# Single machine + volume: SQLite needs exactly one writer. Do not scale above 1.
+app = "fsrs-cards-8378"
+primary_region = "sjc"
+
+[build]
+
+[env]
+  TZ = "America/Los_Angeles"   # day rollover (4 AM) uses this timezone
+  ANKI_FSRS_DATA = "/data"
+
+[mounts]
+  source = "fsrs_data"
+  destination = "/data"
+  snapshot_retention = 14
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "suspend"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "60s"
+    method = "GET"
+    path = "/healthz"
+    timeout = "5s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

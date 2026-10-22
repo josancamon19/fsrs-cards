@@ -1,0 +1,21 @@
+{
+  "name": "FSRS Cards",
+  "short_name": "FSRS Cards",
+  "description": "Spaced-repetition flashcards with the FSRS algorithm",
+  "id": "/",
+  "start_url": "/#/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d0d0d",
+  "theme_color": "#0d0d0d",
+  "icons": [
+    { "src": "/static/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/static/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/static/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Study all", "url": "/#/study", "icons": [{ "src": "/static/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Stats", "url": "/#/stats", "icons": [{ "src": "/static/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

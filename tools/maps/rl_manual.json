@@ -1,0 +1,537 @@
+{
+ "bear_note": "0E8B2A3E-A36A-4276-A1F5-9DF605217D70",
+ "notes": {
+  "1792650963062": {
+   "header": "Building RL Bottoms Up",
+   "front": "Knowledge tree: how do REINFORCE, baseline, TRPO, GAE, PPO, RLHF, DPO and GRPO c"
+  },
+  "1792650963064": {
+   "header": "Terminology",
+   "front": "What single goal does every algorithm in this deck serve?"
+  },
+  "1792650963066": {
+   "header": "Building RL Bottoms Up",
+   "front": "Mind map: what are the 7 main branches of RL for LLMs?"
+  },
+  "1792650963068": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "The universal update rule hidden inside every policy-gradient algorithm?"
+  },
+  "1792650963070": {
+   "header": "Building RL Bottoms Up",
+   "front": "Name the problem each step fixes: baseline, TRPO, PPO, GAE, RLHF, DPO, GRPO."
+  },
+  "1792650963072": {
+   "header": "Building RL Bottoms Up",
+   "front": "Which methods need a critic, a reward model, and online rollouts? (REINFORCE+bas"
+  },
+  "1792650963074": {
+   "header": "Terminology",
+   "front": "Reward vs return: what's the difference?"
+  },
+  "1792650963076": {
+   "header": "Terminology",
+   "front": "Why measure the return from step \\(t\\) onward instead of the whole trajectory?"
+  },
+  "1792650963078": {
+   "header": "Creating a Value Function",
+   "front": "Why does a discount \\(\\gamma \\lt 1\\) make nearby rewards count more?"
+  },
+  "1792650963080": {
+   "header": "Creating a Value Function",
+   "front": "What does the return look like with \\(\\gamma = 0\\)? With \\(\\gamma = 1\\)?"
+  },
+  "1792650963082": {
+   "header": "Terminology",
+   "front": "Why do 'reward' and 'return' mean almost the same thing in LLM RL? What is \\(\\ga"
+  },
+  "1792650963084": {
+   "header": "Terminology",
+   "front": "Policy vs \\(\\theta\\) for a language model."
+  },
+  "1792650963086": {
+   "header": "Terminology",
+   "front": "Why must the policy be a distribution you sample from, not a fixed argmax choice"
+  },
+  "1792650963088": {
+   "header": "Terminology",
+   "front": "Write the expected return \\(J(\\pi)\\)."
+  },
+  "1792650963090": {
+   "header": "Terminology",
+   "front": "What is the Monte Carlo method, and how is it used in RL?"
+  },
+  "1792650963092": {
+   "header": "Terminology",
+   "front": "You sample one prompt twice: returns +1 and 0. Estimate the expected return. How"
+  },
+  "1792650963094": {
+   "header": "Terminology",
+   "front": "In LLM RL, the <b>state</b> is {{c1::the prompt plus all tokens generated so far"
+  },
+  "1792650963098": {
+   "header": "Terminology",
+   "front": "An expectation is \\(\\sum_x P(x)F(x)\\). Why do you never multiply by \\(P(x)\\) whe"
+  },
+  "1792650963100": {
+   "header": "Terminology",
+   "front": "For a whole generated response, what is \\(P(x)\\)?"
+  },
+  "1792650963102": {
+   "header": "Terminology",
+   "front": "Online vs offline RL, and on-policy vs off-policy: what's the difference?"
+  },
+  "1792650963104": {
+   "header": "Terminology",
+   "front": "Token-level example: why is training on month-old samples a problem?"
+  },
+  "1792650963106": {
+   "header": "Terminology",
+   "front": "What is a surrogate loss, and why is its value meaningless in RL?"
+  },
+  "1792650963108": {
+   "header": "Value Functions",
+   "front": "Define \\(V^\\pi(s)\\) and \\(Q^\\pi(s,a)\\)."
+  },
+  "1792650963110": {
+   "header": "Creating a Value Function",
+   "front": "The model is halfway through a maths problem. What's the brute-force way to esti"
+  },
+  "1792650963112": {
+   "header": "Creating a Value Function",
+   "front": "Why train a value network (critic) instead of just Monte Carlo sampling every st"
+  },
+  "1792650963114": {
+   "header": "Creating a Value Function",
+   "front": "Monte Carlo returns vs a trained critic: bias and variance?"
+  },
+  "1792650963116": {
+   "header": "Creating a Value Function",
+   "front": "Bias vs variance of an estimator?"
+  },
+  "1792650963118": {
+   "header": "Creating a Value Function",
+   "front": "Why must the critic keep training throughout RL?"
+  },
+  "1792650963120": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "From a state the model succeeds 50% of the time (V). If the next token is 'there"
+  },
+  "1792650963122": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "Define the advantage in words and symbols."
+  },
+  "1792650963124": {
+   "header": "Value Functions",
+   "front": "What do \\(V^*(s)\\) and \\(Q^*(s,a)\\) mean?"
+  },
+  "1792650963126": {
+   "header": "Creating a Value Function",
+   "front": "How is the critic trained? What is its per-token target in LLM RL?"
+  },
+  "1792650963128": {
+   "header": "Creating a Value Function",
+   "front": "\\\"Monte Carlo is unbiased because it's the true value.\\\" What's wrong?"
+  },
+  "1792650963130": {
+   "header": "Creating a Value Function",
+   "front": "What is bootstrapping in RL?"
+  },
+  "1792650963132": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "Write the REINFORCE policy gradient."
+  },
+  "1792650963134": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "Explain REINFORCE in plain words (no baseline)."
+  },
+  "1792650963136": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "In \\(\\nabla_\\theta \\log\\pi_\\theta(a_t\\mid s_t)\\), what is 'the gradient'?"
+  },
+  "1792650963138": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "How many samples does the REINFORCE expectation need?"
+  },
+  "1792650963140": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "In plain REINFORCE, what happens to the tokens of a rollout with return 0?"
+  },
+  "1792650963142": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "All returns are positive: answer A scores 10, answer B scores 9. What does REINF"
+  },
+  "1792650963144": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "An easy prompt usually scores 9, a hard one usually scores 1. Same baseline for "
+  },
+  "1792650963146": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "REINFORCE with a baseline: formula and the meaning of the weight."
+  },
+  "1792650963148": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "In REINFORCE, does the score come from the value model?"
+  },
+  "1792650963150": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "You have 64 prompts × 4 samples. Walk through one REINFORCE update: what is summ"
+  },
+  "1792650963152": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "How do you implement REINFORCE in code (one backward pass)?"
+  },
+  "1792650963154": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "Why must the baseline depend only on the state, never on the action taken?"
+  },
+  "1792650963156": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "In practice, where does \\(V(s)\\) for the baseline come from? Is it a frozen poli"
+  },
+  "1792650963158": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "Why compute a baseline at every token, not just once per prompt?"
+  },
+  "1792650963160": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "Vanilla REINFORCE vs + baseline vs + per-token critic vs GRPO's group baseline."
+  },
+  "1792650963162": {
+   "header": "1. REINFORCE / Vanilla,1992",
+   "front": "Prove a state-only baseline adds no bias to the policy gradient."
+  },
+  "1792650963164": {
+   "header": "2. TRPO, 2015",
+   "front": "Even with a baseline, why is a big policy update dangerous in RL specifically?"
+  },
+  "1792650963166": {
+   "header": "2. TRPO, 2015",
+   "front": "Define the importance ratio."
+  },
+  "1792650963168": {
+   "header": "2. TRPO, 2015",
+   "front": "Why does TRPO/PPO need the importance ratio at all?"
+  },
+  "1792650963170": {
+   "header": "2. TRPO, 2015",
+   "front": "The model sampled 'therefore'. Old policy gave it 20%, new gives 40%. Ratio? Mea"
+  },
+  "1792650963172": {
+   "header": "2. TRPO, 2015",
+   "front": "Importance ratio vs KL: what does each measure, and what job does it do?"
+  },
+  "1792650963174": {
+   "header": "2. TRPO, 2015",
+   "front": "\\\"TRPO's KL constraint keeps the advantage from exploding.\\\" Correct it."
+  },
+  "1792650963176": {
+   "header": "2. TRPO, 2015",
+   "front": "TRPO: the {{c1::importance ratio × advantage}} goes in the objective you maximiz"
+  },
+  "1792650963179": {
+   "header": "2. TRPO, 2015",
+   "front": "Show that at \\(\\theta=\\theta_{old}\\), the ratio objective's gradient equals REIN"
+  },
+  "1792650963181": {
+   "header": "2. TRPO, 2015",
+   "front": "Write TRPO's full optimization problem."
+  },
+  "1792650963183": {
+   "header": "2. TRPO, 2015",
+   "front": "How is TRPO's KL computed, step by step?"
+  },
+  "1792650963185": {
+   "header": "2. TRPO, 2015",
+   "front": "Why can't you trust ratio × advantage once the new policy moves far from the old"
+  },
+  "1792650963187": {
+   "header": "2. TRPO, 2015",
+   "front": "Why have both a ratio and a KL constraint?"
+  },
+  "1792650963189": {
+   "header": "2. TRPO, 2015",
+   "front": "Why is TRPO expensive? Why can't you just use Adam?"
+  },
+  "1792650963191": {
+   "header": "3. Generalized Advantage Estimator (GAE), 2016",
+   "front": "Define the TD (temporal-difference) error."
+  },
+  "1792650963193": {
+   "header": "3. Generalized Advantage Estimator (GAE), 2016",
+   "front": "Critic says 0.7 before token 40 and 0.1 after. No reward at that step, \\(\\gamma="
+  },
+  "1792650963195": {
+   "header": "3. Generalized Advantage Estimator (GAE), 2016",
+   "front": "Judging token 40 by its TD error alone vs by \\(G - V\\): what's the risk of each?"
+  },
+  "1792650963197": {
+   "header": "3. Generalized Advantage Estimator (GAE), 2016",
+   "front": "What does GAE's \\(\\lambda\\) control?"
+  },
+  "1792650963199": {
+   "header": "3. Generalized Advantage Estimator (GAE), 2016",
+   "front": "Which algorithms use TD errors / GAE: PPO? GRPO?"
+  },
+  "1792650963201": {
+   "header": "3. Generalized Advantage Estimator (GAE), 2016",
+   "front": "Write the GAE advantage."
+  },
+  "1792650963203": {
+   "header": "3. Generalized Advantage Estimator (GAE), 2016",
+   "front": "What is the GAE advantage when \\(\\lambda = 0\\)?"
+  },
+  "1792650963205": {
+   "header": "3. Generalized Advantage Estimator (GAE), 2016",
+   "front": "\\(\\gamma\\) vs \\(\\lambda\\): what does each knob do? Typical values?"
+  },
+  "1792650963207": {
+   "header": "3. Generalized Advantage Estimator (GAE), 2016",
+   "front": "Early in training the critic is barely trained. Which way should \\(\\lambda\\) lea"
+  },
+  "1792650963209": {
+   "header": "3. Generalized Advantage Estimator (GAE), 2016",
+   "front": "\\\"GAE was built to fix TRPO.\\\" Correct it."
+  },
+  "1792650963211": {
+   "header": "3. Generalized Advantage Estimator (GAE), 2016",
+   "front": "Is GAE a compute optimization?"
+  },
+  "1792650963213": {
+   "header": "3. Generalized Advantage Estimator (GAE), 2016",
+   "front": "Walk through one actor-critic iteration with GAE for a 100-token rollout."
+  },
+  "1792650963215": {
+   "header": "3. Generalized Advantage Estimator (GAE), 2016",
+   "front": "Show that GAE with \\(\\lambda=1\\) (and \\(\\gamma=1\\), \\(V(s_{T+1})=0\\)) equals \\(G"
+  },
+  "1792650963217": {
+   "header": "4. PPO, 2017",
+   "front": "What is PPO's core idea relative to TRPO?"
+  },
+  "1792650963219": {
+   "header": "4. PPO, 2017",
+   "front": "Write the PPO clipped objective."
+  },
+  "1792650963221": {
+   "header": "4. PPO, 2017",
+   "front": "What does clipping the ratio to [0.8, 1.2] stop the optimizer from doing?"
+  },
+  "1792650963223": {
+   "header": "4. PPO, 2017",
+   "front": "Why is clipping so much cheaper than TRPO's KL fence?"
+  },
+  "1792650963225": {
+   "header": "4. PPO, 2017",
+   "front": "The two KLs in RLHF-style training: KL to \\(\\pi_{old}\\) vs KL to \\(\\pi_{ref}\\)."
+  },
+  "1792650963227": {
+   "header": "4. PPO, 2017",
+   "front": "Why does PPO take the <b>min</b> of the clipped and unclipped terms?"
+  },
+  "1792650963229": {
+   "header": "4. PPO, 2017",
+   "front": "ε = 0.2. Gradient or not? (a) A>0, r=1.3  (b) A>0, r=0.7  (c) A<0, r=0.7  (d) A<"
+  },
+  "1792650963231": {
+   "header": "4. PPO, 2017",
+   "front": "PPO-clip vs PPO-KL-penalty: which won, and is β learned?"
+  },
+  "1792650963233": {
+   "header": "4. PPO, 2017",
+   "front": "Besides clip + min, what else is in a practical PPO update?"
+  },
+  "1792650963235": {
+   "header": "5.2 Optimizing via PPO",
+   "front": "PPO's combined loss (policy + value + entropy)."
+  },
+  "1792650963237": {
+   "header": "4. PPO, 2017",
+   "front": "\\\"Inside the clip range PPO behaves the same as TRPO.\\\" Correct it."
+  },
+  "1792650963239": {
+   "header": "5. RLHF 2020",
+   "front": "How do you get a reward for 'write a kind email', where nothing can be checked?"
+  },
+  "1792650963241": {
+   "header": "5.1 Training a Reward Model",
+   "front": "Why train a reward model instead of using the human labels directly in PPO?"
+  },
+  "1792650963243": {
+   "header": "5.1 Training a Reward Model",
+   "front": "Reward model vs value model (critic): same thing?"
+  },
+  "1792650963245": {
+   "header": "5. RLHF 2020",
+   "front": "Bradley–Terry model."
+  },
+  "1792650963247": {
+   "header": "5. RLHF 2020",
+   "front": "RM scores A = 3, B = 1. P(A preferred)?"
+  },
+  "1792650963249": {
+   "header": "5.1 Training a Reward Model",
+   "front": "Reward-model training loss."
+  },
+  "1792650963251": {
+   "header": "5.1 Training a Reward Model",
+   "front": "Reward-model architecture."
+  },
+  "1792650963253": {
+   "header": "5. RLHF 2020",
+   "front": "The full RLHF pipeline, start to finish."
+  },
+  "1792650963255": {
+   "header": "5.2 Optimizing via PPO",
+   "front": "The reward model is just a model. What goes wrong, and what stops it? (Not clipp"
+  },
+  "1792650963257": {
+   "header": "5. RLHF 2020",
+   "front": "Why does Bradley–Terry use the score difference, not the raw scores?"
+  },
+  "1792650963259": {
+   "header": "5.1 Training a Reward Model",
+   "front": "\\\"The reward model outputs a value in [0, 1].\\\" Correct it."
+  },
+  "1792650963261": {
+   "header": "5.2 Optimizing via PPO",
+   "front": "Per-token reward used in RLHF-PPO."
+  },
+  "1792650963263": {
+   "header": "5.1 Training a Reward Model",
+   "front": "In InstructGPT-style RLHF, how is the critic usually initialized? Is the backbon"
+  },
+  "1792650963265": {
+   "header": "5. RLHF 2020",
+   "front": "RLHF history in three papers."
+  },
+  "1792650963267": {
+   "header": "6. DPO, 2022",
+   "front": "DPO's core idea."
+  },
+  "1792650963269": {
+   "header": "6.1 From DPO to PPO",
+   "front": "In DPO there's no reward model. What number plays each response's 'score' in Bra"
+  },
+  "1792650963271": {
+   "header": "6. DPO, 2022",
+   "front": "DPO loss."
+  },
+  "1792650963273": {
+   "header": "6. DPO, 2022",
+   "front": "In DPO, is \\(\\pi_{ref}\\) the policy from the previous step?"
+  },
+  "1792650963275": {
+   "header": "6.1 From DPO to PPO",
+   "front": "Why is the cancellation of \\(Z(x)\\) the key trick in DPO?"
+  },
+  "1792650963277": {
+   "header": "6. DPO, 2022",
+   "front": "During DPO training, do the preferred response's log-probs always go up?"
+  },
+  "1792650963279": {
+   "header": "6. DPO, 2022",
+   "front": "What does β mean in DPO?"
+  },
+  "1792650963281": {
+   "header": "6.2 PPO vs DPO",
+   "front": "When DPO vs RLHF-PPO?"
+  },
+  "1792650963283": {
+   "header": "6. DPO, 2022",
+   "front": "\\\"DPO (2022) isn't differentiable under Bradley–Terry.\\\" Correct both mistakes."
+  },
+  "1792650963285": {
+   "header": "6.1 From DPO to PPO",
+   "front": "DPO derivation, step 1: what is the optimum of the KL-regularized RLHF objective"
+  },
+  "1792650963287": {
+   "header": "6.1 From DPO to PPO",
+   "front": "DPO derivation, step 2: solve the optimum for the reward and plug into Bradley–T"
+  },
+  "1792650963289": {
+   "header": "7. GRPO, 2024",
+   "front": "GRPO in one sentence."
+  },
+  "1792650963291": {
+   "header": "7. GRPO, 2024",
+   "front": "8 samples for one prompt, 3 correct (reward 1/0). Advantages before ÷std?"
+  },
+  "1792650963293": {
+   "header": "7. GRPO, 2024",
+   "front": "What happens in GRPO if all 8 answers are correct (or all wrong)?"
+  },
+  "1792650963295": {
+   "header": "7. GRPO, 2024",
+   "front": "What does GRPO keep from PPO, and what does it change?"
+  },
+  "1792650963297": {
+   "header": "7. GRPO, 2024",
+   "front": "Only 1 of 8 is correct. Compute the normalized advantages. What's the effect of "
+  },
+  "1792650963299": {
+   "header": "7. GRPO, 2024",
+   "front": "Does GRPO require verifiable rewards?"
+  },
+  "1792650963301": {
+   "header": "7. GRPO, 2024",
+   "front": "Write the GRPO objective."
+  },
+  "1792650963303": {
+   "header": "7.1 DR GRPO, 2025",
+   "front": "Dr. GRPO: what two terms does it remove, and why?"
+  },
+  "1792650963305": {
+   "header": "7.2 DAPO, 05/2025",
+   "front": "DAPO's four changes to GRPO."
+  },
+  "1792650963307": {
+   "header": "7.2 DAPO, 05/2025",
+   "front": "Why does DAPO raise only the <i>upper</i> clip bound?"
+  },
+  "1792650963309": {
+   "header": "7.3 Other Methods",
+   "front": "REINFORCE++, GSPO, GFPO: one line each."
+  },
+  "1792650963311": {
+   "header": "FAQ and some Facts",
+   "front": "A prompt is so hard that all G answers fail. What does the model learn?"
+  },
+  "1792650963313": {
+   "header": "FAQ and some Facts",
+   "front": "What is RLVR?"
+  },
+  "1792650963315": {
+   "header": "FAQ and some Facts",
+   "front": "Why did random rewards still improve Qwen2.5-Math, but not Llama or OLMo?"
+  },
+  "1792650963317": {
+   "header": "FAQ and some Facts",
+   "front": "RL's Razor: why does RL forget less than SFT?"
+  },
+  "1792650963319": {
+   "header": "FAQ and some Facts",
+   "front": "SFT on answers your own model wrote (filtered for correct ones): forget more or "
+  },
+  "1792650963321": {
+   "header": "FAQ and some Facts",
+   "front": "Why does RL for LLMs need large batch sizes?"
+  },
+  "1792650963323": {
+   "header": "FAQ and some Facts",
+   "front": "\\\"Models don't learn in RL, and you always need SFT CoT first.\\\" How true?"
+  },
+  "1792650963325": {
+   "header": "FAQ and some Facts",
+   "front": "Why does LoRA work well for RL?"
+  },
+  "1792650963327": {
+   "header": "FAQ and some Facts",
+   "front": "Process vs outcome reward models."
+  },
+  "1792650963329": {
+   "header": "FAQ and some Facts",
+   "front": "Empirical tips from 'Tricks or Traps' (2508.08221) on advantage normalization an"
+  }
+ }
+}

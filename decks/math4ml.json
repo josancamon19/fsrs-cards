@@ -1,0 +1,4097 @@
+[
+ {
+  "id": 1792626439628,
+  "deck": "Math4ML::Probability & Information Theory::00 Map · Big Picture",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::00 m4ml::level::4_connect m4ml::kind::map m4ml::topic::map",
+  "fields": {
+   "Front": "Knowledge tree: name the <b>8 branches</b> of probability-for-ML covered in this deck.",
+   "Back": "<ol><li><b>Interpretations</b>: frequentist vs Bayesian</li><li><b>Distributions</b>: PMF, PDF, uniform</li><li><b>Rules</b>: joint, conditional, marginal, chain, Bayes, independence</li><li><b>Summaries</b>: expectation, variance, std, mode, median</li><li><b>Relationships</b>: covariance, correlation, causation, sparsity</li><li><b>Normalization</b>: softmax, L2, LayerNorm, RMSNorm</li><li><b>Information theory</b>: surprise → entropy → cross-entropy → KL, perplexity</li><li><b>Learning</b>: loss = E[error], MSE, likelihood, MLE</li></ol>",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_tree_a.png\"><img src=\"m4ml_tree_b.png\">",
+   "Section": "00 Map · Big Picture",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Mind map"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Probability",
+  "source_label": "Math › Probability",
+  "suspended": [
+   true
+  ]
+ },
+ {
+  "id": 1792626439630,
+  "deck": "Math4ML::Probability & Information Theory::00 Map · Big Picture",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::00 m4ml::level::4_connect m4ml::kind::map m4ml::topic::information",
+  "fields": {
+   "Front": "Trace the chain from a probability \\(p(x)\\) to <b>KL divergence</b>, naming the operation at each step.",
+   "Back": "probability \\(p\\) → <i>take −log</i> → <b>surprise</b> → <i>average under p</i> → <b>entropy</b> \\(H(p)\\) → <i>take surprise from model q instead</i> → <b>cross-entropy</b> \\(H(p,q)\\) → <i>subtract H(p)</i> → <b>KL</b>.<br>Side branches: exponentiate CE → <b>perplexity</b>; one-hot p → <b>CE loss = NLL</b>.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_infochain.png\">",
+   "Section": "00 Map · Big Picture",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Mind map"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439632,
+  "deck": "Math4ML::Probability & Information Theory::00 Map · Big Picture",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::00 m4ml::level::4_connect m4ml::kind::connection m4ml::topic::expectation",
+  "fields": {
+   "Front": "Many things are “just an expectation” \\(\\mathbb{E}[f(X)]\\). Name 6 and their \\(f\\).",
+   "Back": "<ul><li>mean: \\(f(x)=x\\)</li><li>second moment: \\(f(x)=x^2\\)</li><li>variance: \\(f(x)=(x-\\mu)^2\\)</li><li>MSE / ML loss: \\(f=(\\hat y-y)^2\\) or any error \\(\\ell\\)</li><li>entropy: \\(f(x)=-\\log p(x)\\)</li><li>cross-entropy: \\(f(x)=-\\log q(x)\\), averaged under \\(p\\)</li><li>covariance: \\(f=(x-\\mu_X)(y-\\mu_Y)\\)</li></ul>",
+   "Extra": "Once you can compute a weighted average, you can compute all of these.",
+   "Image": "<img src=\"m4ml_map_summaries.png\">",
+   "Section": "00 Map · Big Picture",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": [
+   "List / too many items → split into single-answer cards"
+  ]
+ },
+ {
+  "id": 1792626439634,
+  "deck": "Math4ML::Probability & Information Theory::00 Map · Big Picture",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::00 m4ml::level::4_connect m4ml::kind::connection m4ml::topic::map",
+  "fields": {
+   "Front": "Which four quantities all measure <b>spread / uncertainty</b>, and of what?",
+   "Back": "<ul><li><b>Variance / std</b>: spread of numbers around their mean</li><li><b>MSE</b>: spread of predictions around the targets</li><li><b>Surprise</b>: how unexpected <i>one</i> outcome is</li><li><b>Entropy</b>: average surprise, i.e. uncertainty of a whole distribution</li></ul>",
+   "Extra": "",
+   "Image": "",
+   "Section": "00 Map · Big Picture",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": [
+   "List / too many items → split into single-answer cards"
+  ]
+ },
+ {
+  "id": 1792626439636,
+  "deck": "Math4ML::Probability & Information Theory::00 Map · Big Picture",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::00 m4ml::level::4_connect m4ml::kind::connection m4ml::topic::likelihood",
+  "fields": {
+   "Front": "Name the four things that turn out to be the <b>same optimisation goal</b> when training a classifier.",
+   "Back": "Minimise <b>cross-entropy loss</b> = minimise <b>NLL</b> = maximise <b>likelihood</b> (MLE) = minimise <b>KL(p‖q)</b> (since \\(H(p)\\) is fixed by the data).",
+   "Extra": "",
+   "Image": "",
+   "Section": "00 Map · Big Picture",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": [
+   true
+  ]
+ },
+ {
+  "id": 1792626439638,
+  "deck": "Math4ML::Probability & Information Theory::00 Map · Big Picture",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::00 m4ml::level::4_connect m4ml::kind::connection m4ml::topic::map",
+  "fields": {
+   "Front": "Where does <b>squaring</b> show up, why, and how do we undo it?",
+   "Back": "Variance, MSE, L2 norm, RMS. Squaring makes every deviation positive (so they can't cancel) and punishes big deviations more. Taking the square root (std, RMS, ‖x‖) brings you back to the original units.",
+   "Extra": "",
+   "Image": "",
+   "Section": "00 Map · Big Picture",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": [
+   true
+  ]
+ },
+ {
+  "id": 1792626439640,
+  "deck": "Math4ML::Probability & Information Theory::01 Foundations · Interpretations & Vocabulary",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::01 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::foundations",
+  "fields": {
+   "Front": "What are probability theory and information theory each <b>for</b>?",
+   "Back": "<b>Probability</b>: making statements and reasoning under uncertainty.<br><b>Information theory</b>: quantifying how much uncertainty a distribution contains.",
+   "Extra": "",
+   "Image": "",
+   "Section": "01 Foundations · Interpretations & Vocabulary",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Probability",
+  "source_label": "Math › Probability",
+  "suspended": [
+   true
+  ]
+ },
+ {
+  "id": 1792626439642,
+  "deck": "Math4ML::Probability & Information Theory::01 Foundations · Interpretations & Vocabulary",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::01 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::foundations",
+  "fields": {
+   "Front": "<b>Frequentist</b> reading of “P = 0.7”?",
+   "Back": "Long-run frequency: repeat the experiment 1,000 times and it happens ~700 times. Probability is a property of a <b>repeatable process in the world</b>.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_freq_bayes.png\">",
+   "Section": "01 Foundations · Interpretations & Vocabulary",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=1.%20Etymology",
+  "source_label": "Math › 1. Etymology",
+  "suspended": [
+   "frequentist stuff is a bit annoying/confusing, doesn't rly matter I believe"
+  ]
+ },
+ {
+  "id": 1792626439644,
+  "deck": "Math4ML::Probability & Information Theory::01 Foundations · Interpretations & Vocabulary",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::01 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::foundations",
+  "fields": {
+   "Front": "<b>Bayesian</b> reading of “P = 0.7”?",
+   "Back": "Degree of belief: “I'm 70% confident, given what I know.” Probability is a property of <b>your knowledge</b>, and it gets updated with evidence (prior → posterior).",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_freq_bayes.png\">",
+   "Section": "01 Foundations · Interpretations & Vocabulary",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=1.%20Etymology",
+  "source_label": "Math › 1. Etymology",
+  "suspended": [
+   "same reason"
+  ]
+ },
+ {
+  "id": 1792626439646,
+  "deck": "Math4ML::Probability & Information Theory::01 Foundations · Interpretations & Vocabulary",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::01 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::foundations",
+  "fields": {
+   "Front": "Do frequentists and Bayesians use different <b>maths</b>?",
+   "Back": "No. They use the same rules (sum, product, Bayes). They differ in what probability <i>means</i> and which things you may assign it to (for example one-off events and parameters).",
+   "Extra": "",
+   "Image": "",
+   "Section": "01 Foundations · Interpretations & Vocabulary",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=1.%20Etymology",
+  "source_label": "Math › 1. Etymology",
+  "suspended": [
+   "Vocabulary/philosophy trivia, not useful for intuition"
+  ]
+ },
+ {
+  "id": 1792626439648,
+  "deck": "Math4ML::Probability & Information Theory::01 Foundations · Interpretations & Vocabulary",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::01 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::foundations",
+  "fields": {
+   "Problem": "A coin has already been flipped and is covered by a hand. What's P(heads)? Which interpretation justifies your answer?",
+   "Hint": "",
+   "Answer": "50%, which is the <b>Bayesian</b> reading.",
+   "Steps": "The event is in the past, so the world isn't uncertain, but <i>you</i> are. For a Bayesian, probability measures what you know, not just what hasn't happened yet.",
+   "Image": "<img src=\"m4ml_freq_bayes.png\">",
+   "Section": "01 Foundations · Interpretations & Vocabulary",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=1.%20Etymology",
+  "source_label": "Math › 1. Etymology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439650,
+  "deck": "Math4ML::Probability & Information Theory::01 Foundations · Interpretations & Vocabulary",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::01 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::foundations",
+  "fields": {
+   "Front": "What was the probability of rain in Paris on 1 March 1850? How do the two schools answer?",
+   "Back": "<b>Frequentist</b>: it's a fixed one-off fact (0 or 1), not repeatable, so there's no meaningful probability.<br><b>Bayesian</b>: you don't know, so assign a belief, e.g. the base rate of rainy March days (~40%).",
+   "Extra": "Same idea as the covered coin: already decided, still unknown to you.",
+   "Image": "",
+   "Section": "01 Foundations · Interpretations & Vocabulary",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=1.%20Etymology",
+  "source_label": "Math › 1. Etymology",
+  "suspended": [
+   true
+  ]
+ },
+ {
+  "id": 1792626439652,
+  "deck": "Math4ML::Probability & Information Theory::01 Foundations · Interpretations & Vocabulary",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::01 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::foundations",
+  "fields": {
+   "Front": "Why is “1 in 20 startups succeed” an <b>ambiguous</b> frequentist answer for one particular startup?",
+   "Back": "<b>Reference-class problem</b>: 1 in 20 out of <i>which</i> startups? All of them, AI startups, ones with repeat founders? Each group gives a different frequency.",
+   "Extra": "",
+   "Image": "",
+   "Section": "01 Foundations · Interpretations & Vocabulary",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=1.%20Etymology",
+  "source_label": "Math › 1. Etymology",
+  "suspended": [
+   true
+  ]
+ },
+ {
+  "id": 1792626439654,
+  "deck": "Math4ML::Probability & Information Theory::01 Foundations · Interpretations & Vocabulary",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::01 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::vocabulary",
+  "fields": {
+   "Front": "Define <b>odds</b>. Convert odds 3:1 to a probability.",
+   "Back": "\\(\\text{odds} = \\dfrac{p}{1-p}\\). Odds 3:1 means \\(p/(1-p)=3\\), so \\(p = 0.75\\).",
+   "Extra": "",
+   "Image": "",
+   "Section": "01 Foundations · Interpretations & Vocabulary",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=1.%20Etymology",
+  "source_label": "Math › 1. Etymology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439656,
+  "deck": "Math4ML::Probability & Information Theory::01 Foundations · Interpretations & Vocabulary",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::01 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::vocabulary",
+  "fields": {
+   "Problem": "Convert \\(p = 0.2\\) to odds.",
+   "Hint": "",
+   "Answer": "\\(0.2/0.8 = 0.25\\), i.e. <b>1 : 4</b>.",
+   "Steps": "",
+   "Image": "",
+   "Section": "01 Foundations · Interpretations & Vocabulary",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=1.%20Etymology",
+  "source_label": "Math › 1. Etymology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439658,
+  "deck": "Math4ML::Probability & Information Theory::01 Foundations · Interpretations & Vocabulary",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::01 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::vocabulary",
+  "fields": {
+   "Front": "<b>Possible</b> vs <b>probable</b>?",
+   "Back": "<b>Possible</b>: P > 0 (it can happen).<br><b>Probable / likely</b>: more likely than not (informally > 50%).",
+   "Extra": "",
+   "Image": "",
+   "Section": "01 Foundations · Interpretations & Vocabulary",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=1.%20Etymology",
+  "source_label": "Math › 1. Etymology",
+  "suspended": [
+   "Vocabulary/philosophy trivia, not useful for intuition"
+  ]
+ },
+ {
+  "id": 1792626439660,
+  "deck": "Math4ML::Probability & Information Theory::01 Foundations · Interpretations & Vocabulary",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::01 m4ml::level::1_recall m4ml::kind::pitfall m4ml::topic::vocabulary",
+  "fields": {
+   "Front": "Does “chance” mean “very likely”?",
+   "Back": "No. It's a neutral synonym for probability (“a 10% chance”).",
+   "Extra": "",
+   "Image": "",
+   "Section": "01 Foundations · Interpretations & Vocabulary",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Pitfall"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=1.%20Etymology",
+  "source_label": "Math › 1. Etymology",
+  "suspended": [
+   "Vocabulary/philosophy trivia, not useful for intuition"
+  ]
+ },
+ {
+  "id": 1792626439662,
+  "deck": "Math4ML::Probability & Information Theory::01 Foundations · Interpretations & Vocabulary",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::01 m4ml::level::2_understand m4ml::kind::pitfall m4ml::topic::vocabulary",
+  "fields": {
+   "Front": "One coin flip lands heads, so the likelihood is \\(L(\\theta) = \\theta\\). Compute \\(\\int_0^1 L(\\theta)\\,d\\theta\\). What does the result tell you about likelihood?",
+   "Back": "\\(\\tfrac12\\), not 1 → likelihood is <b>not</b> a probability distribution over θ. It only <b>ranks</b> parameters: here θ = 1 explains “heads” best.",
+   "Extra": "Contrast: fix θ = 0.7 and sum over the <b>outcomes</b>: P(H) + P(T) = 0.7 + 0.3 = 1.<br><b>What you hold fixed decides what sums to 1</b>: θ fixed → probabilities over outcomes sum to 1; data fixed → likelihood over θ doesn't have to.",
+   "Image": "",
+   "Section": "01 Foundations · Interpretations & Vocabulary",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": null
+ },
+ {
+  "id": 1792626439664,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::02 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::distributions",
+  "fields": {
+   "Front": "What is a <b>PMF</b>? Give its two constraints.",
+   "Back": "Probability mass function, for <b>discrete</b> variables: a probability for each outcome.<br>\\(0 \\le P(x) \\le 1\\) and \\(\\sum_x P(x) = 1\\).",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_dice_pmf.png\">",
+   "Section": "02 Distributions & Rules",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.1%20Distributions",
+  "source_label": "Math › 2.1 Distributions",
+  "suspended": [
+   true
+  ]
+ },
+ {
+  "id": 1792626439666,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::02 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::distributions",
+  "fields": {
+   "Front": "What is a <b>PDF</b>? Give its constraints.",
+   "Back": "Probability density function, for <b>continuous</b> variables: \\(p(x) \\ge 0\\) and \\(\\int p(x)\\,dx = 1\\). Probabilities are <b>areas</b> over ranges: \\(P(a\\le X\\le b)=\\int_a^b p(x)\\,dx\\).",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_pdf_area.png\">",
+   "Section": "02 Distributions & Rules",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.1%20Distributions",
+  "source_label": "Math › 2.1 Distributions",
+  "suspended": [
+   "Vocabulary/philosophy trivia, not useful for intuition"
+  ]
+ },
+ {
+  "id": 1792626439668,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::02 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::distributions",
+  "fields": {
+   "Front": "For a continuous height, why is P(X = 1.75 exactly) = 0? Does 0 mean impossible?",
+   "Back": "A single point has zero width, so it has zero area under the curve. <b>Probability 0 ≠ impossible</b>: some exact value always occurs. Probability lives in ranges, not points.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_pdf_area.png\">",
+   "Section": "02 Distributions & Rules",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.1%20Distributions",
+  "source_label": "Math › 2.1 Distributions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439670,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::02 m4ml::level::2_understand m4ml::kind::pitfall m4ml::topic::distributions",
+  "fields": {
+   "Front": "Can a PDF value be greater than 1?",
+   "Back": "Yes. A density is not a probability. E.g. uniform on [0, 0.5] has density 2 everywhere. Only the <b>area</b> must be ≤ 1.",
+   "Extra": "",
+   "Image": "",
+   "Section": "02 Distributions & Rules",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Pitfall"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.1%20Distributions",
+  "source_label": "Math › 2.1 Distributions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439672,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::02 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::distributions",
+  "fields": {
+   "Front": "Uniform distribution: discrete vs continuous formula?",
+   "Back": "Discrete with k states: \\(P(x) = 1/k\\).<br>Continuous on [a, b]: \\(p(x) = \\dfrac{1}{b-a}\\) (1/k makes no sense with infinitely many states).",
+   "Extra": "",
+   "Image": "",
+   "Section": "02 Distributions & Rules",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.1%20Distributions",
+  "source_label": "Math › 2.1 Distributions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439674,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::02 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::distributions",
+  "fields": {
+   "Problem": "X is uniform on [2, 6]. What's the density, and \\(P(3 \\le X \\le 4)\\)?",
+   "Hint": "",
+   "Answer": "Density \\(= 1/4\\); probability \\(= 0.25\\).",
+   "Steps": "Density = 1/(b − a) = 1/(6 − 2) = 0.25. Area of the range = width × height = 1 × 0.25 = 0.25.",
+   "Image": "",
+   "Section": "02 Distributions & Rules",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.1%20Distributions",
+  "source_label": "Math › 2.1 Distributions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439676,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::02 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::distributions",
+  "fields": {
+   "Problem": "Roll two fair dice. What is P(sum = 7)?",
+   "Hint": "Count ordered pairs.",
+   "Answer": "\\(6/36 = 1/6\\)",
+   "Steps": "Total outcomes: 6 × 6 = 36. Pairs summing to 7: (1,6) (2,5) (3,4) (4,3) (5,2) (6,1) = 6. 7 is the mode of the sum.",
+   "Image": "<img src=\"m4ml_dice_pmf.png\">",
+   "Section": "02 Distributions & Rules",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.1%20Distributions",
+  "source_label": "Math › 2.1 Distributions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439678,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::02 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::distributions",
+  "fields": {
+   "Problem": "Two dice: P(sum = 2)? P(sum ≥ 10)?",
+   "Hint": "",
+   "Answer": "P(2) = 1/36. P(≥10) = 6/36 = 1/6.",
+   "Steps": "Only (1,1) gives 2. Sums 10, 11, 12 have 3 + 2 + 1 = 6 combinations.",
+   "Image": "<img src=\"m4ml_dice_pmf.png\">",
+   "Section": "02 Distributions & Rules",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.1%20Distributions",
+  "source_label": "Math › 2.1 Distributions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439680,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::02 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::rules",
+  "fields": {
+   "Front": "What is the <b>joint</b> probability \\(P(x, y)\\)?",
+   "Back": "The probability that x <b>and</b> y both happen.",
+   "Extra": "",
+   "Image": "",
+   "Section": "02 Distributions & Rules",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439682,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::02 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::rules",
+  "fields": {
+   "Text": "Conditional probability: {{c1::\\( P(y \\mid x) = \\frac{P(x, y)}{P(x)} \\)}}, defined only when {{c2::\\( P(x) > 0 \\)}}.",
+   "Extra": "Read “probability of y given x”: zoom into the world where x happened.",
+   "Image": "<img src=\"m4ml_map_rules.png\">",
+   "Section": "02 Distributions & Rules",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439685,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::02 m4ml::level::2_understand m4ml::kind::pitfall m4ml::topic::rules",
+  "fields": {
+   "Front": "Why must it be \\(P(x) > 0\\), not \\(\\ge 0\\), in \\(P(y\\mid x) = P(x,y)/P(x)\\)?",
+   "Back": "You can't divide by zero. Conditioning on an impossible event is undefined.",
+   "Extra": "",
+   "Image": "",
+   "Section": "02 Distributions & Rules",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Pitfall"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": [
+   "Vague or pedantic 'why' → replace with a concrete step or exercise"
+  ]
+ },
+ {
+  "id": 1792626439687,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::02 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::rules",
+  "fields": {
+   "Text": "Marginal (sum rule): {{c1::\\( P(x) = \\sum_y P(x, y) \\)}}  (continuous: {{c2::\\( p(x) = \\int p(x, y)\\,dy \\)}})",
+   "Extra": "Marginalising = ignore a variable by summing over all its values.",
+   "Image": "",
+   "Section": "02 Distributions & Rules",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": [
+   "Formula fill-in: visible half gives away the hidden half → replace with a simple exercise",
+   "Formula fill-in: visible half gives away the hidden half → replace with a simple exercise"
+  ]
+ },
+ {
+  "id": 1792626439690,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::02 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::rules",
+  "fields": {
+   "Front": "Intuitively, what does <b>marginalising</b> out y do?",
+   "Back": "It collapses a joint table into one variable. E.g. from a table of P(weather, traffic), get P(weather) by adding up each row over all traffic levels.",
+   "Extra": "",
+   "Image": "",
+   "Section": "02 Distributions & Rules",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439692,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::02 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::rules",
+  "fields": {
+   "Text": "Product rule: {{c1::\\( P(x, y) = P(y \\mid x)\\,P(x) \\)}}",
+   "Extra": "",
+   "Image": "",
+   "Section": "02 Distributions & Rules",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439694,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::02 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::rules",
+  "fields": {
+   "Text": "Chain rule: {{c1::\\( P(a, b, c) = P(a)\\,P(b \\mid a)\\,P(c \\mid a, b) \\)}}",
+   "Extra": "General: \\(P(x_1..x_n)=\\prod_i P(x_i\\mid x_1..x_{i-1})\\). A joint distribution decomposes into a chain of conditionals.",
+   "Image": "<img src=\"m4ml_map_rules.png\">",
+   "Section": "02 Distributions & Rules",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439696,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::02 m4ml::level::4_connect m4ml::kind::connection m4ml::topic::rules",
+  "fields": {
+   "Front": "Where does the <b>chain rule</b> show up in LLMs?",
+   "Back": "A language model scores a sentence as \\(P(\\text{sentence}) = \\prod_t P(\\text{token}_t \\mid \\text{previous tokens})\\). That long product is why we work in log space (sum of log-probs).",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_map_rules.png\">",
+   "Section": "02 Distributions & Rules",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439698,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::02 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::rules",
+  "fields": {
+   "Text": "Independence: {{c1::\\( P(x, y) = P(x)\\,P(y) \\)}}, equivalently {{c2::\\( P(x \\mid y) = P(x) \\)}}.",
+   "Extra": "",
+   "Image": "",
+   "Section": "02 Distributions & Rules",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439701,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::02 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::rules",
+  "fields": {
+   "Text": "Conditional independence given z: {{c1::\\( P(x, y \\mid z) = P(x \\mid z)\\,P(y \\mid z) \\)}}",
+   "Extra": "",
+   "Image": "",
+   "Section": "02 Distributions & Rules",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439703,
+  "deck": "Math4ML::Probability & Information Theory::02 Distributions & Rules",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::02 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::rules",
+  "fields": {
+   "Front": "Give an example of two variables that are dependent but conditionally independent given a third.",
+   "Back": "Ice-cream sales and drownings are correlated, but (roughly) independent once you condition on <b>temperature</b>, the common cause.",
+   "Extra": "",
+   "Image": "",
+   "Section": "02 Distributions & Rules",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439705,
+  "deck": "Math4ML::Probability & Information Theory::03 Bayes' Rule",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::03 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::bayes",
+  "fields": {
+   "Text": "Bayes' rule: {{c1::\\( P(A \\mid B) = \\frac{P(B \\mid A)\\,P(A)}{P(B)} \\)}}",
+   "Extra": "Posterior ∝ likelihood × prior.",
+   "Image": "<img src=\"m4ml_map_rules.png\">",
+   "Section": "03 Bayes' Rule",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": null,
+  "source_label": null,
+  "suspended": null
+ },
+ {
+  "id": 1792626439707,
+  "deck": "Math4ML::Probability & Information Theory::03 Bayes' Rule",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::03 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::bayes",
+  "fields": {
+   "Front": "Name the four parts of Bayes' rule \\(P(A\\mid B) = P(B\\mid A)P(A)/P(B)\\).",
+   "Back": "<ul><li>\\(P(A)\\): <b>prior</b>, belief before the evidence</li><li>\\(P(B\\mid A)\\): <b>likelihood</b>, how well the idea predicts the evidence</li><li>\\(P(B)\\): <b>evidence</b> / normaliser, how common the evidence is overall</li><li>\\(P(A\\mid B)\\): <b>posterior</b>, updated belief</li></ul>",
+   "Extra": "",
+   "Image": "",
+   "Section": "03 Bayes' Rule",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": null,
+  "source_label": null,
+  "suspended": null
+ },
+ {
+  "id": 1792626439709,
+  "deck": "Math4ML::Probability & Information Theory::03 Bayes' Rule",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::03 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::bayes",
+  "fields": {
+   "Front": "In one sentence, what is Bayes' rule <b>for</b>?",
+   "Back": "To <b>flip a conditional</b>: you know P(evidence | idea) but want P(idea | evidence).",
+   "Extra": "",
+   "Image": "",
+   "Section": "03 Bayes' Rule",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": null,
+  "source_label": null,
+  "suspended": null
+ },
+ {
+  "id": 1792626439711,
+  "deck": "Math4ML::Probability & Information Theory::03 Bayes' Rule",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::03 m4ml::level::4_connect m4ml::kind::connection m4ml::topic::bayes",
+  "fields": {
+   "Front": "Derive Bayes' rule from the product rule.",
+   "Back": "\\(P(A,B) = P(A\\mid B)P(B) = P(B\\mid A)P(A)\\). Divide both sides by \\(P(B)\\).",
+   "Extra": "",
+   "Image": "",
+   "Section": "03 Bayes' Rule",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439713,
+  "deck": "Math4ML::Probability & Information Theory::03 Bayes' Rule",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::03 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::bayes",
+  "fields": {
+   "Front": "What's the <b>counting</b> way to think about Bayes?",
+   "Back": "Imagine 1,000 cases. <b>Zoom into the group that matches the evidence</b>, then ask what share of <i>them</i> has the outcome you care about.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_bayes_startup.png\">",
+   "Section": "03 Bayes' Rule",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": null,
+  "source_label": null,
+  "suspended": null
+ },
+ {
+  "id": 1792626439715,
+  "deck": "Math4ML::Probability & Information Theory::03 Bayes' Rule",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::03 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::bayes",
+  "fields": {
+   "Front": "Name 4 real situations where you reach for Bayes' rule.",
+   "Back": "Whenever the evidence is easy to measure but you care about the cause: medical tests, spam filters (“free” → spam?), fraud detection, hiring tests, AI-text detectors.",
+   "Extra": "",
+   "Image": "",
+   "Section": "03 Bayes' Rule",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": null,
+  "source_label": null,
+  "suspended": null
+ },
+ {
+  "id": 1792626439717,
+  "deck": "Math4ML::Probability & Information Theory::03 Bayes' Rule",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::03 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::bayes",
+  "fields": {
+   "Front": "What is the <b>base-rate effect</b> (base-rate fallacy)?",
+   "Back": "When the thing you're looking for is <b>rare</b>, even an accurate test's false positives (from the huge negative group) can swamp the true positives. Always ask how rare it is before trusting a test.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_bayes_detector.png\">",
+   "Section": "03 Bayes' Rule",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": null,
+  "source_label": null,
+  "suspended": null
+ },
+ {
+  "id": 1792626439719,
+  "deck": "Math4ML::Probability & Information Theory::03 Bayes' Rule",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::03 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::bayes",
+  "fields": {
+   "Problem": "1,000 startups: 50 succeed. 100 have repeat founders, and 20 of the 50 winners had repeat founders. P(success | repeat founder)?",
+   "Hint": "Zoom into the 100 repeat-founder startups.",
+   "Answer": "<b>20%</b>",
+   "Steps": "P(A) = 0.05, P(B) = 0.10, P(B|A) = 20/50 = 0.40.<br>\\(0.40 \\times 0.05 / 0.10 = 0.20\\). Counts check: 20 of the 100 repeat-founder startups succeeded.",
+   "Image": "<img src=\"m4ml_bayes_startup.png\">",
+   "Section": "03 Bayes' Rule",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": null,
+  "source_label": null,
+  "suspended": null
+ },
+ {
+  "id": 1792626439721,
+  "deck": "Math4ML::Probability & Information Theory::03 Bayes' Rule",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::03 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::bayes",
+  "fields": {
+   "Problem": "1,000 essays, 100 written by AI. A detector catches 90% of AI essays and wrongly flags 10% of human ones. An essay is flagged: P(AI)?",
+   "Hint": "False-positive rate applies to the 900 humans only.",
+   "Answer": "<b>50%</b>, a coin flip despite “90% accuracy”.",
+   "Steps": "AI flagged: 0.9 × 100 = 90. Human flagged: 0.1 × <b>900</b> = 90. Flagged total 180. P(AI | flagged) = 90/180 = 0.5.<br>Formula: 0.9 × 0.1 / 0.18 = 0.5.",
+   "Image": "<img src=\"m4ml_bayes_detector.png\">",
+   "Section": "03 Bayes' Rule",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": null,
+  "source_label": null,
+  "suspended": null
+ },
+ {
+  "id": 1792626439723,
+  "deck": "Math4ML::Probability & Information Theory::03 Bayes' Rule",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::03 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::bayes",
+  "fields": {
+   "Problem": "Same detector (90% catch, 10% false flags), but only <b>1%</b> of 1,000 essays are AI. P(AI | flagged)?",
+   "Hint": "",
+   "Answer": "≈ <b>8.3%</b>",
+   "Steps": "AI: 10 essays → 9 flagged. Humans: 990 → 99 flagged. Flagged = 108. 9/108 ≈ 0.083. Rarer target → false positives dominate even more.",
+   "Image": "<img src=\"m4ml_bayes_detector.png\">",
+   "Section": "03 Bayes' Rule",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": null,
+  "source_label": null,
+  "suspended": null
+ },
+ {
+  "id": 1792626439725,
+  "deck": "Math4ML::Probability & Information Theory::03 Bayes' Rule",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::03 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::bayes",
+  "fields": {
+   "Problem": "A disease affects 1% of people. The test catches 99% of sick people and gives 5% false positives. You test positive: P(sick)?",
+   "Hint": "Use 10,000 people.",
+   "Answer": "≈ <b>16.7%</b>",
+   "Steps": "Out of 10,000: 100 sick → 99 positive. 9,900 healthy → 495 positive. 99 / (99 + 495) = 99/594 ≈ 0.167.",
+   "Image": "",
+   "Section": "03 Bayes' Rule",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": null,
+  "source_label": null,
+  "suspended": null
+ },
+ {
+  "id": 1792626439727,
+  "deck": "Math4ML::Probability & Information Theory::03 Bayes' Rule",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::03 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::bayes",
+  "fields": {
+   "Problem": "40% of email is spam. “free” appears in 30% of spam and 2% of non-spam. An email says “free”: P(spam)?",
+   "Hint": "",
+   "Answer": "≈ <b>91%</b>",
+   "Steps": "P(free ∧ spam) = 0.3 × 0.4 = 0.12. P(free ∧ ham) = 0.02 × 0.6 = 0.012. P(free) = 0.132. 0.12/0.132 ≈ 0.909.",
+   "Image": "",
+   "Section": "03 Bayes' Rule",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": null,
+  "source_label": null,
+  "suspended": null
+ },
+ {
+  "id": 1792626439729,
+  "deck": "Math4ML::Probability & Information Theory::03 Bayes' Rule",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::03 m4ml::level::2_understand m4ml::kind::pitfall m4ml::topic::bayes",
+  "fields": {
+   "Front": "Most common slip in Bayes count problems?",
+   "Back": "Applying an error rate to the <b>wrong group</b>. The false-positive rate applies only to the negatives (10% of the 900 humans = 90, not 100).",
+   "Extra": "",
+   "Image": "",
+   "Section": "03 Bayes' Rule",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Pitfall"
+  },
+  "source_url": null,
+  "source_label": null,
+  "suspended": null
+ },
+ {
+  "id": 1792626439731,
+  "deck": "Math4ML::Probability & Information Theory::03 Bayes' Rule",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::03 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::bayes",
+  "fields": {
+   "Front": "Startup example: prior 5%, then you learn the founders built two successful companies before. Which part is prior, evidence, posterior? What's the main criticism?",
+   "Back": "Prior = 5% base rate; evidence = track record; posterior ≈ 20%. Criticism: priors can be subjective. Bayes' rule at least makes the <i>update</i> consistent maths instead of gut feel.",
+   "Extra": "",
+   "Image": "",
+   "Section": "03 Bayes' Rule",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": null,
+  "source_label": null,
+  "suspended": null
+ },
+ {
+  "id": 1792626439733,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::04 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::expectation",
+  "fields": {
+   "Text": "Expectation of a function: {{c1::\\( \\mathbb{E}[f(X)] = \\sum_x P(x)\\,f(x) \\)}}  (continuous: {{c2::\\( \\int p(x)\\,f(x)\\,dx \\)}})",
+   "Extra": "A probability-weighted average. With \\(f(x)=x\\) it's the mean μ.",
+   "Image": "<img src=\"m4ml_map_summaries.png\">",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": [
+   "should add the word discrete? this one is bad overall",
+   "same for this one, though I need to check PDFs better"
+  ]
+ },
+ {
+  "id": 1792626439736,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::04 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::expectation",
+  "fields": {
+   "Front": "Why is \\(\\mathbb{E}[X] = \\sum_x P(x)\\,x\\) “the mean”?",
+   "Back": "A sample average is \\(\\sum \\text{value} \\times \\frac{\\text{count}}{N}\\). As N grows, count/N → P(x), so the average → \\(\\sum P(x)\\,x\\). E[X] <i>is</i> the mean, defined for a distribution instead of a list.",
+   "Extra": "",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": [
+   "the answer is rly shitty and unintuitive"
+  ]
+ },
+ {
+  "id": 1792626439738,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::04 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::expectation",
+  "fields": {
+   "Front": "A die's expected value is 3.5, yet you can never roll 3.5. Why is that fine?",
+   "Back": "E[X] is where the <b>long-run average</b> settles, not a single outcome, like “2.4 children per family”.",
+   "Extra": "",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": [
+   "this is definitely not a good question"
+  ]
+ },
+ {
+  "id": 1792626439740,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::04 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::expectation",
+  "fields": {
+   "Problem": "Expected value of one fair die?",
+   "Hint": "",
+   "Answer": "\\(3.5\\)",
+   "Steps": "(1+2+3+4+5+6)/6 = 21/6 = 3.5",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439742,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::04 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::expectation",
+  "fields": {
+   "Problem": "A die is loaded: 6 comes up half the time; the other five faces share the rest equally. E[X]?",
+   "Hint": "Multiply each value by <i>its own</i> probability.",
+   "Answer": "<b>4.5</b>",
+   "Steps": "Each other face: 0.5/5 = 0.1. 6 × 0.5 = 3. (1+2+3+4+5) × 0.1 = 1.5. Total 4.5. <b>No dividing</b>, because the probabilities already sum to 1.",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439744,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::04 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::expectation",
+  "fields": {
+   "Problem": "Free game: win $10 with probability 0.2, otherwise nothing. Expected winnings?",
+   "Hint": "",
+   "Answer": "<b>$2</b>",
+   "Steps": "10 × 0.2 + 0 × 0.8 = 2",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439746,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::04 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::expectation",
+  "fields": {
+   "Problem": "Win $10 with probability 0.2, lose $5 with probability 0.8. Worth playing?",
+   "Hint": "",
+   "Answer": "No: <b>−$2</b> per game.",
+   "Steps": "+10 × 0.2 = +2, −5 × 0.8 = −4 → −2. Casinos: slightly negative EV for you, so the house wins over thousands of plays.",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439748,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::04 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::expectation",
+  "fields": {
+   "Problem": "Fair die: compute \\(\\mathbb{E}[X^2]\\).",
+   "Hint": "",
+   "Answer": "\\(91/6 \\approx 15.17\\)",
+   "Steps": "(1+4+9+16+25+36)/6 = 91/6",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439750,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::04 m4ml::level::2_understand m4ml::kind::pitfall m4ml::topic::variance",
+  "fields": {
+   "Front": "Is \\(\\mathbb{E}[X^2] = (\\mathbb{E}[X])^2\\)?",
+   "Back": "No. Die: 15.17 vs 3.5² = 12.25. The gap (≈2.92) <b>is the variance</b>. The gap is 0 only when there's no spread.",
+   "Extra": "",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Pitfall"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439752,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::04 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::variance",
+  "fields": {
+   "Text": "Variance: {{c1::\\( \\mathrm{Var}(X) = \\mathbb{E}[(X-\\mu)^2] \\)}} = {{c2::\\( \\mathbb{E}[X^2] - \\mathbb{E}[X]^2 \\)}}",
+   "Extra": "Definition = average squared distance from the mean; the second form is an algebraic shortcut.",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": [
+   "Formula fill-in: visible half gives away the hidden half → replace with a simple exercise",
+   "Formula fill-in: visible half gives away the hidden half → replace with a simple exercise"
+  ]
+ },
+ {
+  "id": 1792626439755,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::04 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::variance",
+  "fields": {
+   "Front": "Why do we <b>square</b> the distances in variance?",
+   "Back": "The plain average distance from the mean is always <b>0</b> (positives and negatives cancel). Squaring makes every distance positive and weighs big deviations more.",
+   "Extra": "",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439757,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::04 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::variance",
+  "fields": {
+   "Front": "Units of variance? What do we do about it?",
+   "Back": "Squared units (minutes², k$²), which are hard to interpret. Take the square root to get the <b>standard deviation</b>, back in original units.",
+   "Extra": "",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439759,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::04 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::variance",
+  "fields": {
+   "Text": "Standard deviation: {{c1::\\( \\sigma = \\sqrt{\\mathrm{Var}(X)} \\)}}",
+   "Extra": "",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439761,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::04 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::variance",
+  "fields": {
+   "Front": "What does a standard deviation tell you in practice?",
+   "Back": "The <b>typical distance</b> of an outcome from the mean. It's a measure of risk / consistency: same average, different predictability (delivery apps, investments).",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_variance_apps.png\">",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439763,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::04 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::variance",
+  "fields": {
+   "Front": "Why do maths texts prefer variance and practitioners std?",
+   "Back": "Variance has nicer algebra: easy to <b>differentiate</b> (no square root), and it adds for independent variables (\\(\\mathrm{Var}(X+Y)=\\mathrm{Var}X+\\mathrm{Var}Y\\)). Std is interpretable in original units.",
+   "Extra": "",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439765,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::04 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::variance",
+  "fields": {
+   "Problem": "Game A always pays 5. Game B pays 0 or 10, 50/50. Mean and variance of each?",
+   "Hint": "",
+   "Answer": "Both mean 5. Var(A) = 0, Var(B) = 25 (σ = 5).",
+   "Steps": "B: E[X²] = (0 + 100)/2 = 50; 50 − 5² = 25. Same average, B is spread out.",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439767,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::04 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::variance",
+  "fields": {
+   "Problem": "App A delivers in 28 or 32 min (50/50); App B in 10 or 50 min (50/50). Variance and std of each?",
+   "Hint": "",
+   "Answer": "A: Var 4 min², σ 2 min. B: Var 400 min², σ 20 min.",
+   "Steps": "Both means are 30. A: every delivery is 2 away → 2² = 4. B: every delivery is 20 away (20 early or 20 late) → 400. σ = 20 means “typically 20 min off the average”.",
+   "Image": "<img src=\"m4ml_variance_apps.png\">",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439769,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::04 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::variance",
+  "fields": {
+   "Problem": "Sign-ups: 0 or 10 per day, 50/50. Find E, Var, σ.",
+   "Hint": "",
+   "Answer": "E = 5, Var = 25, σ = 5",
+   "Steps": "Var = 0.5·(0−5)² + 0.5·(10−5)² = 12.5 + 12.5 = 25. Shortcut: E[X²] − 5² = 50 − 25 = 25.",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439771,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::04 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::variance",
+  "fields": {
+   "Problem": "Sign-ups: 0 w.p. 0.2, 5 w.p. 0.5, 10 w.p. 0.3. Find E, Var, σ.",
+   "Hint": "Square the distance <i>first</i>, then weight.",
+   "Answer": "E = 5.5, Var = 12.25, σ = 3.5",
+   "Steps": "E = 0 + 2.5 + 3 = 5.5.<br>0.2·(−5.5)² = 6.05; 0.5·(−0.5)² = 0.125; 0.3·(4.5)² = 6.075; sum 12.25 → σ = 3.5.",
+   "Image": "<img src=\"m4ml_signups.png\">",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439773,
+  "deck": "Math4ML::Probability & Information Theory::04 Expectation · Variance · Std",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::04 m4ml::level::2_understand m4ml::kind::pitfall m4ml::topic::variance",
+  "fields": {
+   "Front": "Two classic slips when computing a weighted variance?",
+   "Back": "<ol><li>Forgetting the weights: 25 + 25 = 50 is wrong; it's 0.5·25 + 0.5·25 = 25.</li><li>Wrong order: it's \\(P(x)\\cdot(x-\\mu)^2\\), not \\((P(x)\\cdot(x-\\mu))^2\\). Square first, then weight.</li></ol>",
+   "Extra": "",
+   "Image": "",
+   "Section": "04 Expectation · Variance · Std",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Pitfall"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439775,
+  "deck": "Math4ML::Probability & Information Theory::05 Mode & Median",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::05 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::mode-median",
+  "fields": {
+   "Front": "Define the <b>mode</b> of a distribution.",
+   "Back": "The <b>most probable</b> value (highest P), not the biggest value.",
+   "Extra": "",
+   "Image": "",
+   "Section": "05 Mode & Median",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439777,
+  "deck": "Math4ML::Probability & Information Theory::05 Mode & Median",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::05 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::mode-median",
+  "fields": {
+   "Front": "Define the <b>median</b> of a distribution.",
+   "Back": "Sort outcomes <b>by value</b>, accumulate probability, and take the value where the cumulative probability first reaches 0.5.",
+   "Extra": "",
+   "Image": "",
+   "Section": "05 Mode & Median",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439779,
+  "deck": "Math4ML::Probability & Information Theory::05 Mode & Median",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::05 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::mode-median",
+  "fields": {
+   "Problem": "Sign-ups: 0 (0.2), 5 (0.5), 10 (0.3). Mode, median, mean?",
+   "Hint": "",
+   "Answer": "Mode 5, median 5, mean 5.5",
+   "Steps": "Mode: biggest probability is 0.5 at 5. Median: 0.2 at 0, then 0.7 at 5, which crosses 0.5. Mean is pulled up by the 10-sign-up days.",
+   "Image": "<img src=\"m4ml_signups.png\">",
+   "Section": "05 Mode & Median",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439781,
+  "deck": "Math4ML::Probability & Information Theory::05 Mode & Median",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::05 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::mode-median",
+  "fields": {
+   "Problem": "Values 2, 5, 3, each with probability 1/3. Median?",
+   "Hint": "",
+   "Answer": "<b>3</b>",
+   "Steps": "Sort by value: 2, 3, 5. Cumulative: 0.33, 0.67 → 3 crosses 0.5. Listing order doesn't matter.",
+   "Image": "",
+   "Section": "05 Mode & Median",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439783,
+  "deck": "Math4ML::Probability & Information Theory::05 Mode & Median",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::05 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::mode-median",
+  "fields": {
+   "Front": "Which of mean / median / mode work for <b>names or colours</b>, and why?",
+   "Back": "Only the <b>mode</b>. The median needs an order, and the mean needs numbers. The mode only asks which is most common.",
+   "Extra": "",
+   "Image": "",
+   "Section": "05 Mode & Median",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439785,
+  "deck": "Math4ML::Probability & Information Theory::05 Mode & Median",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::05 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::mode-median",
+  "fields": {
+   "Front": "Why can the mean differ from the median?",
+   "Back": "Skew: the mean gets pulled toward a long tail or toward big values, while the median only cares about the halfway point.",
+   "Extra": "",
+   "Image": "",
+   "Section": "05 Mode & Median",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439787,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::normalization",
+  "fields": {
+   "Front": "What does “normalized” mean? Give 5 example constraints.",
+   "Back": "Data transformed to satisfy a constraint: Σ = 1, range [0, 1], μ = 0 & σ = 1, length ‖x‖ = 1, max = 1.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_map_norm.png\">",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.%20Normalization",
+  "source_label": "Math › 3. Normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439789,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::normalization",
+  "fields": {
+   "Front": "What are the two families of normalization?",
+   "Back": "<b>Probability normalization</b>: make a valid distribution (divide by sum, softmax).<br><b>Scale normalization</b>: centre and/or rescale values (z-score / LayerNorm, RMSNorm, L2).",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_map_norm.png\">",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.%20Normalization",
+  "source_label": "Math › 3. Normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439791,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::06 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::softmax",
+  "fields": {
+   "Text": "Softmax: {{c1::\\( \\mathrm{softmax}(x)_i = \\frac{e^{x_i} }{\\sum_j e^{x_j} } \\)}}",
+   "Extra": "Exponentiate, then divide by the sum.",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.1.%20Probability%20normalization",
+  "source_label": "Math › 3.1. Probability normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439793,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::06 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::softmax",
+  "fields": {
+   "Problem": "Scores [2, 1, 1]. Normalise by (a) dividing by the sum, (b) softmax.",
+   "Hint": "",
+   "Answer": "(a) 0.50, 0.25, 0.25 (b) ≈ 0.58, 0.21, 0.21",
+   "Steps": "Softmax: e² ≈ 7.39, e¹ ≈ 2.72; sum ≈ 12.83 → 0.576, 0.212, 0.212. The leader gains share: softmax amplifies gaps.",
+   "Image": "<img src=\"m4ml_softmax.png\">",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.1.%20Probability%20normalization",
+  "source_label": "Math › 3.1. Probability normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439795,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::softmax",
+  "fields": {
+   "Front": "What is softmax's <b>shift invariance</b>, and why does it hold?",
+   "Back": "\\(\\mathrm{softmax}(x + c) = \\mathrm{softmax}(x)\\): the factor \\(e^c\\) appears in numerator and denominator and cancels. Only <b>differences</b> between logits matter. [12, 11, 11] gives the same 0.58/0.21/0.21; dividing by the sum would give 0.35/0.32/0.32.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_softmax.png\">",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.1.%20Probability%20normalization",
+  "source_label": "Math › 3.1. Probability normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439797,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::softmax",
+  "fields": {
+   "Front": "Why does every implementation subtract max(x) before softmax?",
+   "Back": "It gives the same result (shift invariance) and prevents overflow from things like \\(e^{1000}\\).",
+   "Extra": "",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.1.%20Probability%20normalization",
+  "source_label": "Math › 3.1. Probability normalization",
+  "suspended": [
+   "I don't understand this card, what?"
+  ]
+ },
+ {
+  "id": 1792626439799,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::softmax",
+  "fields": {
+   "Front": "Softmax ignores shifts. What happens if you <b>multiply</b> the logits by 10?",
+   "Back": "The gaps grow 10× ([2,1,1] → [20,10,10]), so the top option gets ≈ 99.99%. Softmax is <b>scale-sensitive</b>. That's exactly what temperature controls.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_softmax.png\">",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.1.%20Probability%20normalization",
+  "source_label": "Math › 3.1. Probability normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439801,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::06 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::softmax",
+  "fields": {
+   "Problem": "Two logits differ by 1. By 5. What's the ratio of their softmax probabilities?",
+   "Hint": "",
+   "Answer": "\\(e^1 \\approx 2.7\\times\\) and \\(e^5 \\approx 148\\times\\)",
+   "Steps": "A gap Δ becomes a ratio \\(e^{\\Delta}\\), which is why the largest logit quickly takes most of the mass.",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.1.%20Probability%20normalization",
+  "source_label": "Math › 3.1. Probability normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439803,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::formula m4ml::topic::softmax",
+  "fields": {
+   "Text": "Temperature: {{c1::\\( \\mathrm{softmax}(x / T) \\)}}. Small T → {{c2::sharper / more peaked (→ argmax)}}; large T → {{c3::flatter (→ uniform)}}.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_temperature.png\">",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.1.%20Probability%20normalization",
+  "source_label": "Math › 3.1. Probability normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439807,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::softmax",
+  "fields": {
+   "Front": "Why is it called <b>soft</b>max?",
+   "Back": "It's a smooth, differentiable version of <b>argmax</b>: the biggest logit takes most of the probability, yet gradients still reach every option.",
+   "Extra": "",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.1.%20Probability%20normalization",
+  "source_label": "Math › 3.1. Probability normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439809,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::softmax",
+  "fields": {
+   "Front": "Why softmax instead of just dividing scores by their sum? (3 reasons)",
+   "Back": "<ol><li>Handles <b>negative</b> scores: \\(e^x > 0\\) always.</li><li>Smooth and easy to <b>differentiate</b>.</li><li>Pairs with <b>cross-entropy</b>: the log cancels the exp, giving gradient = prediction − target.</li></ol>",
+   "Extra": "",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.1.%20Probability%20normalization",
+  "source_label": "Math › 3.1. Probability normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439811,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::pitfall m4ml::topic::softmax",
+  "fields": {
+   "Front": "Does softmax make distributions truly sparse?",
+   "Back": "No. \\(e^x > 0\\) means no output is ever exactly 0, so “peaked” or “low-entropy” is more accurate. For true zeros, see <i>sparsemax</i>.",
+   "Extra": "",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Pitfall"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439813,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::4_connect m4ml::kind::connection m4ml::topic::softmax",
+  "fields": {
+   "Front": "Derive the gradient of cross-entropy loss through softmax (target index i).",
+   "Back": "\\(-\\log \\mathrm{softmax}(x)_i = -x_i + \\log\\sum_j e^{x_j}\\). Differentiate w.r.t. \\(x_j\\): \\(\\mathrm{softmax}(x)_j - \\mathbb{1}[j=i]\\) = <b>prediction − one-hot target</b>.",
+   "Extra": "",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.1.%20Probability%20normalization",
+  "source_label": "Math › 3.1. Probability normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439815,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::scale-norm",
+  "fields": {
+   "Front": "Why do we need <b>scale</b> normalization at all? (features + deep nets)",
+   "Back": "<b>Features</b>: house size (~2,000 sq ft) would drown out bedrooms (~3) purely because of units. Standardising puts every feature on a level playing field.<br><b>Deep nets</b>: values passing through many layers drift and blow up or shrink. Normalising keeps each layer in a steady range, so training stays stable.",
+   "Extra": "",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439817,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::06 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::scale-norm",
+  "fields": {
+   "Text": "z-score: {{c1::\\( z = \\frac{x - \\mu}{\\sigma} \\)}}",
+   "Extra": "Step 1 centre (μ → 0), step 2 rescale (σ → 1).",
+   "Image": "<img src=\"m4ml_zscore.png\">",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439819,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::scale-norm",
+  "fields": {
+   "Front": "What question does a z-score answer, and how does it reframe the value?",
+   "Back": "“How many <b>standard deviations</b> is this from the mean?” It changes “how big is it?” into “how unusual is it compared with its group?”",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_zscore.png\">",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439821,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::scale-norm",
+  "fields": {
+   "Front": "What does <b>centring</b> (subtracting the mean) achieve, and when is it useful?",
+   "Back": "It measures values relative to the group average, which removes a shared offset (e.g. everyone's scores bumped by an easy exam). In networks, values balanced around 0 keep gradients well behaved; all-positive inputs make weight updates zig-zag.",
+   "Extra": "",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439823,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::06 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::scale-norm",
+  "fields": {
+   "Problem": "Standardise [2, 4, 6].",
+   "Hint": "",
+   "Answer": "≈ [−1.22, 0, 1.22]",
+   "Steps": "μ = 4 → deviations [−2, 0, 2]. Var = (4 + 0 + 4)/3 = 8/3 ≈ 2.67 → σ ≈ 1.63. Divide: −2/1.63 ≈ −1.22.",
+   "Image": "<img src=\"m4ml_zscore.png\">",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439825,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::06 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::scale-norm",
+  "fields": {
+   "Problem": "Check that [−1.22, 0, 1.22] has std 1.",
+   "Hint": "",
+   "Answer": "Squares ≈ 1.5, 0, 1.5 → mean 1 → σ = 1 ✓",
+   "Steps": "",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439827,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::06 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::scale-norm",
+  "fields": {
+   "Text": "LayerNorm: {{c1::\\( \\mathrm{LN}(x) = \\gamma \\odot \\frac{x - \\mu}{\\sqrt{\\sigma^2 + \\epsilon} } + \\beta \\)}}",
+   "Extra": "γ, β learned (can undo the normalization where helpful); ε keeps the division stable.",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439829,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::scale-norm",
+  "fields": {
+   "Front": "LayerNorm vs classic standardization: same formula, different <b>axis</b>. Explain.",
+   "Back": "Classic: normalise each <b>feature across samples</b> in the dataset.<br>LayerNorm: normalise <b>across the features of one sample</b> (e.g. the 768 dims of a single token), using that token's own μ and σ. Plus learned γ, β and ε.",
+   "Extra": "",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439831,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::scale-norm",
+  "fields": {
+   "Front": "What does LayerNorm make the network focus on?",
+   "Back": "The token's <b>pattern</b> (which features stand out relative to the rest), not its overall loudness.",
+   "Extra": "",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": [
+   "Vague or pedantic 'why' → replace with a concrete step or exercise"
+  ]
+ },
+ {
+  "id": 1792626439833,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::06 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::scale-norm",
+  "fields": {
+   "Text": "RMSNorm: {{c1::\\( \\frac{x}{\\mathrm{RMS}(x) + \\epsilon}\\,\\gamma \\)}}, with {{c2::\\( \\mathrm{RMS}(x) = \\sqrt{\\tfrac{1}{d}\\sum_i x_i^2} \\)}}",
+   "Extra": "",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439836,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::scale-norm",
+  "fields": {
+   "Front": "RMSNorm vs LayerNorm: the key difference and why it's used.",
+   "Back": "RMSNorm <b>drops centring</b> (no mean subtraction, no β) and only rescales. The rescaling does most of the stabilising work, so it's cheaper and simpler and performs <b>about as well in practice</b> (not mathematically equal). Used in Llama and other big LLMs.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_norms.png\">",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439838,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::06 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::scale-norm",
+  "fields": {
+   "Problem": "RMSNorm of [2, 4, 6] (γ = 1, ε = 0).",
+   "Hint": "",
+   "Answer": "≈ [0.46, 0.93, 1.39]",
+   "Steps": "RMS = √((4 + 16 + 36)/3) = √18.67 ≈ 4.32. Divide each value. Note: not centred, all still positive.",
+   "Image": "<img src=\"m4ml_norms.png\">",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439840,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::06 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::scale-norm",
+  "fields": {
+   "Text": "L2 normalization: {{c1::\\( \\hat x = \\frac{x}{\\lVert x \\rVert_2} \\)}}, where {{c2::\\( \\lVert x \\rVert_2 = \\sqrt{\\sum_i x_i^2} \\)}}",
+   "Extra": "Result has length 1, so only direction remains.",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439843,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::06 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::scale-norm",
+  "fields": {
+   "Problem": "L2-normalise [3, 4].",
+   "Hint": "",
+   "Answer": "[0.6, 0.8]",
+   "Steps": "‖x‖ = √(9 + 16) = 5",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439845,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::scale-norm",
+  "fields": {
+   "Front": "L2 normalization keeps what and discards what? When do you use it?",
+   "Back": "Keeps <b>direction</b>, discards <b>length</b>. Used when comparing embeddings (cosine similarity), where you care which way they point, not how big they are.",
+   "Extra": "",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439847,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::2_understand m4ml::kind::connection m4ml::topic::scale-norm",
+  "fields": {
+   "Front": "How are RMS and the L2 norm related? What does each normalization produce?",
+   "Back": "\\(\\mathrm{RMS}(x) = \\lVert x\\rVert_2 / \\sqrt{n}\\). After L2: the vector's total length is 1. After RMSNorm: each entry is about 1 in size <i>on average</i>.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_norms.png\">",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
+  "source_label": "Math › 3.2. Scale normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439849,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::4_connect m4ml::kind::connection m4ml::topic::normalization",
+  "fields": {
+   "Front": "Invariances: which of softmax / LayerNorm / RMSNorm ignore <b>shifting</b> the input? <b>Scaling</b> it?",
+   "Back": "<ul><li><b>Softmax</b>: shift-invariant, scale-<i>sensitive</i></li><li><b>LayerNorm</b>: invariant to both (subtracts mean, divides by σ)</li><li><b>RMSNorm</b>: scale-invariant, <i>not</i> shift-invariant (no centring)</li></ul>",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_map_norm.png\">",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.%20Normalization",
+  "source_label": "Math › 3. Normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792699614179,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::06 m4ml::level::4_connect m4ml::kind::synthesis m4ml::topic::softmax",
+  "fields": {
+   "Front": "Explain <b>softmax</b> as you would in an interview.",
+   "Back": "<b>1. What it does.</b> A <i>probability</i> normalization (not a <i>scale</i> one like LayerNorm, RMSNorm or L2): it turns any real-valued scores (logits) into a distribution. Every output is &gt; 0 and they sum to 1.<br><br>\n<b>2. Formula.</b> Exponentiate, then divide by the sum; temperature divides the logits first:\n\\[\\mathrm{softmax}(x)_i = \\frac{e^{x_i}}{\\sum_j e^{x_j}}, \\qquad \\mathrm{softmax}(x/T)\\]\n<b>3. Compared with dividing by the sum</b>, \\(x_i / \\sum_j x_j\\):\n<table style=\"border-collapse:collapse;font-size:16px;margin:6px 0 4px;width:100%\">\n<tr><th style=\"padding:5px 8px;border-bottom:1px solid #9ca3af;text-align:left\"></th><th style=\"padding:5px 8px;border-bottom:1px solid #9ca3af;text-align:left\">Divide by the sum</th><th style=\"padding:5px 8px;border-bottom:1px solid #9ca3af;text-align:left\">Softmax</th></tr>\n<tr><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\">Inputs</td><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\">must be ≥ 0 (breaks on negatives or a zero sum)</td><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\">any real numbers</td></tr>\n<tr><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\">What matters</td><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\"><b>ratios</b>: \\(p_i/p_j = x_i/x_j\\)</td><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\"><b>differences</b>: \\(p_i/p_j = e^{x_i - x_j}\\)</td></tr>\n<tr><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\">Add a constant</td><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\">changes the output</td><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\">no change (<b>shift-invariant</b>)</td></tr>\n<tr><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\">Multiply by a constant</td><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\">no change (<b>scale-invariant</b>)</td><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\">changes the output (<b>scale-sensitive</b>)</td></tr>\n<tr><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\">Gaps</td><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\">keeps proportions</td><td style=\"padding:5px 8px;border-bottom:1px solid #e5e7eb;vertical-align:top\"><b>amplifies</b> them; the leader gains share</td></tr>\n</table><br>\n<b>4. Key properties</b>\n<ul>\n<li><b>Shift invariance</b>: \\(e^c\\) cancels top and bottom, so implementations subtract \\(\\max(x)\\) first to avoid overflow (\\(e^{1000}\\)).</li>\n<li><b>Temperature</b>: T → 0 approaches argmax (one-hot); T → ∞ approaches uniform.</li>\n<li><b>Soft argmax</b>: smooth, differentiable, order-preserving. \\(\\partial p_i/\\partial x_j = p_i(\\delta_{ij} - p_j)\\).</li>\n<li><b>Never exactly 0</b> (\\(e^x &gt; 0\\)): peaked, not sparse. Sparsemax gives true zeros.</li>\n<li><b>With cross-entropy</b>: \\(\\log \\mathrm{softmax}(x)_i = x_i - \\mathrm{logsumexp}(x)\\), so the gradient is <b>prediction − one-hot target</b>.</li>\n<li><b>Two classes</b> reduce to the sigmoid: \\(\\mathrm{softmax}([a, 0])_1 = \\sigma(a)\\).</li>\n</ul>\n<b>5. Example: logits [2, 1, 1]</b>\n<ul>\n<li>Divide by the sum: <b>0.50 / 0.25 / 0.25</b></li>\n<li>Softmax: e² ≈ 7.39, e ≈ 2.72, sum ≈ 12.83 → <b>0.576 / 0.212 / 0.212</b></li>\n<li>Shift +10 → [12, 11, 11]: softmax unchanged; divide-by-sum gives 0.35 / 0.32 / 0.32</li>\n<li>Scale ×10 → [20, 10, 10]: softmax ≈ 0.9999 / 0.00005 / 0.00005; divide-by-sum unchanged</li>\n</ul>",
+   "Extra": "<b>Where it shows up</b>: the last layer of classifiers and of LLMs picking the next token, attention weights \\(\\mathrm{softmax}(QK^\\top/\\sqrt{d})\\), RL policies \\(\\pi(a \\mid s)\\).<br><b>Grade</b>: all 5 parts → Good · one missing → Hard · two or more missing → Again.",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Synthesis"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.1.%20Probability%20normalization",
+  "source_label": "Math › 3.1. Probability normalization",
+  "suspended": null
+ },
+ {
+  "id": 1792626439851,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::07 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::covariance",
+  "fields": {
+   "Text": "Covariance: {{c1::\\( \\mathrm{Cov}(X,Y) = \\mathbb{E}[(X-\\mu_X)(Y-\\mu_Y)] \\)}}",
+   "Extra": "Average product of deviations, weighted by the joint P(x, y).",
+   "Image": "<img src=\"m4ml_cov.png\">",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": [
+   "Formula fill-in with no question (bare name) → replace with a simple exercise"
+  ]
+ },
+ {
+  "id": 1792626439853,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::07 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::covariance",
+  "fields": {
+   "Front": "How do you read the <b>sign</b> of covariance?",
+   "Back": "<b>+</b> move together (above-average X with above-average Y); <b>−</b> move in opposite directions; <b>≈ 0</b> no linear relationship.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_cov.png\">",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439855,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::07 m4ml::level::2_understand m4ml::kind::pitfall m4ml::topic::covariance",
+  "fields": {
+   "Front": "Units of covariance? Why is its magnitude hard to read?",
+   "Back": "(unit of X) × (unit of Y), e.g. hours × points. Probabilities have no units. Measuring hours in minutes multiplies Cov by 60 although the relationship is unchanged.",
+   "Extra": "",
+   "Image": "",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Pitfall"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439857,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::07 m4ml::level::2_understand m4ml::kind::connection m4ml::topic::covariance",
+  "fields": {
+   "Front": "Relationship between variance and covariance?",
+   "Back": "\\(\\mathrm{Var}(X) = \\mathrm{Cov}(X, X)\\)",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_map_rel.png\">",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439859,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::07 m4ml::level::2_understand m4ml::kind::pitfall m4ml::topic::covariance",
+  "fields": {
+   "Front": "Independent ⇒ Cov = 0. Does Cov = 0 ⇒ independent?",
+   "Back": "<b>No.</b> Covariance only detects linear patterns. An inverted-U relationship can have Cov ≈ 0 and still be strongly dependent.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_corr.png\">",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Pitfall"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439861,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::07 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::correlation",
+  "fields": {
+   "Text": "Correlation: {{c1::\\( \\rho = \\frac{\\mathrm{Cov}(X,Y)}{\\sigma_X\\,\\sigma_Y} \\)}}, always in {{c2::[−1, 1]}}",
+   "Extra": "Standardised covariance = average product of z-scores. Unitless.",
+   "Image": "<img src=\"m4ml_corr.png\">",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439864,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::07 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::correlation",
+  "fields": {
+   "Front": "Interpret ρ = 0.8.",
+   "Back": "When X is 1σ above its mean, Y is on average 0.8σ above its mean (2σ → 1.6σ; below → below). Unitless.",
+   "Extra": "",
+   "Image": "",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439866,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::07 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::correlation",
+  "fields": {
+   "Problem": "You switch study time from hours to minutes. What happens to Cov(hours, score)? To the correlation?",
+   "Hint": "",
+   "Answer": "Covariance ×60; correlation <b>unchanged</b>.",
+   "Steps": "Correlation divides by σ_X, which also grows ×60, so the units cancel.",
+   "Image": "",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439868,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::07 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::correlation",
+  "fields": {
+   "Problem": "(X, Y) takes values (1,2), (2,4), (3,6), each with probability 1/3. Compute Cov and ρ.",
+   "Hint": "",
+   "Answer": "Cov = 4/3 ≈ 1.33; ρ = 1",
+   "Steps": "μX = 2, μY = 4. Products: (−1)(−2) = 2, 0, (1)(2) = 2 → mean 4/3. σX = √(2/3), σY = √(8/3), product = 4/3 → ρ = 1 (perfectly linear).",
+   "Image": "",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439870,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::07 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::correlation",
+  "fields": {
+   "Front": "Give an example of a strong relationship with correlation ≈ 0.",
+   "Back": "Stress vs performance: too little → sluggish, moderate → sharp, too much → falls apart. Inverted U: the rising and falling halves cancel in a straight-line fit.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_corr.png\">",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439872,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::07 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::causation",
+  "fields": {
+   "Front": "What is <b>causation</b>, formally? How does it differ from conditioning?",
+   "Back": "\\(P(Y \\mid \\mathrm{do}(X))\\): what happens to Y if you <b>intervene</b> and set X, vs \\(P(Y\\mid X)\\), which is just <b>observing</b> X.",
+   "Extra": "",
+   "Image": "",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439874,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::07 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::causation",
+  "fields": {
+   "Front": "Ice-cream sales and drownings are correlated. Does banning ice cream save lives?",
+   "Back": "No. A <b>confounder</b> (hot weather) drives both. Correlation ≠ causation.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_map_rel.png\">",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439876,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::07 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::sparsity",
+  "fields": {
+   "Front": "Sparse vs dense distribution? How does it relate to entropy?",
+   "Back": "<b>Sparse/peaked</b>: mass on a few outcomes (e.g. [0.001, 0.002, 0.995, …]). <b>Dense</b>: spread evenly ([0.33, 0.33, 0.33]). Sparse ↔ <b>low entropy</b>.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_map_rel.png\">",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439878,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::07 m4ml::level::2_understand m4ml::kind::formula m4ml::topic::sparsity",
+  "fields": {
+   "Text": "A normalized sparsity score: {{c1::\\( 1 - \\frac{H(p)}{\\log n} \\)}}",
+   "Extra": "\\(\\log n\\) = max entropy (uniform over n outcomes).",
+   "Image": "",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439880,
+  "deck": "Math4ML::Probability & Information Theory::07 Covariance · Correlation · Causation · Sparsity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::07 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::sparsity",
+  "fields": {
+   "Problem": "Sparsity score \\(1 - H(p)/\\log n\\) of (a) a uniform distribution, (b) a one-hot distribution?",
+   "Hint": "",
+   "Answer": "(a) 0  (b) 1",
+   "Steps": "Uniform has max entropy log n; one-hot has entropy 0.",
+   "Image": "",
+   "Section": "07 Covariance · Correlation · Causation · Sparsity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
+  "source_label": "Math › 4. More Definitions",
+  "suspended": null
+ },
+ {
+  "id": 1792626439882,
+  "deck": "Math4ML::Probability & Information Theory::08 Loss Functions · MSE",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::08 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::loss",
+  "fields": {
+   "Text": "Expected loss: {{c1::\\( \\mathbb{E}_{(x,y)\\sim \\mathcal{D} }\\left[\\ell(f(x), y)\\right] \\)}}",
+   "Extra": "Loss is just an expectation: the average error over the data, under the model's current weights.",
+   "Image": "",
+   "Section": "08 Loss Functions · MSE",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": [
+   "Formula fill-in with no question (bare name) → replace with a simple exercise"
+  ]
+ },
+ {
+  "id": 1792626439884,
+  "deck": "Math4ML::Probability & Information Theory::08 Loss Functions · MSE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::08 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::loss",
+  "fields": {
+   "Front": "What is “the loss” conceptually, and what does training do with it?",
+   "Back": "The <b>expected error</b> of the model <i>with its current settings</i>. Training nudges the weights to lower it, re-measures, and repeats. You choose the error function ℓ to suit the problem.",
+   "Extra": "",
+   "Image": "",
+   "Section": "08 Loss Functions · MSE",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439886,
+  "deck": "Math4ML::Probability & Information Theory::08 Loss Functions · MSE",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::08 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::loss",
+  "fields": {
+   "Text": "Mean squared error: {{c1::\\( \\mathrm{MSE} = \\frac{1}{N}\\sum_i (\\hat y_i - y_i)^2 \\)}}",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_mse.png\">",
+   "Section": "08 Loss Functions · MSE",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439888,
+  "deck": "Math4ML::Probability & Information Theory::08 Loss Functions · MSE",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::08 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::loss",
+  "fields": {
+   "Problem": "Three equally likely houses; the model is off by 10, 0 and 20 (k$). MSE?",
+   "Hint": "",
+   "Answer": "≈ <b>166.7</b> (k$)²",
+   "Steps": "(100 + 0 + 400)/3 = 500/3. The 20-off house alone contributes 400 of the 500.",
+   "Image": "<img src=\"m4ml_mse.png\">",
+   "Section": "08 Loss Functions · MSE",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439890,
+  "deck": "Math4ML::Probability & Information Theory::08 Loss Functions · MSE",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::08 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::loss",
+  "fields": {
+   "Problem": "Model predicts 300k, house is worth 310k. Squared error (in thousands)?",
+   "Hint": "",
+   "Answer": "100, in (thousand $)², not $100,000.",
+   "Steps": "Same squared-units quirk as variance.",
+   "Image": "",
+   "Section": "08 Loss Functions · MSE",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439892,
+  "deck": "Math4ML::Probability & Information Theory::08 Loss Functions · MSE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::08 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::loss",
+  "fields": {
+   "Front": "Why does MSE punish big misses so hard?",
+   "Back": "Squaring: 2× the error → 4× the loss. An error of 20 costs 400; an error of 10 costs 100.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_mse.png\">",
+   "Section": "08 Loss Functions · MSE",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439894,
+  "deck": "Math4ML::Probability & Information Theory::08 Loss Functions · MSE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::08 m4ml::level::4_connect m4ml::kind::connection m4ml::topic::loss",
+  "fields": {
+   "Front": "How is MSE related to variance?",
+   "Back": "Variance is the MSE you get by always predicting the constant μ, and the mean is the <b>best constant prediction</b> under MSE.",
+   "Extra": "",
+   "Image": "",
+   "Section": "08 Loss Functions · MSE",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439896,
+  "deck": "Math4ML::Probability & Information Theory::08 Loss Functions · MSE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::08 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::loss",
+  "fields": {
+   "Front": "Squared vs absolute vs cross-entropy loss: when to use each?",
+   "Back": "<ul><li><b>Squared</b>: regression on numbers; punishes big misses hard</li><li><b>Absolute</b>: gentler on outliers / big misses</li><li><b>Cross-entropy</b>: classification / predicting probabilities</li></ul>",
+   "Extra": "",
+   "Image": "",
+   "Section": "08 Loss Functions · MSE",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
+  "source_label": "Math › 2.2 Terminology",
+  "suspended": null
+ },
+ {
+  "id": 1792626439898,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::surprise",
+  "fields": {
+   "Text": "Surprise (self-information): {{c1::\\( I(x) = -\\log p(x) = \\log\\frac{1}{p(x)} \\)}}",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_surprise.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": [
+   "the prompt doesn't make any fucking sense, like I have no idea what's asking"
+  ]
+ },
+ {
+  "id": 1792626439900,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::surprise",
+  "fields": {
+   "Front": "Three properties surprise should have, and that \\(-\\log p\\) satisfies.",
+   "Back": "<ol><li>Certain event (p = 1) → 0 surprise</li><li>Rarer → more surprising</li><li>Independent events → surprises <b>add</b></li></ol>",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_surprise.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": [
+   "question is wrong, wtf, surprise has 3 properties maybe is the question"
+  ]
+ },
+ {
+  "id": 1792626439902,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::surprise",
+  "fields": {
+   "Front": "Why define surprise with \\(\\log\\), not \\(1/p\\)?",
+   "Back": "<b>Additivity</b>: independent probabilities multiply, but surprises should add (two heads = 1 + 1 = 2 bits). Only the log turns × into +. (1/p <i>is</i> differentiable, so that isn't the reason.)",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439904,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::surprise",
+  "fields": {
+   "Front": "Why the <b>minus</b> sign in \\(-\\log p\\)?",
+   "Back": "For p < 1, \\(\\log p\\) is negative. The minus flips it positive, which gives a surprise / loss you can push down.",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.2%20Logs%20and%20bits",
+  "source_label": "Math › 5.2 Logs and bits",
+  "suspended": [
+   "I don't rly know if this is correct, and don't understand it, is not triggering a connection or smth"
+  ]
+ },
+ {
+  "id": 1792626439906,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::09 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::surprise",
+  "fields": {
+   "Problem": "Surprise in bits for p = 1, 1/2, 1/4, 1/8?",
+   "Hint": "",
+   "Answer": "0, 1, 2, 3 bits",
+   "Steps": "Each halving of p adds one bit. \\(\\log_2\\) asks “2 to what power gives this?”: \\(2^{-1} = 1/2\\) so \\(\\log_2(1/2) = -1\\).",
+   "Image": "<img src=\"m4ml_surprise.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439908,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::09 m4ml::level::3_apply m4ml::kind::pitfall m4ml::topic::surprise",
+  "fields": {
+   "Problem": "Surprise of p = 0.9 in bits and in nats?",
+   "Hint": "",
+   "Answer": "≈ 0.152 bits; ≈ 0.105 nats",
+   "Steps": "\\(-\\log_2 0.9 \\approx 0.152\\), \\(-\\ln 0.9 \\approx 0.105\\). (0.045 would be log base 10, a common slip.)",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Pitfall"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.2%20Logs%20and%20bits",
+  "source_label": "Math › 5.2 Logs and bits",
+  "suspended": null
+ },
+ {
+  "id": 1792626439910,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::logs",
+  "fields": {
+   "Front": "What is a <b>bit</b>, intuitively?",
+   "Back": "The number of yes/no questions needed to pin something down. 1 bit = the information in one fair coin flip.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_bits_tree.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.2%20Logs%20and%20bits",
+  "source_label": "Math › 5.2 Logs and bits",
+  "suspended": null
+ },
+ {
+  "id": 1792626439912,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::09 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::logs",
+  "fields": {
+   "Problem": "Guess a number from 1 to 8 with yes/no questions. How many? What are good questions?",
+   "Hint": "",
+   "Answer": "<b>3</b> = \\(\\log_2 8\\)",
+   "Steps": "Q1 “> 4?” → Q2 “> 6?” (or “> 2?”) → Q3 “> 7?” (etc.) → answer. Each question halves the options.",
+   "Image": "<img src=\"m4ml_bits_tree.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.2%20Logs%20and%20bits",
+  "source_label": "Math › 5.2 Logs and bits",
+  "suspended": null
+ },
+ {
+  "id": 1792626439914,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::09 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::logs",
+  "fields": {
+   "Problem": "Numbers 1 to 1,024: how many yes/no questions?",
+   "Hint": "",
+   "Answer": "10 bits",
+   "Steps": "\\(2^{10} = 1024\\)",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.2%20Logs%20and%20bits",
+  "source_label": "Math › 5.2 Logs and bits",
+  "suspended": null
+ },
+ {
+  "id": 1792626439916,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::logs",
+  "fields": {
+   "Front": "Bits vs nats? Convert between them.",
+   "Back": "Same quantity, different units: <b>bits</b> use \\(\\log_2\\); <b>nats</b> use \\(\\ln\\) (base e).<br>1 nat ≈ 1.44 bits; 1 bit = ln 2 ≈ 0.693 nats. Changing the base rescales every number by a constant, so it never changes which model is best.",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.2%20Logs%20and%20bits",
+  "source_label": "Math › 5.2 Logs and bits",
+  "suspended": null
+ },
+ {
+  "id": 1792626439918,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::logs",
+  "fields": {
+   "Front": "Why does ML default to <b>nats</b>?",
+   "Back": "\\(\\frac{d}{dx}\\ln x = 1/x\\) (no extra constant), and ln cancels the e in softmax, which gives the clean “prediction − target” gradient.",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.2%20Logs%20and%20bits",
+  "source_label": "Math › 5.2 Logs and bits",
+  "suspended": null
+ },
+ {
+  "id": 1792626439920,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::logs",
+  "fields": {
+   "Front": "Why do we use log-probabilities in ML? (3 reasons)",
+   "Back": "<ol><li><b>Numerical stability</b>: multiplying many small probabilities <b>underflows</b> to 0; adding logs stays manageable.</li><li><b>Easier gradients</b>: sums are simpler to differentiate than long products; log is <b>monotonic</b>, so the argmax is unchanged.</li><li><b>Surprise adds up</b>: log turns × into +, and base 2 counts yes/no questions.</li></ol>",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_logs.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.2%20Logs%20and%20bits",
+  "source_label": "Math › 5.2 Logs and bits",
+  "suspended": null
+ },
+ {
+  "id": 1792626439922,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::logs",
+  "fields": {
+   "Front": "Why does \\(\\log(ab) = \\log a + \\log b\\)?",
+   "Back": "Exponents add when you multiply powers: \\(2^3 \\cdot 2^2 = 2^5\\). A log returns the exponent, so the log of a product is the sum of the exponents.",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.2%20Logs%20and%20bits",
+  "source_label": "Math › 5.2 Logs and bits",
+  "suspended": null
+ },
+ {
+  "id": 1792626439924,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::logs",
+  "fields": {
+   "Front": "What does “log is monotonic” mean, and why does it matter?",
+   "Back": "If a > b then log a > log b. So maximising log p finds the <b>same answer</b> as maximising p.",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.2%20Logs%20and%20bits",
+  "source_label": "Math › 5.2 Logs and bits",
+  "suspended": null
+ },
+ {
+  "id": 1792626439926,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::entropy",
+  "fields": {
+   "Text": "Entropy: {{c1::\\( H(p) = -\\sum_x p(x)\\log p(x) \\)}} = {{c2::expected surprise}}",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_infochain.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": [
+   "Formula fill-in: visible half gives away the hidden half → replace with a simple exercise",
+   "Formula fill-in: visible half gives away the hidden half → replace with a simple exercise"
+  ]
+ },
+ {
+  "id": 1792626439929,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::entropy",
+  "fields": {
+   "Front": "Entropy conceptually?",
+   "Back": "The <b>average surprise</b> when sampling from p: the irreducible unpredictability of the source itself.",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439931,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::09 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::entropy",
+  "fields": {
+   "Problem": "Entropy of (a) a fair coin, (b) a coin that always lands heads?",
+   "Hint": "",
+   "Answer": "(a) 1 bit (b) 0 bits",
+   "Steps": "(a) 0.5·1 + 0.5·1. (b) no uncertainty → no surprise on average.",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439933,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::09 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::entropy",
+  "fields": {
+   "Problem": "Weather truth P: sunny 0.5, cloudy 0.25, rainy 0.25. Entropy in bits?",
+   "Hint": "",
+   "Answer": "<b>1.5 bits</b>",
+   "Steps": "0.5·1 + 0.25·2 + 0.25·2 = 0.5 + 0.5 + 0.5",
+   "Image": "<img src=\"m4ml_entropy_ce_kl.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439935,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::09 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::entropy",
+  "fields": {
+   "Problem": "Entropy of a uniform distribution over 8 outcomes? Over n?",
+   "Hint": "",
+   "Answer": "3 bits; \\(\\log_2 n\\) (the maximum possible for n outcomes)",
+   "Steps": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439937,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::cross-entropy",
+  "fields": {
+   "Text": "Cross-entropy: {{c1::\\( H(p, q) = -\\sum_x p(x)\\log q(x) \\)}}",
+   "Extra": "Weights from reality p, surprises from the model q.",
+   "Image": "<img src=\"m4ml_entropy_ce_kl.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": [
+   "Formula fill-in with no question (bare name) → replace with a simple exercise"
+  ]
+ },
+ {
+  "id": 1792626439939,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::cross-entropy",
+  "fields": {
+   "Front": "Cross-entropy conceptually?",
+   "Back": "How surprised your beliefs q leave you, on average, when reality p plays out. It's low if you expected what actually happens.",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439941,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::cross-entropy",
+  "fields": {
+   "Front": "Model Q's own entropy \\(H(q)\\) vs cross-entropy \\(H(p,q)\\): what's the difference?",
+   "Back": "\\(H(q)\\): how unsure the model <i>thinks</i> it is. \\(H(p,q)\\): how surprised it <i>actually</i> is when reality happens. A model can be very confident (low H(q)) and badly wrong (high CE).",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439943,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::09 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::cross-entropy",
+  "fields": {
+   "Problem": "Weather truth P = (0.5, 0.25, 0.25); model Q = (0.25, 0.5, 0.25). Cross-entropy and KL in bits?",
+   "Hint": "Keep P as the weights; take surprises from Q.",
+   "Answer": "CE = <b>1.75 bits</b>; KL = <b>0.25 bits</b>",
+   "Steps": "CE = 0.5·(−log₂0.25) + 0.25·(−log₂0.5) + 0.25·(−log₂0.25) = 0.5·2 + 0.25·1 + 0.25·2 = 1.75. KL = 1.75 − 1.5. The model wastes ¼ bit per day by underrating sunny days.",
+   "Image": "<img src=\"m4ml_entropy_ce_kl.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439945,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::09 m4ml::level::3_apply m4ml::kind::pitfall m4ml::topic::cross-entropy",
+  "fields": {
+   "Problem": "Truth P(2) = 0.9 but the model says Q(2) = 0.1. What's the x = 2 term of the cross-entropy, in bits?",
+   "Hint": "",
+   "Answer": "≈ <b>2.99 bits</b>",
+   "Steps": "0.9 × (−log₂ 0.1) = 0.9 × 3.32. It's only one term of the sum. (0.9 × 1.0 would be log base 10.)",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Pitfall"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439947,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::kl",
+  "fields": {
+   "Text": "KL divergence: {{c1::\\( D_{KL}(p \\Vert q) = H(p, q) - H(p) \\)}} = {{c2::\\( \\sum_x p(x)\\log\\frac{p(x)}{q(x)} \\)}}",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_entropy_ce_kl.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": [
+   "Formula fill-in: visible half gives away the hidden half → replace with a simple exercise",
+   "Formula fill-in: visible half gives away the hidden half → replace with a simple exercise"
+  ]
+ },
+ {
+  "id": 1792626439950,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::kl",
+  "fields": {
+   "Front": "KL divergence conceptually?",
+   "Back": "The <b>extra</b> surprise caused purely by using model q instead of the truth p: bits wasted per prediction. It's 0 only when q = p.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_entropy_ce_kl.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439952,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::2_understand m4ml::kind::connection m4ml::topic::kl",
+  "fields": {
+   "Front": "Decompose cross-entropy into two parts.",
+   "Back": "\\(H(p,q) = H(p) + D_{KL}(p\\Vert q)\\): the <b>unavoidable</b> surprise of reality plus the <b>model's fault</b>.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_entropy_ce_kl.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439954,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::kl",
+  "fields": {
+   "Front": "Can KL be negative? What follows?",
+   "Back": "No: \\(D_{KL} \\ge 0\\) (Gibbs' inequality). So \\(H(p,q) \\ge H(p)\\): a model can't be less surprised than the truth on average, which puts a <b>floor on perplexity</b>.",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439956,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::kl",
+  "fields": {
+   "Front": "Is KL symmetric? Illustrate with a 1% event.",
+   "Back": "No, \\(D(p\\Vert q) \\ne D(q\\Vert p)\\).<br>Truth 1%, model 0% → when it happens, \\(-\\log 0 = \\infty\\): <b>catastrophic</b>.<br>Truth 0%, model 1% → it never happens, so you only lose the wasted 1%: <b>cheap</b>.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_kl_zero.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439958,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::4_connect m4ml::kind::connection m4ml::topic::kl",
+  "fields": {
+   "Front": "Why do trained models (almost) never assign exactly 0 to any token?",
+   "Back": "Softmax can't output 0 (\\(e^x > 0\\)). A never-seen token gets pushed lower and lower, but stays > 0, which protects against an infinite loss if it ever appears.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_kl_zero.png\">",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439960,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::ce-loss",
+  "fields": {
+   "Text": "Cross-entropy loss with a one-hot label: {{c1::\\( \\mathcal{L} = -\\log q(y_{\\text{true} }) \\)}}",
+   "Extra": "All other terms are multiplied by p(x) = 0.",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439962,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::2_understand m4ml::kind::connection m4ml::topic::ce-loss",
+  "fields": {
+   "Front": "With a one-hot label, how do cross-entropy and KL relate?",
+   "Back": "The label is certain, so \\(H(p) = 0\\) and <b>CE = KL</b>. Minimising cross-entropy is minimising KL.",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439964,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::09 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::ce-loss",
+  "fields": {
+   "Problem": "True class is “cat”. Model gives cat probability 1/2, 1/8, 0.9. CE loss for each (bits)?",
+   "Hint": "",
+   "Answer": "1, 3, ≈ 0.152 bits",
+   "Steps": "\\(-\\log_2\\) of the probability given to the right answer.",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439966,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::2_understand m4ml::kind::intuition m4ml::topic::ce-loss",
+  "fields": {
+   "Front": "Three behaviours that make surprise a good classification loss.",
+   "Back": "<ul><li>Wrong + confident → huge penalty</li><li>Unsure → moderate penalty</li><li>Right + confident → ≈ 0 loss</li></ul>",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Intuition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": [
+   "List / too many items → split into single-answer cards"
+  ]
+ },
+ {
+  "id": 1792626439968,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::perplexity",
+  "fields": {
+   "Text": "Perplexity: {{c1::\\( 2^{H(p,q)} \\)}} if H is in bits, or {{c2::\\( e^{H(p,q)} \\)}} if in nats.",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439971,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::perplexity",
+  "fields": {
+   "Front": "Perplexity conceptually?",
+   "Back": "The number of <b>equally likely options</b> that would give the same surprise: the effective number of choices the model is torn between.",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439973,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::09 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::perplexity",
+  "fields": {
+   "Problem": "A language model averages 3 bits of surprise per token. Perplexity?",
+   "Hint": "",
+   "Answer": "<b>8</b>",
+   "Steps": "\\(2^3 = 8\\): as unsure as picking uniformly from 8 words.",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439975,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::09 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::perplexity",
+  "fields": {
+   "Problem": "Weather model with CE = 1.75 bits. Perplexity?",
+   "Hint": "",
+   "Answer": "≈ <b>3.36</b>",
+   "Steps": "\\(2^{1.75}\\): like choosing among 3–4 options, even though there are only 3 weather types.",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439977,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::09 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::perplexity",
+  "fields": {
+   "Problem": "CE = 2.0 nats. Perplexity?",
+   "Hint": "",
+   "Answer": "\\(e^2 \\approx 7.39\\)",
+   "Steps": "Match the base to the units. In bits: 2.0 nats ≈ 2.885 bits → \\(2^{2.885} \\approx 7.39\\) too.",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439979,
+  "deck": "Math4ML::Probability & Information Theory::09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::09 m4ml::level::4_connect m4ml::kind::connection m4ml::topic::perplexity",
+  "fields": {
+   "Front": "Can a model's perplexity go below \\(2^{H(p)}\\)? What does perplexity 1 mean?",
+   "Back": "No: KL ≥ 0, so CE ≥ entropy. The floor is the inherent unpredictability of language. Perplexity 1 = CE 0 = always certain <i>and</i> right.",
+   "Extra": "",
+   "Image": "",
+   "Section": "09 Information Theory · Surprise, Entropy, CE, KL, Perplexity",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.1%20Expectation%20%E2%86%92%20Surprise%20%E2%86%92%20Entropy%20%E2%86%92%20Cross-Entropy%20%E2%86%92%20KL%20divergence",
+  "source_label": "Math › 5.1 Expectation → Surprise → Entropy → Cross-Entropy → KL divergence",
+  "suspended": null
+ },
+ {
+  "id": 1792626439981,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::10 m4ml::level::1_recall m4ml::kind::definition m4ml::topic::likelihood",
+  "fields": {
+   "Front": "Probability vs likelihood: same formula \\(P(x\\mid\\theta)\\), read two ways. Explain.",
+   "Back": "<b>Probability</b>: θ fixed, vary x. “If the coin is fair, what's the chance I'd see 7 heads in 10?”<br><b>Likelihood</b>: x fixed, vary θ. “I saw 7 heads. Is a 50% coin or a 70% coin the less surprised by it?”",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_prob_vs_lik.png\">",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Definition"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": null
+ },
+ {
+  "id": 1792626439983,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::10 m4ml::level::2_understand m4ml::kind::pitfall m4ml::topic::likelihood",
+  "fields": {
+   "Front": "Why write the likelihood as \\(P(x\\mid\\theta)\\) or \\(P(x;\\theta)\\), not \\(P(x,\\theta)\\)?",
+   "Back": "θ is a <b>parameter</b> you condition on, not a second random variable you observe jointly.",
+   "Extra": "",
+   "Image": "",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Pitfall"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": [
+   "Vague or pedantic 'why' → replace with a concrete step or exercise"
+  ]
+ },
+ {
+  "id": 1792626439985,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::10 m4ml::level::2_understand m4ml::kind::pitfall m4ml::topic::likelihood",
+  "fields": {
+   "Front": "Is \\(L(\\theta)\\) a probability distribution over θ?",
+   "Back": "No: it doesn't sum/integrate to 1 over θ. A single likelihood value means nothing on its own; only <b>comparisons</b> between θs (ratios) do.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_likelihood.png\">",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Pitfall"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": null
+ },
+ {
+  "id": 1792626439987,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::10 m4ml::level::2_understand m4ml::kind::classify m4ml::topic::likelihood",
+  "fields": {
+   "Front": "Probability or likelihood? “A fair die is rolled. How likely is a six?”",
+   "Back": "<b>Probability</b><br><i>Rule: model fixed & predicting outcomes → probability. Data fixed & scoring the model → likelihood.</i>",
+   "Extra": "",
+   "Image": "",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Classify"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": null
+ },
+ {
+  "id": 1792626439989,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::10 m4ml::level::2_understand m4ml::kind::classify m4ml::topic::likelihood",
+  "fields": {
+   "Front": "Probability or likelihood? “A model got 9/10 test questions right. How well does ‘true accuracy = 90%’ explain that?”",
+   "Back": "<b>Likelihood</b><br><i>Rule: model fixed & predicting outcomes → probability. Data fixed & scoring the model → likelihood.</i>",
+   "Extra": "",
+   "Image": "",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Classify"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": null
+ },
+ {
+  "id": 1792626439991,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::10 m4ml::level::2_understand m4ml::kind::classify m4ml::topic::likelihood",
+  "fields": {
+   "Front": "Probability or likelihood? “The LM's weights are fixed. How likely is the next word ‘dog’?”",
+   "Back": "<b>Probability</b><br><i>Rule: model fixed & predicting outcomes → probability. Data fixed & scoring the model → likelihood.</i>",
+   "Extra": "",
+   "Image": "",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Classify"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": null
+ },
+ {
+  "id": 1792626439993,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::10 m4ml::level::2_understand m4ml::kind::classify m4ml::topic::likelihood",
+  "fields": {
+   "Front": "Probability or likelihood? “During training, compare weight settings by how much probability each gives the real sentences.”",
+   "Back": "<b>Likelihood</b><br><i>Rule: model fixed & predicting outcomes → probability. Data fixed & scoring the model → likelihood.</i>",
+   "Extra": "",
+   "Image": "",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Classify"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": null
+ },
+ {
+  "id": 1792626439995,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::10 m4ml::level::2_understand m4ml::kind::classify m4ml::topic::likelihood",
+  "fields": {
+   "Front": "Probability or likelihood? “A spam filter is set to 30% spam. How likely is the next email spam?”",
+   "Back": "<b>Probability</b><br><i>Rule: model fixed & predicting outcomes → probability. Data fixed & scoring the model → likelihood.</i>",
+   "Extra": "",
+   "Image": "",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Classify"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": null
+ },
+ {
+  "id": 1792626439997,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::10 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::likelihood",
+  "fields": {
+   "Text": "Likelihood of i.i.d. data: {{c1::\\( L(\\theta) = \\prod_i P(x_i \\mid \\theta) \\)}}; log-likelihood: {{c2::\\( \\log L(\\theta) = \\sum_i \\log P(x_i \\mid \\theta) \\)}}",
+   "Extra": "The log turns the product into a sum, which is easy to differentiate and doesn't underflow.",
+   "Image": "",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": [
+   "Formula fill-in: visible half gives away the hidden half → replace with a simple exercise",
+   "Formula fill-in: visible half gives away the hidden half → replace with a simple exercise"
+  ]
+ },
+ {
+  "id": 1792626440000,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::10 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::mle",
+  "fields": {
+   "Text": "Maximum likelihood estimation: {{c1::\\( \\theta^* = \\arg\\max_\\theta \\log L(\\theta) \\)}}",
+   "Extra": "Pick the θ that makes the observed data least surprising.",
+   "Image": "",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": [
+   "Formula fill-in with no question (bare name) → replace with a simple exercise"
+  ]
+ },
+ {
+  "id": 1792626440002,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::10 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::mle",
+  "fields": {
+   "Text": "Negative log-likelihood: {{c1::\\( \\mathrm{NLL} = -\\frac{1}{N}\\sum_i \\log P(x_i \\mid \\theta) \\)}}",
+   "Extra": "= cross-entropy loss. Minimise it to do MLE.",
+   "Image": "",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": null
+ },
+ {
+  "id": 1792626440004,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::10 m4ml::level::4_connect m4ml::kind::connection m4ml::topic::mle",
+  "fields": {
+   "Front": "Why is minimising cross-entropy loss the same as MLE?",
+   "Back": "CE loss = average of \\(-\\log\\) (probability the model gave the real data). MLE = make those probabilities as high as possible. Pushing probabilities up = pushing minus their log down. It's the same goal; the minus sign exists because frameworks minimise.",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_infochain.png\">",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": null
+ },
+ {
+  "id": 1792626440006,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::10 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::mle",
+  "fields": {
+   "Problem": "10 flips, 7 heads. Compare \\(L(0.5)\\) and \\(L(0.7)\\). Which does MLE pick?",
+   "Hint": "",
+   "Answer": "θ = 0.7, which explains the data ≈ 2.28× better.",
+   "Steps": "\\(L(\\theta) = \\theta^7(1-\\theta)^3\\) (the binomial coefficient cancels when comparing).<br>L(0.5) = 0.5¹⁰ ≈ 0.000977; L(0.7) = 0.7⁷·0.3³ ≈ 0.002224.",
+   "Image": "<img src=\"m4ml_likelihood.png\">",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": null
+ },
+ {
+  "id": 1792626440008,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::10 m4ml::level::2_understand m4ml::kind::formula m4ml::topic::mle",
+  "fields": {
+   "Front": "MLE estimate of a coin's heads-probability?",
+   "Back": "\\(\\hat\\theta = \\dfrac{\\#\\text{heads}}{\\#\\text{flips}}\\) (e.g. 7/10 = 0.7).",
+   "Extra": "",
+   "Image": "<img src=\"m4ml_likelihood.png\">",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L2 · Understand",
+   "LevelClass": "L2",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": null
+ },
+ {
+  "id": 1792626440010,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::10 m4ml::level::4_connect m4ml::kind::connection m4ml::topic::mle",
+  "fields": {
+   "Front": "How can MLE <b>overfit</b>? Give the coin example.",
+   "Back": "3 heads in 3 flips → MLE says θ = 1 → puts 0 on tails → infinite surprise the first time tails appears.",
+   "Extra": "",
+   "Image": "",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": null
+ },
+ {
+  "id": 1792626440012,
+  "deck": "Math4ML::Probability & Information Theory::10 Likelihood & MLE",
+  "notetype": "Math4ML · Basic",
+  "tags": "m4ml m4ml::section::10 m4ml::level::4_connect m4ml::kind::connection m4ml::topic::mle",
+  "fields": {
+   "Front": "How does a <b>prior</b> fix MLE's overfitting? Name the estimator and its ML counterpart.",
+   "Back": "<b>MAP</b>: maximise likelihood × prior (Bayes: posterior ∝ likelihood × prior). A prior that says “coins are usually near fair” stops θ jumping to 1. In ML, <b>regularisation</b> (e.g. weight decay ≈ Gaussian prior) plays this role.",
+   "Extra": "",
+   "Image": "",
+   "Section": "10 Likelihood & MLE",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Connection"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
+  "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
+  "suspended": null
+ },
+ {
+  "id": 1792626440014,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::11 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::algebra",
+  "fields": {
+   "Text": "Negative power: {{c1::\\( a^{-n} = \\frac{1}{a^n} \\)}}",
+   "Extra": "",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": [
+   "Replaced by intuition exercises (2026-10-22)"
+  ]
+ },
+ {
+  "id": 1792626440016,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::11 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::algebra",
+  "fields": {
+   "Text": "Product of powers: {{c1::\\( a^m a^n = a^{m+n} \\)}}",
+   "Extra": "This is why logs turn products into sums.",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": [
+   "Replaced by intuition exercises (2026-10-22)"
+  ]
+ },
+ {
+  "id": 1792626440018,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::11 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::algebra",
+  "fields": {
+   "Text": "Roots as powers: {{c1::\\( \\sqrt[n]{a} = a^{1/n} \\)}}, so {{c2::\\( \\frac{1}{\\sqrt{a} } = a^{-1/2} \\)}}",
+   "Extra": "",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": [
+   "Replaced by intuition exercises (2026-10-22)",
+   "Replaced by intuition exercises (2026-10-22)"
+  ]
+ },
+ {
+  "id": 1792626440021,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::11 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::algebra",
+  "fields": {
+   "Text": "Definition of log: {{c1::\\( \\log_b a = x \\iff b^x = a \\)}}",
+   "Extra": "“b to what power gives a?”",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": [
+   "Replaced by intuition exercises (2026-10-22)"
+  ]
+ },
+ {
+  "id": 1792626440023,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::11 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::algebra",
+  "fields": {
+   "Text": "Exp and ln undo each other: {{c1::\\( \\ln(e^x) = x \\)}} and {{c2::\\( e^{\\ln x} = x \\)}}",
+   "Extra": "",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": [
+   "Replaced by intuition exercises (2026-10-22)",
+   "Replaced by intuition exercises (2026-10-22)"
+  ]
+ },
+ {
+  "id": 1792626440026,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::11 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::algebra",
+  "fields": {
+   "Text": "Log of a product: {{c1::\\( \\log(ab) = \\log a + \\log b \\)}}; of a quotient: {{c2::\\( \\log(a/b) = \\log a - \\log b \\)}}",
+   "Extra": "",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": [
+   "Replaced by intuition exercises (2026-10-22)",
+   "Replaced by intuition exercises (2026-10-22)"
+  ]
+ },
+ {
+  "id": 1792626440029,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::11 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::algebra",
+  "fields": {
+   "Text": "Log of a power: {{c1::\\( \\log_b(a^n) = n\\log_b a \\)}}",
+   "Extra": "",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": [
+   "Replaced by intuition exercises (2026-10-22)"
+  ]
+ },
+ {
+  "id": 1792626440031,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::11 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::algebra",
+  "fields": {
+   "Text": "Change of base: {{c1::\\( \\log_2 x = \\frac{\\ln x}{\\ln 2} \\)}}",
+   "Extra": "How you convert nats to bits.",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.2%20Logs%20and%20bits",
+  "source_label": "Math › 5.2 Logs and bits",
+  "suspended": [
+   "Replaced by intuition exercises (2026-10-22)"
+  ]
+ },
+ {
+  "id": 1792626440033,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Cloze",
+  "tags": "m4ml m4ml::section::11 m4ml::level::1_recall m4ml::kind::formula m4ml::topic::algebra",
+  "fields": {
+   "Text": "Derivatives: {{c1::\\( \\frac{d}{dx}e^x = e^x \\)}} and {{c2::\\( \\frac{d}{dx}\\ln x = \\frac{1}{x} \\)}}",
+   "Extra": "",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L1 · Recall",
+   "LevelClass": "L1",
+   "Kind": "Formula"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": [
+   "Replaced by intuition exercises (2026-10-22)",
+   "Replaced by intuition exercises (2026-10-22)"
+  ]
+ },
+ {
+  "id": 1792626440036,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::11 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::algebra",
+  "fields": {
+   "Problem": "Evaluate: \\(\\log_2(1/8)\\), \\(\\log_2 0.5\\), \\(\\ln 1\\), \\(\\log_2(2^5 \\cdot 2^3)\\)",
+   "Hint": "",
+   "Answer": "−3, −1, 0, 8",
+   "Steps": "",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": [
+   "Replaced by intuition exercises (2026-10-22)"
+  ]
+ },
+ {
+  "id": 1792626440038,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::11 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::algebra",
+  "fields": {
+   "Problem": "Simplify \\(e^{\\ln(4x^2)}\\) and \\(8^{1/3}\\).",
+   "Hint": "",
+   "Answer": "\\(4x^2\\) and \\(2\\)",
+   "Steps": "",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": [
+   "Replaced by intuition exercises (2026-10-22)"
+  ]
+ },
+ {
+  "id": 1792626440040,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::11 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::algebra",
+  "fields": {
+   "Problem": "Why is \\(\\log_2(1/2) = -1\\)?",
+   "Hint": "",
+   "Answer": "Because \\(2^{-1} = 1/2\\). Any probability below 1 needs a negative power, so its log is negative.",
+   "Steps": "",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": [
+   "Replaced by intuition exercises (2026-10-22)"
+  ]
+ },
+ {
+  "id": 1792703343880,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::11 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::algebra",
+  "fields": {
+   "Problem": "\\(\\ln x\\) answers “\\(e\\) to what power gives \\(x\\)?” Given \\(e^{0.69} \\approx 2\\), what is \\(\\ln 0.5\\)?",
+   "Hint": "",
+   "Answer": "\\(\\approx -0.69\\)",
+   "Steps": "0.5 < 1, so the power is negative: \\(e^{-0.69} = 1/e^{0.69} = 1/2\\). So \\(\\ln 0.5 = -\\ln 2\\). Halving a probability subtracts 0.69 in log space.",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": null
+ },
+ {
+  "id": 1792703343922,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::11 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::algebra",
+  "fields": {
+   "Problem": "A model gives a token log-prob \\(-2.3\\). Given \\(e^{2.3} \\approx 10\\), what is the probability?",
+   "Hint": "",
+   "Answer": "\\(0.1\\)",
+   "Steps": "\\(e^{-2.3} = 1/e^{2.3} \\approx 1/10\\). Each further \\(-2.3\\) is another factor of 10 smaller: \\(-4.6 \\to 0.01\\), \\(-6.9 \\to 0.001\\).",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": null
+ },
+ {
+  "id": 1792703343969,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::11 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::algebra",
+  "fields": {
+   "Problem": "\\(\\log_2 0.125 = ?\\) What is it counting?",
+   "Hint": "",
+   "Answer": "\\(-3\\)",
+   "Steps": "\\(2^{-3} = 1/8 = 0.125\\). A log counts how many times you multiply by the base; a negative log counts <b>halvings</b> from 1. Any probability < 1 has a negative log.",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": null
+ },
+ {
+  "id": 1792703344004,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::11 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::algebra",
+  "fields": {
+   "Problem": "You add \\(0.69\\) to a logit \\(x\\). What happens to \\(e^{x}\\)?",
+   "Hint": "",
+   "Answer": "It <b>doubles</b>",
+   "Steps": "\\(e^{x + 0.69} = e^{x}\\, e^{0.69} = 2e^{x}\\). Adding in log space = multiplying in probability space.",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": null
+ },
+ {
+  "id": 1792703344046,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::11 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::algebra",
+  "fields": {
+   "Problem": "A 3-token sequence has token probabilities 0.5, 0.25, 0.5. Compute \\(\\log_2\\) of the sequence probability as one product, then as a sum of logs.",
+   "Hint": "",
+   "Answer": "\\(-4\\) both ways",
+   "Steps": "Product: \\(0.5 \\cdot 0.25 \\cdot 0.5 = 1/16 \\Rightarrow \\log_2 = -4\\). Sum: \\((-1) + (-2) + (-1) = -4\\). \\(\\log(ab) = \\log a + \\log b\\), which is why models add log-probs.",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": null
+ },
+ {
+  "id": 1792703344085,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::11 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::algebra",
+  "fields": {
+   "Problem": "A 1000-token answer where every token has \\(p = 0.9\\) (\\(\\ln 0.9 \\approx -0.105\\)). Total log-prob? Why not just multiply the probabilities?",
+   "Hint": "",
+   "Answer": "\\(\\approx -105\\)",
+   "Steps": "\\(\\ln(0.9^{1000}) = 1000 \\ln 0.9 \\approx -105\\). The probability \\(e^{-105} \\approx 2\\times10^{-46}\\) is below float32’s smallest normal number (\\(\\sim10^{-38}\\)): multiplying underflows to 0, summing logs doesn’t.",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": null
+ },
+ {
+  "id": 1792703344130,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::11 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::algebra",
+  "fields": {
+   "Problem": "\\(\\ln 8 \\approx 2.08\\) and \\(\\ln 2 \\approx 0.69\\). Use them to get \\(\\log_2 8\\).",
+   "Hint": "",
+   "Answer": "\\(3\\)",
+   "Steps": "Change of base: \\(\\log_2 x = \\ln x / \\ln 2 = 2.08 / 0.69 = 3\\). Same move converts nats to bits.",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": null
+ },
+ {
+  "id": 1792703344168,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::11 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::algebra",
+  "fields": {
+   "Problem": "Attention scores are divided by \\(\\sqrt{d}\\). For \\(d = 64\\), write the factor as a power of \\(d\\) and compute it.",
+   "Hint": "",
+   "Answer": "\\(d^{-1/2} = 0.125\\)",
+   "Steps": "\\(1/\\sqrt{d} = d^{-1/2}\\): a root is a fractional power, dividing is a negative power. \\(64^{1/2} = 8\\), so \\(64^{-1/2} = 1/8\\).",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": null
+ },
+ {
+  "id": 1792703344208,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::11 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::algebra",
+  "fields": {
+   "Problem": "The learning rate halves every epoch. By what factor has it shrunk after 10 epochs (as a power, and roughly as a number)?",
+   "Hint": "",
+   "Answer": "\\(2^{-10} \\approx 0.001\\)",
+   "Steps": "Ten factors of \\(1/2\\): \\((2^{-1})^{10} = 2^{-10} = 1/1024\\). Exponents add when you multiply powers of the same base.",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": null
+ },
+ {
+  "id": 1792703344246,
+  "deck": "Math4ML::Probability & Information Theory::11 Algebra · Powers & Logs",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::11 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::algebra",
+  "fields": {
+   "Problem": "One coin flip lands heads, so the log-likelihood is \\(\\ln\\theta\\). What is its gradient at \\(\\theta = 0.25\\), and which way does gradient ascent move \\(\\theta\\)?",
+   "Hint": "",
+   "Answer": "\\(1/\\theta = 4\\), so \\(\\theta\\) moves <b>up</b>",
+   "Steps": "\\(\\frac{d}{d\\theta}\\ln\\theta = 1/\\theta\\). Small \\(\\theta\\) → big gradient: the less likely the data under the model, the harder the push toward explaining it.",
+   "Image": "",
+   "Section": "11 Algebra · Powers & Logs",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
+  "source_label": "Math › Algebraic Relationships",
+  "suspended": null
+ }
+]

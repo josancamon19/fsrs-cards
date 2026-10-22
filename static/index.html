@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#f9f9f7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0d0d0d" media="(prefers-color-scheme: dark)"><meta name="mobile-web-app-capable" content="yes">
+<title>FSRS Cards</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='1' y='1' width='7' height='7' rx='2' fill='%23e34948'/><rect x='8' y='1' width='7' height='7' rx='2' fill='%23eda100'/><rect x='1' y='8' width='7' height='7' rx='2' fill='%232a78d6'/><rect x='8' y='8' width='7' height='7' rx='2' fill='%231baf7a'/></svg>">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="FSRS Cards">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/vendor/katex/katex.min.css">
+<script defer src="/static/vendor/katex/katex.min.js"></script>
+<script defer src="/static/vendor/katex/auto-render.min.js"></script>
+<script>try{const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#/"><span class="brand-mark"></span>FSRS Cards</a>
+  <nav class="nav">
+    <a href="#/" data-nav="decks">Decks</a>
+    <a href="#/stats" data-nav="stats">Stats</a>
+    <a href="#/browse" data-nav="browse">Browse</a>
+    <a href="#/answers" data-nav="answers">Answers</a>
+    <a href="#/settings" data-nav="settings">Settings</a>
+  </nav>
+  <div class="spacer"></div>
+  <button class="icon-btn" id="theme-btn" title="Toggle theme">◐</button>
+</header>
+<main id="view"></main>
+<div class="tip" id="tip"></div>
+<div class="toast" id="toast"></div>
+<script defer src="/static/app.js"></script>
+</body>
+</html>

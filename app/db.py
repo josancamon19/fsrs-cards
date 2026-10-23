@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS responses (       -- spoken answers (text only; audio
   model          TEXT,
   audio_path     TEXT,                       -- set only while waiting for transcription (before the flip)
   audio_after_path TEXT,                     -- same, for the part after the flip
+  meta           TEXT,                       -- JSON from the browser: mic name, loudness and speech time per part
   done_at        INTEGER
 );
 CREATE INDEX IF NOT EXISTS ix_responses_card ON responses(card_id, ts);
@@ -159,7 +160,7 @@ def conn() -> sqlite3.Connection:
         if "meta" not in {r[1] for r in c.execute("PRAGMA table_info(chats)")}:
             c.execute("ALTER TABLE chats ADD COLUMN meta TEXT")
         rcols = {r[1] for r in c.execute("PRAGMA table_info(responses)")}
-        for col in ("transcript_after", "transcript_after_raw", "audio_after_path"):
+        for col in ("transcript_after", "transcript_after_raw", "audio_after_path", "meta"):
             if col not in rcols:
                 c.execute(f"ALTER TABLE responses ADD COLUMN {col} TEXT")
         _conn = c

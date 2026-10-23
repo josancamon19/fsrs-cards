@@ -352,10 +352,12 @@ async function studyView(deck) {
   };
   addEventListener('keydown', onKey);
   cleanup = () => { removeEventListener('keydown', onKey); chatEnd(); recDiscard(); recRelease(); S = null; };
-  if (REC.on) await recEnsureStream();
+  // open the mic and load the first card in parallel; if the card shows first, recording starts the moment the mic is ready
+  const micReady = REC.on ? recEnsureStream() : null;
   recPaint();
   try { applyStudy(await api(nextUrl())); }
   catch (e) { $('#study-body').innerHTML = `<div class="done-box">${esc(e.message)}</div>`; }
+  if (micReady) micReady.then(ok => { if (ok && S && S.card && !REC.seg && !S.revealed) recStart(S.card.id); });
 }
 function renderCounts() {
   const c = S.counts, st = S.card && S.card.state;
@@ -795,6 +797,7 @@ const REC_MIME = ['audio/webm;codecs=opus', 'audio/mp4', 'audio/webm'].find(t =>
 /* A part is sent for transcription only if at least SPEECH_MS of it was clearly above silence (RMS over SPEECH_RMS).
    Kept deliberately low: a dropped answer is worse than a wasted transcription. */
 const SPEECH_RMS = 0.015, SPEECH_MS = 250;
+const QUIET_RMS = 0.04; // loudest moment below this: speech is faint and the transcriber will likely drop words
 const pendingResp = new Set();
 const micPref = () => { try { return localStorage.getItem('mic-device') || ''; } catch (e) { return ''; } };
 
@@ -818,7 +821,8 @@ async function recEnsureStream() {
     REC.ctx = new AudioContext();
     REC.analyser = REC.ctx.createAnalyser(); REC.analyser.fftSize = 1024;
     REC.ctx.createMediaStreamSource(REC.stream).connect(REC.analyser);
-    if (REC.ctx.state !== 'running') addEventListener('pointerdown', () => REC.ctx?.resume(), { once: true });
+    // browsers start audio suspended until a user gesture; keyboard-only study must wake it too
+    if (REC.ctx.state !== 'running') for (const ev of ['pointerdown', 'keydown', 'touchstart']) addEventListener(ev, () => REC.ctx?.resume().catch(() => {}), { once: true, capture: true });
   } catch (e) { REC.analyser = null; }
   return true;
 }
@@ -856,6 +860,7 @@ function recMeter() { // every 100ms: count speech in the current part and anima
     let sum = 0; for (const v of buf) sum += v * v;
     const rms = Math.sqrt(sum / buf.length);
     if (REC.seg && REC.seg.speechMs != null && rms >= SPEECH_RMS) REC.seg.speechMs += 100;
+    if (REC.seg) REC.seg.peak = Math.max(REC.seg.peak || 0, rms);
     // fast attack, slow release, sqrt curve so quiet speech still moves the bars
     REC.lvl = REC.seg ? Math.max(Math.min(1, Math.sqrt(rms * 6)), (REC.lvl || 0) * 0.7) : 0;
     $('#mic-btn')?.style.setProperty('--lvl', REC.lvl.toFixed(2));
@@ -872,7 +877,7 @@ function recSegment() {
 function recClose(seg) { // resolves to {blob, ms, speechMs} once the recorder has flushed
   const ms = Date.now() - seg.start;
   return new Promise(res => {
-    seg.mr.onstop = () => res({ blob: new Blob(seg.chunks, { type: seg.mr.mimeType || 'audio/webm' }), ms, speechMs: seg.speechMs });
+    seg.mr.onstop = () => res({ blob: new Blob(seg.chunks, { type: seg.mr.mimeType || 'audio/webm' }), ms, speechMs: seg.speechMs, peak: seg.peak });
     try { seg.mr.stop(); } catch (e) { res(null); }
   });
 }
@@ -912,7 +917,13 @@ async function recUpload(cardId, t, { rating, flagged }) {
   const fd = new FormData(), ext = b => b.type.includes('mp4') ? 'm4a' : 'webm';
   if (before) fd.append('audio', before.blob, 'before.' + ext(before.blob));
   if (after) fd.append('audio_after', after.blob, 'after.' + ext(after.blob));
-  Object.entries({ ts: t.t0, duration_ms: t.duration, reveal_ms: t.revealMs, rating, flagged }).forEach(([k, v]) => v != null && fd.append(k, v));
+  // how loud each part was and which mic, so a faint or wrong mic shows up in the data (and is flagged right away)
+  const mic = REC.stream?.getAudioTracks()[0]?.label || '';
+  const part = x => x ? { ms: x.ms, speechMs: x.speechMs, peak: x.peak != null ? +x.peak.toFixed(4) : null } : null;
+  const loudest = Math.max(before?.peak ?? 1, after?.peak ?? (before ? 0 : 1));
+  Object.entries({ ts: t.t0, duration_ms: t.duration, reveal_ms: t.revealMs, rating, flagged,
+    meta: JSON.stringify({ mic, before: part(t.before), after: part(t.after) }) }).forEach(([k, v]) => v != null && fd.append(k, v));
+  if (loudest < QUIET_RMS) toast(`Your mic sounded very quiet${mic ? ` (${esc(mic)})` : ''}, so the transcript may miss words. Check <b>Settings → Microphone → Test</b>`, 5000);
   try {
     const r = await api(`/api/cards/${cardId}/responses`, { method: 'POST', body: fd });
     if (!r.transcription) return toast('Answer saved, but the server has no OPENAI_API_KEY so it can\'t transcribe yet', 3500);

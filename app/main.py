@@ -600,7 +600,7 @@ def set_sources(body: Sources):
 async def upload_response(card_id: int, audio: UploadFile | None = File(None), audio_after: UploadFile | None = File(None),
                           ts: int = Form(...),
                           duration_ms: int | None = Form(None), reveal_ms: int | None = Form(None),
-                          rating: int | None = Form(None), flagged: bool = Form(False)):
+                          rating: int | None = Form(None), flagged: bool = Form(False), meta: str | None = Form(None)):
     """Store a recording for background transcription. The audio is deleted as soon as it is transcribed.
     `audio` is the recall attempt (until the card was flipped) and `audio_after` what was said after; either may be missing."""
     if not db.conn().execute("SELECT 1 FROM cards WHERE id = ?", (card_id,)).fetchone():
@@ -614,7 +614,8 @@ async def upload_response(card_id: int, audio: UploadFile | None = File(None), a
     if not any(parts):
         raise HTTPException(400, "no audio")
     rid = await asyncio.to_thread(responses.save_upload, card_id, *parts, ts=ts,
-                                  duration_ms=duration_ms, reveal_ms=reveal_ms, rating=rating, flagged=flagged)
+                                  duration_ms=duration_ms, reveal_ms=reveal_ms, rating=rating, flagged=flagged,
+                                  meta=(meta or "")[:4000] or None)
     return {"id": rid, "status": "pending", "transcription": bool(responses.api_key())}
 
 

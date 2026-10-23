@@ -37,7 +37,7 @@ def card_text(card_id: int) -> tuple[str, str]:
     row = db.conn().execute("SELECT * FROM cards WHERE id = ?", (card_id,)).fetchone()
     r = render.render_card(row)
     # drop deck-template header chips (section / level / kind) so only the actual question and answer remain
-    clean = lambda h: render.strip_html(re.sub(r'<div class="hdr">.*?</div>', " ", h, flags=re.S))
+    clean = lambda h: render.strip_html(re.sub(r'<div class="(?:hdr|meta)">.*?</div>', " ", h, flags=re.S))
     q, a = clean(r["question"]), clean(r["answer"])
     if a.startswith(q):
         a = a[len(q):].strip()
@@ -61,9 +61,10 @@ def save_upload(card_id: int, before: tuple[bytes, str] | None, after: tuple[byt
     with db.lock():
         note = c.execute("SELECT note_id FROM cards WHERE id = ?", (card_id,)).fetchone()
         rid = c.execute("""INSERT INTO responses(card_id, note_id, ts, duration_ms, reveal_ms, rating, flagged,
-                           question, answer, status, audio_path, audio_after_path) VALUES (?,?,?,?,?,?,?,?,?, 'pending', ?, ?)""",
+                           question, answer, status, audio_path, audio_after_path, meta) VALUES (?,?,?,?,?,?,?,?,?, 'pending', ?, ?, ?)""",
                         (card_id, note["note_id"], meta["ts"], meta.get("duration_ms"), meta.get("reveal_ms"),
-                         meta.get("rating"), int(bool(meta.get("flagged"))), q, a, _store(before), _store(after))).lastrowid
+                         meta.get("rating"), int(bool(meta.get("flagged"))), q, a, _store(before), _store(after),
+                         meta.get("meta"))).lastrowid
     enqueue(rid)
     return rid
 
@@ -76,8 +77,26 @@ def enqueue(rid: int) -> None:
         _worker.start()
 
 
+def fix_snapshots() -> None:
+    """Older snapshots kept deck-template header labels ("L1 · Core", "RL for LLMs · Basic") glued to the question.
+    Re-snapshot those from the card so lists show the question first."""
+    c = db.conn()
+    for table in ("responses", "chats"):
+        rows = c.execute(f"SELECT id, card_id, question FROM {table} WHERE question GLOB '*L[0-9] · *'").fetchall()
+        for r in rows:
+            if not c.execute("SELECT 1 FROM cards WHERE id = ?", (r["card_id"],)).fetchone():
+                continue
+            q, a = card_text(r["card_id"])
+            with db.lock():
+                c.execute(f"UPDATE {table} SET question = ?, answer = ? WHERE id = ?", (q, a, r["id"]))
+
+
 def resume_pending() -> None:
     """On startup, retry anything that was mid-flight when the machine stopped."""
+    try:
+        fix_snapshots()
+    except Exception as e:
+        print("snapshot fix skipped:", e)
     for (rid,) in db.conn().execute("SELECT id FROM responses WHERE status = 'pending'").fetchall():
         enqueue(rid)
 
@@ -140,13 +159,28 @@ def _post(url: str, body: bytes, content_type: str, timeout: int = 180) -> dict:
         raise RuntimeError(f"OpenAI {e.code}: {detail}") from None
 
 
+_STOP = {"what", "which", "when", "where", "does", "this", "that", "with", "from", "into", "than", "then", "your", "about",
+         "because", "between", "always", "never", "their", "there", "these", "those", "would", "could", "should"}
+
+
+def keywords(question: str, answer: str) -> list[str]:
+    """Technical terms from the card (PPO, Q(s,a), Monte, Jacobian, …) for the transcriber's `keywords`.
+    A prose prompt is avoided on purpose: when the audio is faint the model can echo a prompt back as if it were speech."""
+    text = re.sub(r"\\[()\[\]]", " ", f"{question} {answer}")
+    out = []
+    for w in re.findall(r"[A-Za-z][A-Za-z0-9'\-]*(?:\([^()\s]{1,8}\))?", text):
+        technical = any(ch.isupper() for ch in w[1:]) or any(ch.isdigit() for ch in w) or "(" in w or len(w) >= 9 \
+            or (w[0].isupper() and len(w) >= 4)
+        if technical and w.lower() not in _STOP and w not in out and len(w) <= 40:
+            out.append(w)
+    return out[:25]
+
+
 def transcribe(path: Path, question: str, answer: str) -> str:
-    # The card text primes the model on the vocabulary (KL divergence, PPO, eigenvalues, …)
-    prompt = (f"Someone is answering a flashcard out loud, in English. Question: {question[:400]} "
-              f"Topic vocabulary: {answer[:600]}")
-    fields = {"model": TRANSCRIBE_MODEL, "prompt": prompt, "languages[]": "en", "response_format": "json"}
+    fields = [("model", TRANSCRIBE_MODEL), ("languages[]", "en"), ("response_format", "json")]
+    fields += [("keywords[]", k) for k in keywords(question, answer)]
     boundary = uuid.uuid4().hex
-    parts = [f'--{boundary}\r\nContent-Disposition: form-data; name="{k}"\r\n\r\n{v}\r\n'.encode() for k, v in fields.items()]
+    parts = [f'--{boundary}\r\nContent-Disposition: form-data; name="{k}"\r\n\r\n{v}\r\n'.encode() for k, v in fields]
     parts.append(f'--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="{path.name}"\r\n'
                  f"Content-Type: application/octet-stream\r\n\r\n".encode() + path.read_bytes() + b"\r\n")
     parts.append(f"--{boundary}--\r\n".encode())
@@ -203,4 +237,5 @@ def to_dict(r) -> dict:
                            "status", "transcript", "transcript_raw", "transcript_after", "transcript_after_raw", "error", "model", "done_at", "note")}
     d["flagged"] = bool(r["flagged"])
     d["analysis"] = json.loads(r["analysis"]) if r["analysis"] else None
+    d["meta"] = json.loads(r["meta"]) if r["meta"] else None
     return d

@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel
@@ -759,6 +759,39 @@ def delete_chat(chat_id: int):
     with db.lock():
         db.conn().execute("DELETE FROM chats WHERE id = ?", (chat_id,))
     return {"ok": True}
+
+
+# ---------------------------------------------------------------- backup
+
+def backup_archive() -> bytes:
+    """tar.gz with anki.sql (a consistent text dump: git stores day-to-day changes as small diffs) and media/."""
+    import io
+    import sqlite3
+    import tarfile
+    with tempfile.TemporaryDirectory() as tmp:
+        snap = sqlite3.connect(Path(tmp) / "snap.db")
+        with db.lock():
+            db.conn().backup(snap)          # consistent copy, even mid-write
+        sql = "\n".join(snap.iterdump()).encode()
+        snap.close()
+        buf = io.BytesIO()
+        with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+            info = tarfile.TarInfo("anki.sql"); info.size = len(sql); info.mtime = int(time.time())
+            tar.addfile(info, io.BytesIO(sql))
+            for f in sorted(db.MEDIA_DIR.iterdir()):
+                if f.is_file():
+                    tar.add(f, arcname=f"media/{f.name}")
+        return buf.getvalue()
+
+
+@app.get("/api/admin/backup")
+async def backup(request: Request):
+    """Full backup for tools/backup.py and the scheduled GitHub backup. Needs the admin token."""
+    require_admin(request)
+    data = await asyncio.to_thread(backup_archive)
+    stamp = datetime.now().strftime("%Y-%m-%d_%H%M")
+    return Response(data, media_type="application/gzip",
+                    headers={"Content-Disposition": f'attachment; filename="fsrs-cards-{stamp}.tar.gz"'})
 
 
 # ---------------------------------------------------------------- stats

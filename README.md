@@ -75,6 +75,18 @@ Locally, `./run.sh` runs without a password unless `APP_PASSWORD` is set.
 **Install as an app (PWA):** on iPhone, open the site in Safari → Share → *Add to Home Screen*. On Android or desktop
 Chrome, use the install icon or *Install app*.
 
+## Backups
+Two layers:
+1. **Fly volume snapshots:** daily, kept 14 days (`fly volumes snapshots list <vol>`). Fast restores, but they stay inside Fly.
+   Moving or forking the volume starts a fresh snapshot history.
+2. **Private GitHub repo `josancamon19/fsrs-cards-backups`:** a daily GitHub Action calls the admin-only
+   `/api/admin/backup` and commits `snapshot/anki.sql` (plain-text dump) plus `snapshot/media/`. Every commit is a
+   verified, restorable copy, and git keeps all days. Run one by hand from the repo's Actions tab, or locally with:
+   ```bash
+   uv run python tools/backup.py --out ~/Backups/fsrs-cards
+   ```
+Restore: `sqlite3 anki.db < snapshot/anki.sql`, then put `anki.db` and the media into the data directory (see that repo's README).
+
 ## Links back to Bear notes
 On the answer side each card can show an **Open in Bear › section** chip (key `O`). It opens
 `bear://x-callback-url/open-note?id=…&header=…`, which jumps to that heading in Bear on Mac or iOS.

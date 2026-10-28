@@ -987,8 +987,10 @@ async function chatStart() {
   chatPaint(true);
   const diag = CHAT.diag;
   try {
-    // the answer just given goes up now, so the tutor can see it (its transcript arrives mid-conversation)
+    // the answer just given goes up now for the transcript (it arrives mid-conversation); the tutor hears the audio itself at once
     const t = await recStop();
+    if (t && t.cardId === card.id) S.take = t;  // kept so a second conversation about this card hears it too
+    const ctxP = chatContext(card, S.take?.cardId === card.id ? S.take : null).catch(e => ({ items: [], images: 0, answerMs: 0, error: String(e) }));
     const responseId = t ? await recUpload(card.id, t, { rating: null, flagged: S.flagged }) : null;
     if (responseId) { S.pendingResponse = responseId; S.pendingResponseCard = card.id; }
     if (!CHAT) return;
@@ -1031,13 +1033,25 @@ async function chatStart() {
       audio.srcObject = e.streams[0]; diag.remoteTrack = true;
       audio.play().catch(er => { diag.playError = er.message; toast('Tap anywhere to hear the tutor', 4000); addEventListener('pointerdown', () => audio.play().catch(() => {}), { once: true }); });
     };
-    pc.addTrack(track, stream);
+    // the mic stays closed until the card's images and your answer are in the conversation, so your first question comes after them
+    const sender = pc.addTrack(track, stream);
+    await sender.replaceTrack(null);
     const dc = pc.createDataChannel('oai-events');
     Object.assign(CHAT, { pc, dc, stream, ownStream, audio, actx });
     dc.onmessage = e => { try { chatEvent(JSON.parse(e.data)); } catch (er) {} };
-    dc.onopen = () => {
+    dc.onopen = async () => {
       if (!CHAT) return;
       diag.openedMs = Date.now() - diag.t0;
+      CHAT.status = 'sharing'; chatPaint();
+      const cx = await ctxP;
+      if (!CHAT || CHAT.dc !== dc) return;
+      for (const item of cx.items) dc.send(JSON.stringify({ type: 'conversation.item.create', item }));
+      const until = Date.now() + 8000;  // ~1s for a 30s answer
+      while (dc.readyState === 'open' && dc.bufferedAmount > 0 && Date.now() < until) await new Promise(r => setTimeout(r, 50));
+      if (!CHAT || CHAT.dc !== dc) return;
+      await sender.replaceTrack(track);
+      CHAT.context = { images: cx.images, answerMs: cx.answerMs };
+      Object.assign(diag, { context: CHAT.context, contextMs: Date.now() - diag.t0 - diag.openedMs }, cx.error ? { contextError: cx.error } : {});
       CHAT.status = 'live'; CHAT.started = Date.now(); chime(true); chatPaint(true);
       CHAT.timer = setInterval(() => chatPaint(), 1000);
       if (CHAT.responseId) api('/api/responses?ids=' + CHAT.responseId).then(x => x.items[0]?.status === 'done' && chatSendAnswer(x.items[0])).catch(() => {});
@@ -1067,24 +1081,87 @@ function chatEvent(ev) {
     case 'conversation.item.input_audio_transcription.failed': d.errors.push('transcription: ' + (ev.error?.message || '')); break;
     case 'response.output_audio_transcript.delta': CHAT.partial += ev.delta || ''; chatPaint(); break;
     case 'response.output_audio_transcript.done': CHAT.partial = ''; chatTurn(ev.item_id, 'assistant', ev.transcript); break;
-    case 'response.done': if (ev.response?.status && ev.response.status !== 'completed') d.errors.push('response ' + ev.response.status + ': ' + JSON.stringify(ev.response.status_details || '').slice(0, 200)); break;
+    case 'response.function_call_arguments.done': chatTool(ev); break;
+    case 'response.done':
+      // a written formula is answered with "shown"; the tutor then carries on talking about it
+      if (CHAT.toolDone) { CHAT.toolDone = false; CHAT.dc?.readyState === 'open' && CHAT.dc.send(JSON.stringify({ type: 'response.create' })); }
+      if (ev.response?.status && ev.response.status !== 'completed') d.errors.push('response ' + ev.response.status + ': ' + JSON.stringify(ev.response.status_details || '').slice(0, 200)); break;
     case 'error': d.errors.push(ev.error?.message || 'error'); toast(`Conversation error · ${esc(ev.error?.message || '')}`, 4000); break;
   }
 }
-function chatTurn(id, role, text) {
+function chatTool(ev) {
+  let args = {}; try { args = JSON.parse(ev.arguments || '{}'); } catch (e) {}
+  if (ev.name === 'show_math' && args.latex) chatTurn(ev.item_id || ev.call_id, 'assistant', args.latex, 'math');
+  CHAT.dc?.readyState === 'open' && CHAT.dc.send(JSON.stringify({ type: 'conversation.item.create',
+    item: { type: 'function_call_output', call_id: ev.call_id, output: JSON.stringify({ shown: !!args.latex }) } }));
+  CHAT.toolDone = true;
+}
+const turnHtml = t => t.kind === 'math' ? `<div class="chat-turn math">\\[${esc(t.text)}\\]</div>`
+  : `<div class="chat-turn ${t.role}"><b>${t.role === 'user' ? 'You' : 'Tutor'}</b> ${esc(t.text)}</div>`;
+function chatTurn(id, role, text, kind) {
   text = (text || '').trim();
   if (!text || !CHAT || CHAT.seen.has(id)) return;
   CHAT.seen.add(id);
-  const turn = { id, role, text, ts: CHAT.itemTs[id] || Date.now() };
+  const turn = { id, role, text, ts: CHAT.itemTs[id] || Date.now(), ...(kind ? { kind } : {}) };
   CHAT.turns.push(turn); CHAT.turns.sort((a, b) => a.ts - b.ts); chatPaint();
   const c = CHAT;
   if (c.id) api(`/api/chats/${c.id}/turns`, { json: { turns: [turn] } }).then(() => c.saved.add(id)).catch(() => {});
 }
+/* What the tutor gets before you speak: the card's images, and the answer you just recorded as audio, so it knows what
+   you said without waiting for the transcript. A data-channel message holds at most 256KB, so images are shrunk to fit
+   and the audio goes in 3.5s pieces. */
+const DC_MAX = 240000;
+const chatMsg = (role, content) => ({ type: 'message', role, content });
+async function chatContext(card, take) {
+  const items = [], cx = { images: 0, answerMs: 0 };
+  const srcs = [...new Set([card.question, card.answer].flatMap(h =>
+    [...new DOMParser().parseFromString(h || '', 'text/html').images].map(i => i.getAttribute('src')).filter(Boolean)))];
+  for (const src of srcs.slice(0, 6)) {
+    try {
+      items.push(chatMsg('user', [{ type: 'input_text', text: `Image shown on the card (${src.split('/').pop()}):` },
+        { type: 'input_image', image_url: await chatImage(src) }]));
+      cx.images++;
+    } catch (e) {}
+  }
+  for (const [part, when] of [[take?.before, 'before seeing the answer'], [take?.after, 'after seeing the answer']]) {
+    if (!hasSpeech(part)) continue;
+    const pieces = await pcmPieces(part.blob);
+    items.push(chatMsg('system', [{ type: 'input_text', text: `The next audio is Joan's recorded answer for this attempt, ${when}.` }]));
+    pieces.forEach(audio => items.push(chatMsg('user', [{ type: 'input_audio', audio }])));
+    cx.answerMs += part.ms;
+  }
+  return { ...cx, items };
+}
+async function chatImage(src) {
+  const img = new Image(); img.src = src; await img.decode();
+  let scale = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+  for (let i = 0; i < 6; i++, scale *= 0.7) {
+    const c = document.createElement('canvas'), g = c.getContext('2d');
+    c.width = Math.max(1, Math.round(img.naturalWidth * scale)); c.height = Math.max(1, Math.round(img.naturalHeight * scale));
+    g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+    for (const url of [c.toDataURL('image/png'), c.toDataURL('image/jpeg', 0.85)]) if (url.length < DC_MAX) return url;
+  }
+  throw new Error('image too large');
+}
+async function pcmPieces(blob) {
+  // decoding into a 24kHz context resamples to what the Realtime API expects (16-bit mono PCM); the first 2 minutes at most
+  const buf = await new OfflineAudioContext(1, 1, 24000).decodeAudioData(await blob.arrayBuffer());
+  const f = buf.getChannelData(0).subarray(0, 120 * 24000), pcm = new Int16Array(f.length);
+  for (let i = 0; i < f.length; i++) pcm[i] = Math.max(-1, Math.min(1, f[i])) * 0x7fff;
+  const bytes = new Uint8Array(pcm.buffer), step = 3.5 * 24000 * 2, out = [];
+  for (let i = 0; i < bytes.length; i += step) {
+    const b = bytes.subarray(i, i + step); let s = '';
+    for (let j = 0; j < b.length; j += 0x8000) s += String.fromCharCode.apply(null, b.subarray(j, j + 0x8000));
+    out.push(btoa(s));
+  }
+  return out;
+}
 function chatSendAnswer(it) {
   if (!CHAT || CHAT.answerSent || !CHAT.dc || CHAT.dc.readyState !== 'open') return;
-  CHAT.answerSent = true;
+  CHAT.answerSent = true; CHAT.answer = { before: it.transcript, after: it.transcript_after }; chatPaint();
   const a = it.analysis || {};
-  const text = `Joan's spoken answer for this attempt. Before seeing the answer: "${it.transcript || '(nothing said)'}".`
+  const text = (CHAT.context?.answerMs ? 'Transcript of the recorded answer you heard at the start (from a separate speech-to-text model). ' : '')
+    + `Joan's spoken answer for this attempt. Before seeing the answer: "${it.transcript || '(nothing said)'}".`
     + (it.transcript_after ? ` After seeing it: "${it.transcript_after}".` : '')
     + (a.unsure?.length ? ` Unsure about: ${a.unsure.join('; ')}.` : '') + (a.missed?.length ? ` Missed: ${a.missed.join('; ')}.` : '');
   CHAT.dc.send(JSON.stringify({ type: 'conversation.item.create', item: { type: 'message', role: 'system', content: [{ type: 'input_text', text }] } }));
@@ -1127,32 +1204,61 @@ function chatPaint(full) {
   if (!CHAT) { slot.innerHTML = ''; return; }
   if (full || !$('.chat-panel', slot)) {
     slot.innerHTML = `<div class="chat-panel"><div class="chat-head"><span><span class="chat-live"></span><span class="mic-bars"><i></i><i></i><i></i></span><span id="chat-status"></span></span>
-      <button class="btn" id="chat-end">End <kbd>T</kbd></button></div><div class="chat-warn hidden" id="chat-warn"></div><div class="chat-turns"></div></div>`;
+      <button class="btn" id="chat-end">End <kbd>T</kbd></button></div><div class="chat-ctx" id="chat-ctx"></div><div class="chat-warn hidden" id="chat-warn"></div>
+      <details class="chat-answer hidden" id="chat-answer"><summary></summary><div></div></details>
+      <div class="chat-board hidden" id="chat-board"></div><div class="chat-turns"></div></div>`;
     $('#chat-end').onclick = () => chatEnd();
   }
   const secs = CHAT.started ? Math.floor((Date.now() - CHAT.started) / 1000) : 0;
-  $('#chat-status').textContent = CHAT.status === 'live' ? `Talking about this card · ${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}` : 'Connecting…';
+  $('#chat-status').textContent = CHAT.status === 'live' ? `Talking about this card · ${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`
+    : CHAT.status === 'sharing' ? 'Giving the tutor your answer…' : 'Connecting…';
+  $('#chat-ctx', slot).innerHTML = CHAT.context ? chatContextLine(CHAT.context, CHAT.answerSent) : '';
+  // your answer, collapsed above the conversation; only its text is replaced, so an open toggle stays open
+  const ans = $('#chat-answer', slot), body = CHAT.answer ? chatAnswerText(CHAT.answer) : '<span class="muted">Transcribing…</span>';
+  ans.classList.toggle('hidden', !CHAT.answer && !CHAT.context?.answerMs);
+  $('summary', ans).textContent = CHAT.answer ? 'Your answer' : 'Your answer · transcribing…';
+  if (ans.dataset.html !== body) { $('div', ans).innerHTML = body; ans.dataset.html = body; }
   const dot = $('.chat-live', slot); dot.classList.toggle('on', CHAT.status === 'live'); dot.classList.toggle('hearing', !!CHAT.hearing);
   const warn = $('#chat-warn', slot);
   warn.classList.toggle('hidden', !CHAT.quiet);
   if (CHAT.quiet) warn.innerHTML = `No sound from <b>${esc(CHAT.diag.mic || 'the microphone')}</b>. If it's the wrong mic, change it in <a href="#/settings">Settings → Microphone</a>.`;
-  const html = CHAT.turns.slice(-6).map(t => `<div class="chat-turn ${t.role}"><b>${t.role === 'user' ? 'You' : 'Tutor'}</b> ${esc(t.text)}</div>`).join('')
+  // the latest formula stays pinned while the conversation scrolls on (saved transcripts keep every one in place)
+  const math = CHAT.turns.filter(t => t.kind === 'math'), board = $('#chat-board', slot), last = math.at(-1);
+  board.classList.toggle('hidden', !last);
+  if (last && board.dataset.id !== last.id) {
+    board.dataset.id = last.id;
+    board.innerHTML = turnHtml(last) + (math.length > 1 ? `<div class="muted">${math.length} formulas · all of them are in the saved transcript</div>` : '');
+    renderMath(board);
+  }
+  const html = CHAT.turns.filter(t => t.kind !== 'math').slice(-6).map(turnHtml).join('')
     + (CHAT.partial ? `<div class="chat-turn assistant partial"><b>Tutor</b> ${esc(CHAT.partial)}</div>` : '');
   const box = $('.chat-turns', slot);
-  if (box.dataset.html !== html) { box.innerHTML = html; box.dataset.html = html; box.scrollTop = box.scrollHeight; }
+  if (box.dataset.html !== html) { box.innerHTML = html; box.dataset.html = html; renderMath(box); box.scrollTop = box.scrollHeight; }
   box.classList.toggle('hidden', !html);
 }
+function chatContextLine(cx, transcript) {
+  const bits = ['the card'];
+  if (cx.images) bits.push(`${cx.images} image${cx.images > 1 ? 's' : ''}`);
+  if (cx.answerMs) bits.push(`your answer (${fmtSecs(cx.answerMs)} audio${transcript ? ' + transcript' : ''})`);
+  return `<span class="k">Tutor has</span> ${bits.map(b => `<span class="tag">${b}</span>`).join('')}`;
+}
+const chatAnswerText = a => `${esc(a.before || '(nothing said before flipping)')}`
+  + (a.after ? `<div><span class="muted">After flipping:</span> ${esc(a.after)}</div>` : '');
+const chatHad = cx => {
+  const bits = [cx?.answerMs && 'your answer', cx?.images && `${cx.images} image${cx.images > 1 ? 's' : ''}`].filter(Boolean);
+  return bits.length ? ` · tutor had ${bits.join(' and ')}` : '';
+};
 function chatItem(c, withQuestion = false) {
   const s = c.summary, mins = c.ended_at ? Math.max(1, Math.round((c.ended_at - c.started_at) / 60000)) : null;
   const list = (k, label, cls) => s && s[k]?.length ? `<div class="resp-tags"><span class="k">${label}</span>${s[k].map(x => `<span class="tag ${cls}">${esc(x)}</span>`).join('')}</div>` : '';
   return `<div class="resp chat-item">
     ${withQuestion ? `<div class="resp-q" data-card="${c.card_id}">${esc(c.question || '')}</div>` : ''}
-    <div class="resp-meta">Conversation · ${fmtDateTime(c.started_at)}${mins ? ` · ${mins} min` : ''} · ${c.turns.length} turns<span class="spacer"></span>
+    <div class="resp-meta">Conversation · ${fmtDateTime(c.started_at)}${mins ? ` · ${mins} min` : ''} · ${c.turns.length} turns${chatHad(c.meta?.context)}<span class="spacer"></span>
       <button class="icon-btn" data-delchat="${c.id}" title="Delete this conversation">✕</button></div>
     ${s ? (s.takeaways?.length ? `<ul class="chat-takeaways">${s.takeaways.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '')
         : `<div class="resp-text muted">${c.status === 'live' ? 'In progress…' : 'Summarizing…'}</div>`}
     ${list('topics', 'Asked', 'topic')}${list('follow_ups', 'Open', 'unsure')}
-    <details class="chat-transcript"><summary>Transcript</summary>${c.turns.map(t => `<div class="chat-turn ${t.role}"><b>${t.role === 'user' ? 'You' : 'Tutor'}</b> ${esc(t.text)}</div>`).join('')}</details>
+    <details class="chat-transcript"><summary>Transcript</summary>${c.answer ? `<details class="chat-answer"><summary>Your answer</summary><div>${chatAnswerText(c.answer)}</div></details>` : ''}${c.turns.map(turnHtml).join('')}</details>
   </div>`;
 }
 

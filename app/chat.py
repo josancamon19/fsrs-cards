@@ -62,11 +62,22 @@ Rules:
 - Use the context: the card, its review history and Joan's earlier answers (what was missed or uncertain).
   Point out a gap from an earlier answer only when it is relevant to what Joan asks.
 - Be precise about math and ML; say so when something is uncertain instead of guessing.
-- If Joan's answer for this attempt arrives mid-conversation as a system message, take it into account.
+- Never read a formula out symbol by symbol. When an equation, derivation step or expression helps, call show_math to
+  write it on Joan's screen (one formula per call), then talk about it in words ("here, the prior is the P of A term").
+- Before Joan speaks you may receive the card's images (diagrams, plots) and Joan's recorded answer for this attempt as audio.
+  You can see the images and you heard the answer: refer to them directly when asked. A transcript of the answer may
+  arrive later as a system message; it doesn't need a reply.
 
 Context about the card:
 {card_context(card_id, response_id)}"""
 
+
+SHOW_MATH = {
+    "type": "function", "name": "show_math",
+    "description": "Write a formula on Joan's screen (rendered with KaTeX) instead of reading it aloud.",
+    "parameters": {"type": "object", "additionalProperties": False, "required": ["latex"], "properties": {
+        "latex": {"type": "string", "description": "LaTeX for one display formula, without $ or \\[ \\] delimiters"}}},
+}
 
 REALTIME_MODEL = os.environ.get("REALTIME_MODEL", "gpt-realtime-2.1")
 REALTIME_VOICE = os.environ.get("REALTIME_VOICE", "marin")
@@ -85,6 +96,7 @@ def client_secret(card_id: int, response_id: int | None) -> dict:
                                          "interrupt_response": True}},
             "output": {"voice": REALTIME_VOICE},
         },
+        "tools": [SHOW_MATH], "tool_choice": "auto",
     }
     body = {"expires_after": {"anchor": "created_at", "seconds": 600}, "session": session}
     return responses._post(f"{responses.API}/realtime/client_secrets", json.dumps(body).encode(), "application/json", timeout=30)
@@ -112,7 +124,8 @@ def add_turns(chat_id: int, turns: list[dict]) -> int:
         for t in turns:
             text = (t.get("text") or "").strip()
             if text and t.get("role") in ("user", "assistant") and (not t.get("id") or t["id"] not in seen):
-                have.append({"id": t.get("id"), "role": t["role"], "text": text, "ts": int(t.get("ts") or time.time() * 1000)})
+                have.append({"id": t.get("id"), "role": t["role"], "text": text, "ts": int(t.get("ts") or time.time() * 1000),
+                             **({"kind": "math"} if t.get("kind") == "math" else {})})
         have.sort(key=lambda t: t["ts"])
         c.execute("UPDATE chats SET turns = ? WHERE id = ?", (json.dumps(have), chat_id))
         return len(have)
@@ -140,7 +153,8 @@ def end(chat_id: int) -> None:
     turns = json.loads(row["turns"])
     if not turns or not responses.api_key():
         return
-    convo = "\n".join(f"{'Joan' if t['role'] == 'user' else 'Tutor'}: {t['text']}" for t in turns)
+    convo = "\n".join(f"{'Joan' if t['role'] == 'user' else 'Tutor'}: {'[wrote] ' if t.get('kind') == 'math' else ''}{t['text']}"
+                      for t in turns)
     body = {"model": responses.CLEANUP_MODEL, "instructions": SUMMARY_INSTRUCTIONS, "reasoning": {"effort": "low"},
             "input": f"<card_question>\n{row['question']}\n</card_question>\n<card_answer>\n{row['answer']}\n</card_answer>\n"
                      f"<conversation>\n{convo}\n</conversation>",
@@ -154,7 +168,9 @@ def end(chat_id: int) -> None:
 
 
 def to_dict(r) -> dict:
-    return {"id": r["id"], "card_id": r["card_id"], "note_id": r["note_id"], "response_id": r["response_id"],
+    a = r["response_id"] and db.conn().execute("SELECT transcript, transcript_after FROM responses WHERE id = ?",
+                                               (r["response_id"],)).fetchone()
+    return {"answer": {"before": a["transcript"], "after": a["transcript_after"]} if a and (a["transcript"] or a["transcript_after"]) else None,"id": r["id"], "card_id": r["card_id"], "note_id": r["note_id"], "response_id": r["response_id"],
             "started_at": r["started_at"], "ended_at": r["ended_at"], "question": r["question"], "status": r["status"],
             "model": r["model"], "turns": json.loads(r["turns"]), "meta": json.loads(r["meta"]) if r["meta"] else None,
             "summary": json.loads(r["summary"]) if r["summary"] else None}

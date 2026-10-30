@@ -1042,7 +1042,7 @@ async function chatStart() {
     dc.onopen = async () => {
       if (!CHAT) return;
       diag.openedMs = Date.now() - diag.t0;
-      CHAT.status = 'sharing'; chatPaint();
+      CHAT.status = 'sharing'; chatPaint(); chatSendEffort();
       const cx = await ctxP;
       if (!CHAT || CHAT.dc !== dc) return;
       for (const item of cx.items) dc.send(JSON.stringify({ type: 'conversation.item.create', item }));
@@ -1086,6 +1086,7 @@ function chatEvent(ev) {
       // a written formula is answered with "shown"; the tutor then carries on talking about it
       if (CHAT.toolDone) { CHAT.toolDone = false; CHAT.dc?.readyState === 'open' && CHAT.dc.send(JSON.stringify({ type: 'response.create' })); }
       if (ev.response?.status && ev.response.status !== 'completed') d.errors.push('response ' + ev.response.status + ': ' + JSON.stringify(ev.response.status_details || '').slice(0, 200)); break;
+    case 'session.updated': if (ev.session?.reasoning) d.reasoning = ev.session.reasoning.effort; break;
     case 'error': d.errors.push(ev.error?.message || 'error'); toast(`Conversation error · ${esc(ev.error?.message || '')}`, 4000); break;
   }
 }
@@ -1166,6 +1167,22 @@ function chatSendAnswer(it) {
     + (a.unsure?.length ? ` Unsure about: ${a.unsure.join('; ')}.` : '') + (a.missed?.length ? ` Missed: ${a.missed.join('; ')}.` : '');
   CHAT.dc.send(JSON.stringify({ type: 'conversation.item.create', item: { type: 'message', role: 'system', content: [{ type: 'input_text', text }] } }));
 }
+/* Reasoning effort: unset = the model's own default (undocumented; the API can't go back to unset once a level is set).
+   Remembered between conversations and changeable mid-conversation. */
+const EFFORTS = [['', 'Default'], ['medium', 'Medium'], ['high', 'High'], ['xhigh', 'XHigh']];
+const effortPref = () => { try { return localStorage.getItem('chat-effort') || ''; } catch (e) { return ''; } };
+function chatSendEffort() {
+  const e = effortPref();
+  if (!e || !CHAT?.dc || CHAT.dc.readyState !== 'open') return;
+  CHAT.effortSent = true;
+  CHAT.dc.send(JSON.stringify({ type: 'session.update', session: { type: 'realtime', reasoning: { effort: e } } }));
+  CHAT.diag.efforts = [...(CHAT.diag.efforts || []), `${e}@${Date.now() - CHAT.diag.t0}`];
+}
+function chatSetEffort(e) {
+  try { localStorage.setItem('chat-effort', e); } catch (er) {}
+  if (!e && CHAT?.effortSent) toast('Default thinking applies from your next conversation', 3000);
+  chatSendEffort(); chatPaint();
+}
 function chatMeta(c) {
   const d = c.diag, tr = c.stream && c.stream.getAudioTracks()[0];
   return { ...d, durationMs: Date.now() - d.t0, peak: +d.peak.toFixed(4), track: tr ? { muted: tr.muted, enabled: tr.enabled, state: tr.readyState } : null,
@@ -1204,11 +1221,15 @@ function chatPaint(full) {
   if (!CHAT) { slot.innerHTML = ''; return; }
   if (full || !$('.chat-panel', slot)) {
     slot.innerHTML = `<div class="chat-panel"><div class="chat-head"><span><span class="chat-live"></span><span class="mic-bars"><i></i><i></i><i></i></span><span id="chat-status"></span></span>
+      <span class="chat-effort" title="How hard the tutor thinks before answering. Higher is slower to reply but better at hard explanations">${
+        EFFORTS.map(([v, l]) => `<button data-effort="${v}">${l}</button>`).join('')}</span>
       <button class="btn" id="chat-end">End <kbd>T</kbd></button></div><div class="chat-ctx" id="chat-ctx"></div><div class="chat-warn hidden" id="chat-warn"></div>
       <details class="chat-answer hidden" id="chat-answer"><summary></summary><div></div></details>
       <div class="chat-board hidden" id="chat-board"></div><div class="chat-turns"></div></div>`;
     $('#chat-end').onclick = () => chatEnd();
+    slot.querySelectorAll('[data-effort]').forEach(b => b.onclick = () => chatSetEffort(b.dataset.effort));
   }
+  slot.querySelectorAll('[data-effort]').forEach(b => b.classList.toggle('on', b.dataset.effort === effortPref()));
   const secs = CHAT.started ? Math.floor((Date.now() - CHAT.started) / 1000) : 0;
   $('#chat-status').textContent = CHAT.status === 'live' ? `Talking about this card · ${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`
     : CHAT.status === 'sharing' ? 'Giving the tutor your answer…' : 'Connecting…';

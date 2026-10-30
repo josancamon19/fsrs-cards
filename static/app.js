@@ -565,8 +565,8 @@ async function suspendAndNext(reason) {
 /* Every field of the card's note as raw HTML, with the front and back rendered live beside it exactly as in study.
    "Ask AI" sends a specific change request to the model (it sees the card, its history, spoken answers and
    conversations); its proposal fills the fields but is only kept once you Save. History lists every request and
-   every saved version, and any of them can be loaded back. Saving writes only the fields that changed; the memory
-   state is kept unless you ask to reset it. */
+   every saved version, and any of them can be loaded back. Saving writes only the fields that changed and keeps the
+   memory state. Metadata fields (section, level, kind…) aren't shown. */
 async function openEditor(id, after) {
   if (closeModal() === false) return;
   const bg = document.createElement('div'); bg.className = 'modal-bg';
@@ -585,10 +585,9 @@ async function openEditor(id, after) {
             <button class="btn" id="ai-go">Ask AI <kbd>⌘↵</kbd></button></div>
           <div class="ai-result hidden" id="ai-result"></div>
         </div>
-        ${Object.entries(orig).map(([k, v]) => `
+        ${Object.entries(orig).filter(([k]) => (c.editable || Object.keys(orig)).includes(k)).map(([k, v]) => `
         <label class="edit-field"><span>${esc(k)}</span><textarea class="input" data-f="${esc(k)}" spellcheck="false" rows="1">${esc(v)}</textarea></label>`).join('')}
         <div class="sub">HTML. Math: <code>\\( … \\)</code> inline, <code>\\[ … \\]</code> on its own line${c.notetype.toLowerCase().includes('cloze') ? ', cloze: <code>{{c1::answer}}</code>' : ''}.</div>
-        <label class="edit-reset"><input type="checkbox" id="e-reset"> Reset its memory (the question now asks something different)</label>
         <details class="edit-history" id="e-hist"><summary>History</summary><div class="hist-list"></div></details>
       </div>
       <div class="edit-preview"><div class="k">Front</div><div class="card-host" id="e-q"></div><div class="k">Back</div><div class="card-host" id="e-a"></div></div>
@@ -618,7 +617,7 @@ async function openEditor(id, after) {
     hist.classList.toggle('hidden', !edits.length);
     $('summary', hist).textContent = `History (${edits.length})`;
     $('.hist-list', hist).innerHTML = edits.map(e => `<div class="hist-item">
-      <div class="hist-meta">${ago(e.ts)} · ${e.kind === 'ai' ? 'AI request' : 'Saved' + (e.reset_memory ? ' · memory reset' : '')}
+      <div class="hist-meta">${ago(e.ts)} · ${e.kind === 'ai' ? 'AI request' : 'Saved'}
         ${e.fields_after ? `<button class="btn sm" data-use="${e.id}">Load this version</button>` : ''}</div>
       ${e.instruction ? `<div class="hist-q">“${esc(e.instruction)}”</div>` : ''}
       ${e.status === 'pending' ? '<div class="muted">Thinking…</div>' : e.status === 'error' ? `<div class="hist-err">Failed · ${esc(e.error || '')}</div>`
@@ -627,7 +626,7 @@ async function openEditor(id, after) {
   hist.onclick = e => {
     const b = e.target.closest('[data-use]'); if (!b) return;
     const x = edits.find(z => z.id === +b.dataset.use);
-    setFields(x.fields_after); $('#e-reset', m).checked = x.kind === 'ai' && x.reset_memory;
+    setFields(x.fields_after);
     toast('Version loaded into the fields · Save to keep it');
   };
 
@@ -636,10 +635,9 @@ async function openEditor(id, after) {
   const showResult = (e, applied) => {
     result.classList.remove('hidden');
     result.innerHTML = `<b>${applied ? 'Changed' : 'Proposal ready'}</b> · ${esc(e.explanation || '')}
-      ${e.reset_memory ? '<div class="muted">It thinks the question changed, so “Reset its memory” is ticked.</div>' : ''}
       <div class="ai-actions">${applied ? '<button class="btn sm" id="ai-undo">Undo</button>' : '<button class="btn sm" id="ai-apply">Load it into the fields</button>'}</div>`;
-    const apply = () => { setFields(e.fields_after); if (e.reset_memory) $('#e-reset', m).checked = true; showResult(e, true); };
-    if (applied) $('#ai-undo', result).onclick = () => { setFields(e.fields_before); $('#e-reset', m).checked = false; result.classList.add('hidden'); };
+    const apply = () => { setFields(e.fields_after); showResult(e, true); };
+    if (applied) $('#ai-undo', result).onclick = () => { setFields(e.fields_before); result.classList.add('hidden'); };
     else $('#ai-apply', result).onclick = apply;
     return apply;
   };
@@ -679,13 +677,12 @@ async function openEditor(id, after) {
 
   const save = async () => {
     const fields = Object.fromEntries(Object.entries(values()).filter(([k, v]) => v !== orig[k]));
-    const reset = $('#e-reset', m).checked;
-    if (!Object.keys(fields).length && !reset) { delete bg.dataset.dirty; closeModal(); return; }
+    if (!Object.keys(fields).length) { delete bg.dataset.dirty; closeModal(); return; }
     try {
-      await api('/api/notes/' + c.note_id, { method: 'PUT', json: { fields, reset_cards: reset } });
+      await api('/api/notes/' + c.note_id, { method: 'PUT', json: { fields } });
     } catch (e) { return toast(`Couldn't save · ${esc(e.message)}`, 4000); }
     delete bg.dataset.dirty; closeModal();
-    toast(reset ? '<b>Card saved</b> · memory reset, it starts as new' : '<b>Card saved</b>');
+    toast('<b>Card saved</b>');
     if (S && S.card && S.card.note_id === c.note_id) {
       const r = await api(`/api/study/card/${S.card.id}` + (S.deck ? '?deck=' + encodeURIComponent(S.deck) : '')).catch(() => null);
       if (r?.card && S?.card) { S.card = r.card; studyRestyle(); }

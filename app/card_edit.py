@@ -17,6 +17,8 @@ from . import chat, db, prompts, render, responses
 
 MODEL = os.environ.get("CARD_EDIT_MODEL", "gpt-6.1-sol")
 EFFORT = os.environ.get("CARD_EDIT_EFFORT", "max")
+# Bookkeeping fields from the deck generators (section, level, kind…): not shown in the editor and never changed by AI.
+METADATA = {"Section", "Level", "LevelClass", "LevelLabel", "Kind", "Type", "Topic"}
 _MIME = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg", "gif": "image/gif", "webp": "image/webp"}
 
 
@@ -25,6 +27,10 @@ def note_fields(note_id: int) -> dict:
                              WHERE n.id = ?""", (note_id,)).fetchone()
     names, vals = json.loads(n["names"]), json.loads(n["fields"])
     return dict(zip(names, vals + [""] * (len(names) - len(vals))))
+
+
+def editable(fields: dict) -> list[str]:
+    return [k for k in fields if k not in METADATA]
 
 
 def _short(s: str, n: int = 700) -> str:
@@ -71,7 +77,7 @@ def history_text(note_id: int, card_id: int) -> str:
         for e in reversed(edits):
             when = chat._day(e["ts"])
             lines.append(f"- {when} request: {e['instruction']!r} → {e['explanation']}" if e["kind"] == "ai"
-                         else f"- {when} Joan saved the card" + (" and reset its memory" if e["reset_memory"] else ""))
+                         else f"- {when} Joan saved the card")
         parts.append("Earlier edits on this card, oldest first:\n" + "\n".join(lines))
     return "\n\n".join(parts)
 
@@ -87,11 +93,11 @@ def _images(fields: dict) -> list[dict]:
 
 
 def schema(names: list[str]) -> dict:
-    return {"type": "object", "additionalProperties": False, "required": ["fields", "explanation", "reset_memory"],
+    return {"type": "object", "additionalProperties": False, "required": ["fields", "explanation"],
             "properties": {
                 "fields": {"type": "object", "additionalProperties": False, "required": names,
                            "properties": {k: {"type": "string"} for k in names}},
-                "explanation": {"type": "string"}, "reset_memory": {"type": "boolean"}}}
+                "explanation": {"type": "string"}}}
 
 
 def start(card_id: int, instruction: str, fields: dict) -> int:
@@ -113,23 +119,24 @@ def run(eid: int) -> None:
         fields = json.loads(e["fields_before"])
         card = db.conn().execute("SELECT * FROM cards WHERE id = ?", (e["card_id"],)).fetchone()
         shown = render.render_card(card, fields)
+        names = editable(fields)
         context = "\n\n".join(x for x in (chat.card_context(e["card_id"]), history_text(e["note_id"], e["card_id"])) if x)
         text = (f"<card_context>\n{context}\n</card_context>\n\n"
-                f"<current_fields notetype=\"{shown['notetype']}\">\n{json.dumps(fields, ensure_ascii=False, indent=1)}\n</current_fields>\n\n"
+                f"<current_fields notetype=\"{shown['notetype']}\">\n{json.dumps({k: fields[k] for k in names}, ensure_ascii=False, indent=1)}\n</current_fields>\n\n"
                 f"<rendered>\nFront: {render.strip_html(shown['question'])}\nBack: {render.strip_html(shown['answer'])}\n</rendered>\n\n"
                 f"<request>\n{e['instruction']}\n</request>")
         body = {"model": MODEL, "reasoning": {"effort": EFFORT},
                 "instructions": prompts.load("card-edit", principles=prompts.load("card-principles"),
                                              examples=examples(e["note_id"])),
                 "input": [{"role": "user", "content": [{"type": "input_text", "text": text}, *_images(fields)]}],
-                "text": {"format": {"type": "json_schema", "name": "card_edit", "strict": True, "schema": schema(list(fields))}}}
+                "text": {"format": {"type": "json_schema", "name": "card_edit", "strict": True, "schema": schema(names)}}}
         res = responses._post(f"{responses.API}/responses", json.dumps(body).encode(), "application/json", timeout=1800)
         out = json.loads("".join(c.get("text", "") for item in res.get("output", []) if item.get("type") == "message"
                                  for c in item.get("content", []) if c.get("type") == "output_text"))
+        after = {**fields, **{k: v for k, v in out["fields"].items() if k in names}}
         with db.lock():
-            db.conn().execute("""UPDATE card_edits SET fields_after = ?, explanation = ?, reset_memory = ?, status = 'done',
-                                 done_at = ? WHERE id = ?""", (json.dumps(out["fields"]), out["explanation"],
-                                                              int(out["reset_memory"]), int(time.time() * 1000), eid))
+            db.conn().execute("""UPDATE card_edits SET fields_after = ?, explanation = ?, status = 'done', done_at = ?
+                                 WHERE id = ?""", (json.dumps(after), out["explanation"], int(time.time() * 1000), eid))
     except Exception as ex:
         with db.lock():
             db.conn().execute("UPDATE card_edits SET status = 'error', error = ?, done_at = ? WHERE id = ?",

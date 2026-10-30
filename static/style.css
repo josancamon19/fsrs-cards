@@ -223,7 +223,6 @@ table.data tr.click { cursor: pointer; } table.data tr.click:hover td { backgrou
 .hist-q { margin-top: 4px; }
 .hist-a { margin-top: 2px; color: var(--ink-2); }
 .hist-err { margin-top: 2px; color: var(--again); }
-.edit-reset { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--ink-2); }
 .edit-preview { position: sticky; top: 0; display: grid; gap: 6px; }
 .edit-preview .k { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
 .edit-preview .card-host { min-height: 0; }

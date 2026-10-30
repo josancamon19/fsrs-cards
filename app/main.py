@@ -313,6 +313,7 @@ def card_info(card_id: int):
     p["suspended"] = bool(row["suspended"])
     p["suspended_at"] = row["suspended_at"]
     p["suspend_reason"] = row["suspend_reason"]
+    p["editable"] = card_edit.editable(p["fields"])
     p["responses"] = [responses.to_dict(r) for r in c.execute(
         "SELECT * FROM responses WHERE card_id = ? ORDER BY ts DESC", (card_id,))]
     p["chats"] = [chat.to_dict(r) for r in c.execute(

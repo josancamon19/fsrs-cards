@@ -10,7 +10,7 @@ import os
 import time
 from datetime import datetime
 
-from . import db, responses, sched
+from . import db, prompts, responses, sched
 
 RATING = {1: "Again", 2: "Hard", 3: "Good", 4: "Easy"}
 
@@ -53,23 +53,7 @@ def card_context(card_id: int, response_id: int | None = None) -> str:
 
 
 def instructions(card_id: int, response_id: int | None = None) -> str:
-    return f"""You are a helpful teacher for Joan, who is preparing for ML / AI research interviews with spaced-repetition flashcards.
-Joan was just studying the card below and wants to talk about a few things related to it.
-
-Rules:
-- Do not speak first. Wait for Joan to talk.
-- Answer briefly and concisely: one to three sentences unless Joan asks you to go deeper. Spoken style, no lists read aloud.
-- Use the context: the card, its review history and Joan's earlier answers (what was missed or uncertain).
-  Point out a gap from an earlier answer only when it is relevant to what Joan asks.
-- Be precise about math and ML; say so when something is uncertain instead of guessing.
-- Never read a formula out symbol by symbol. When an equation, derivation step or expression helps, call show_math to
-  write it on Joan's screen (one formula per call), then talk about it in words ("here, the prior is the P of A term").
-- Before Joan speaks you may receive the card's images (diagrams, plots) and Joan's recorded answer for this attempt as audio.
-  You can see the images and you heard the answer: refer to them directly when asked. A transcript of the answer may
-  arrive later as a system message; it doesn't need a reply.
-
-Context about the card:
-{card_context(card_id, response_id)}"""
+    return prompts.load("tutor", card_context=card_context(card_id, response_id))
 
 
 SHOW_MATH = {
@@ -131,13 +115,6 @@ def add_turns(chat_id: int, turns: list[dict]) -> int:
         return len(have)
 
 
-SUMMARY_INSTRUCTIONS = """You digest a short spoken conversation between Joan (a learner) and a tutor about one flashcard.
-Return:
-- topics: the specific things Joan asked about (short noun phrases)
-- takeaways: what Joan should remember from the conversation, as precise one-line facts or explanations
-- follow_ups: questions left open, or things Joan said they want to look into later
-Only use what was actually said. Empty lists are fine."""
-
 SUMMARY_SCHEMA = {
     "type": "object", "additionalProperties": False, "required": ["topics", "takeaways", "follow_ups"],
     "properties": {k: {"type": "array", "items": {"type": "string"}} for k in ("topics", "takeaways", "follow_ups")},
@@ -155,7 +132,7 @@ def end(chat_id: int) -> None:
         return
     convo = "\n".join(f"{'Joan' if t['role'] == 'user' else 'Tutor'}: {'[wrote] ' if t.get('kind') == 'math' else ''}{t['text']}"
                       for t in turns)
-    body = {"model": responses.CLEANUP_MODEL, "instructions": SUMMARY_INSTRUCTIONS, "reasoning": {"effort": "low"},
+    body = {"model": responses.CLEANUP_MODEL, "instructions": prompts.load("conversation-summary"), "reasoning": {"effort": "low"},
             "input": f"<card_question>\n{row['question']}\n</card_question>\n<card_answer>\n{row['answer']}\n</card_answer>\n"
                      f"<conversation>\n{convo}\n</conversation>",
             "text": {"format": {"type": "json_schema", "name": "chat_digest", "strict": True, "schema": SUMMARY_SCHEMA}}}

@@ -19,7 +19,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel
 
-from . import apkg, chat, db, render, responses, sched
+from . import apkg, card_edit, chat, db, render, responses, sched
 
 STATIC = Path(__file__).resolve().parent.parent / "static"
 CARD_COLS = ("state", "step", "stability", "difficulty", "due", "last_review", "reps", "lapses")
@@ -30,6 +30,7 @@ app.mount("/static", StaticFiles(directory=STATIC), name="static")
 db.conn()
 responses.resume_pending()
 threading.Thread(target=lambda: chat.resume(), daemon=True).start()
+card_edit.fail_stale()
 
 # ---------------------------------------------------------------- auth (single user)
 # Set APP_PASSWORD to require a login (always do this when deployed). Unset = open (local use).
@@ -544,6 +545,7 @@ def edit_note(note_id: int, body: NoteEdit):
     unknown = set(body.fields) - set(names)
     if unknown:
         raise HTTPException(400, f"unknown fields {sorted(unknown)}; this note type has {names}")
+    before = dict(zip(names, vals))
     for k, v in body.fields.items():
         vals[names.index(k)] = v
     with db.lock():
@@ -555,12 +557,76 @@ def edit_note(note_id: int, body: NoteEdit):
             for i in range(len(body.deck.split("::"))):
                 c.execute("INSERT OR IGNORE INTO decks(name) VALUES (?)", ("::".join(body.deck.split("::")[:i + 1]),))
             c.execute("UPDATE cards SET deck_id = (SELECT id FROM decks WHERE name = ?) WHERE note_id = ?", (body.deck, note_id))
+        nt = c.execute("SELECT kind FROM notetypes WHERE id = (SELECT notetype_id FROM notes WHERE id = ?)", (note_id,)).fetchone()
+        if nt["kind"] == 1:  # cloze: a new {{cN::}} gets its own new card, as when the note was created
+            have = {r[0] for r in c.execute("SELECT ord FROM cards WHERE note_id = ?", (note_id,))}
+            new = sorted({int(m) - 1 for v in vals for m in re.findall(r"\{\{c(\d+)::", v)} - have)
+            if new:
+                deck_id = c.execute("SELECT deck_id FROM cards WHERE note_id = ? LIMIT 1", (note_id,)).fetchone()[0]
+                pos = (c.execute("SELECT MAX(due) FROM cards WHERE state = 0 AND due < 1000000000").fetchone()[0] or 0) + 1
+                top = c.execute("SELECT MAX(id) FROM cards").fetchone()[0] or 0
+                for k, o in enumerate(new):
+                    c.execute("INSERT INTO cards(id, note_id, deck_id, ord, due) VALUES (?,?,?,?,?)", (top + 1 + k, note_id, deck_id, o, pos))
+            # a cloze number that's gone would show a blank card: suspend it, with the reason
+            gone = have - {int(m) - 1 for v in vals for m in re.findall(r"\{\{c(\d+)::", v)}
+            for o in gone:
+                c.execute("UPDATE cards SET suspended = 1, suspended_at = ?, suspend_reason = ? WHERE note_id = ? AND ord = ? "
+                          "AND suspended = 0", (int(time.time()), f"Cloze c{o + 1} removed in an edit", note_id, o))
+        if body.fields and dict(zip(names, vals)) != before:
+            card_edit.record_saved(note_id, before, dict(zip(names, vals)), body.reset_cards)
         if body.reset_cards:
             c.execute("""UPDATE cards SET state = 0, step = NULL, stability = NULL, difficulty = NULL, last_review = NULL,
                          reps = 0, lapses = 0, due = 0 WHERE note_id = ?""", (note_id,))
         c.execute("COMMIT")
     render.clear_cache()
     return get_note(note_id)
+
+
+class Preview(BaseModel):
+    fields: dict[str, str]
+
+
+@app.post("/api/cards/{card_id}/preview")
+def card_preview(card_id: int, body: Preview):
+    """Render this card with unsaved field values (nothing is stored)."""
+    row = db.conn().execute("SELECT * FROM cards WHERE id = ?", (card_id,)).fetchone()
+    if not row:
+        raise HTTPException(404)
+    r = render.render_card(row, body.fields)
+    return {"question": r["question"], "answer": r["answer"], "css": r["css"]}
+
+
+class AiEdit(BaseModel):
+    instruction: str
+    fields: dict[str, str] = {}     # the editor's current values (may be unsaved)
+
+
+@app.post("/api/cards/{card_id}/ai-edits")
+def ai_edit(card_id: int, body: AiEdit):
+    """Ask the model for a specific change to this card. Runs in the background (max reasoning takes minutes);
+    poll GET /api/edits/{id}. The proposal is not saved to the note."""
+    if not responses.api_key():
+        raise HTTPException(400, "the server has no OPENAI_API_KEY")
+    if not body.instruction.strip():
+        raise HTTPException(400, "say what should change")
+    if not db.conn().execute("SELECT 1 FROM cards WHERE id = ?", (card_id,)).fetchone():
+        raise HTTPException(404)
+    return get_edit(card_edit.start(card_id, body.instruction, body.fields))
+
+
+@app.get("/api/edits/{edit_id}")
+def get_edit(edit_id: int):
+    r = db.conn().execute("SELECT * FROM card_edits WHERE id = ?", (edit_id,)).fetchone()
+    if not r:
+        raise HTTPException(404)
+    return card_edit.to_dict(r)
+
+
+@app.get("/api/notes/{note_id}/edits")
+def note_edits(note_id: int):
+    """This note's edit history, newest first: AI requests (with their proposals) and saved versions."""
+    return [card_edit.to_dict(r) for r in db.conn().execute(
+        "SELECT * FROM card_edits WHERE note_id = ? ORDER BY ts DESC LIMIT 100", (note_id,))]
 
 
 @app.delete("/api/notes/{note_id}")

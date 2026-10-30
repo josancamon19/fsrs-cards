@@ -112,12 +112,17 @@ def clear_cache():
     _notetype.cache_clear()
 
 
-def render_card(card) -> dict:
+def render_card(card, fields: dict | None = None) -> dict:
+    """`fields`: unsaved values to render instead of the stored ones (the editor's live preview)."""
     c = db.conn()
     note = c.execute("SELECT * FROM notes WHERE id = ?", (card["note_id"],)).fetchone()
     nt = _notetype(note["notetype_id"])
     deck = c.execute("SELECT name FROM decks WHERE id = ?", (card["deck_id"],)).fetchone()
     vals = json.loads(note["fields"])
+    vals += [""] * (len(nt["fields"]) - len(vals))
+    for k, v in (fields or {}).items():
+        if k in nt["fields"]:
+            vals[nt["fields"].index(k)] = v
     ctx = dict(zip(nt["fields"], vals))
     cloze = nt["kind"] == 1
     tmpl = nt["templates"][0 if cloze else min(card["ord"], len(nt["templates"]) - 1)]
@@ -128,7 +133,7 @@ def render_card(card) -> dict:
     a = _render(a_fmt, ctx, True, card["ord"], ts)
     q_for_back = re.sub(r'<input id="typeans"[^>]*>', "", q)
     a = a.replace("\x00FRONT\x00", q_for_back)
-    return {"question": _media(q), "answer": _media(a), "css": nt["css"], "notetype": nt["name"],
+    return {"question": _media(q), "answer": _media(a), "css": nt["css"], "notetype": nt["name"], "note_id": note["id"],
             "template": tmpl["name"], "deck": ctx["_deck"], "tags": note["tags"],
             "source_url": note["source_url"], "source_label": note["source_label"],
             "fields": dict(zip(nt["fields"], vals)), "sort_field": strip_html(vals[0])[:200] if vals else ""}

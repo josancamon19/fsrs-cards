@@ -114,6 +114,23 @@ CREATE TABLE IF NOT EXISTS chats (           -- voice conversations about a card
   meta        TEXT                           -- JSON diagnostics from the browser (mic, levels, events)
 );
 CREATE INDEX IF NOT EXISTS ix_chats_card ON chats(card_id, started_at);
+CREATE TABLE IF NOT EXISTS card_edits (      -- every version of a note's fields: AI edit requests and saved manual edits
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  note_id       INTEGER NOT NULL,
+  card_id       INTEGER,                     -- the card the editor was opened on
+  ts            INTEGER NOT NULL,            -- unix ms
+  kind          TEXT NOT NULL,               -- ai (a request to the model) or saved (fields written to the note)
+  instruction   TEXT,                        -- what Joan asked for (ai)
+  fields_before TEXT,                        -- JSON {field: html}
+  fields_after  TEXT,                        -- JSON {field: html}; for ai, the model's proposal (not saved until Save)
+  explanation   TEXT,                        -- the model's note on what it changed
+  reset_memory  INTEGER,                     -- ai: the model thinks the question changed; saved: memory was reset
+  status        TEXT NOT NULL,               -- pending, done, error
+  error         TEXT,
+  model         TEXT,
+  done_at       INTEGER
+);
+CREATE INDEX IF NOT EXISTS ix_card_edits_note ON card_edits(note_id, ts);
 CREATE TABLE IF NOT EXISTS settings (
   key   TEXT PRIMARY KEY,
   value TEXT NOT NULL

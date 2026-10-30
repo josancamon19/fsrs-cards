@@ -39,6 +39,16 @@ is stored in SQLite in `./data/anki.db`, and media files go in `./data/media/`.
   **Answers** lists every attempt, newest first, with search and filters, and Card info shows a card's attempts over time.
   Needs `OPENAI_API_KEY` on the server (`fly secrets set OPENAI_API_KEY=…`). `TRANSCRIBE_MODEL`/`CLEANUP_MODEL` override the models.
   `GET /api/responses` returns everything as JSON, for later analysis with a model.
+- **Talk about this card** (`T` after flipping): a voice conversation with a tutor (OpenAI Realtime, `gpt-realtime-2.1`)
+  that knows the card, its review history and your spoken answers. Before you speak it gets the card's images and
+  hears the answer you just recorded (no wait for the transcript). It writes formulas on screen (KaTeX) instead of
+  reading them aloud, and a Default / Medium / High / XHigh switch sets how hard it thinks. Conversations are saved as
+  text with a short digest (Card info, Answers → Conversations).
+- **Edit a card** (`E`, ✎ in the study bar, or *Edit* in Card info): every field as HTML with a live preview of the
+  front and back. **Ask AI** sends a specific change request to `gpt-6.1-sol` at max reasoning effort with the card,
+  its history, spoken answers, conversations, earlier requests, the card principles and examples of discarded and good
+  cards. Its proposal fills the fields; nothing is stored until you Save. History keeps every request and every saved
+  version, and any of them can be loaded back. `CARD_EDIT_MODEL`/`CARD_EDIT_EFFORT` override the model.
 
 ## Cards live in the database
 The live app's SQLite database (on Fly) is the **source of truth** for every card: content, progress, suspensions,
@@ -55,6 +65,12 @@ uv run python tools/cards.py rm <note id>
 uv run python tools/cards.py export                        # decks/<deck>.json: content-only snapshot for git history
 ```
 Edited and added notes are marked `edited_at`, so re-importing an old `.apkg` never overwrites them.
+
+## Prompts
+Every model prompt is a Markdown file in `prompts/`, read on each use, so you can edit it by hand: `tutor.md` (voice
+conversations), `conversation-summary.md`, `answer-cleanup.md` (spoken answers), `card-edit.md` and
+`card-principles.md` (AI card edits). `{{name}}` placeholders are filled in by the code; `<!-- comments -->` are notes
+and are dropped.
 
 ## Layout
 `app/apkg.py` handles import, `app/sched.py` holds FSRS and the queue, and `app/render.py` renders templates.

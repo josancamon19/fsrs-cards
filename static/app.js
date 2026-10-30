@@ -312,6 +312,7 @@ async function studyView(deck) {
         <button class="icon-btn" id="skip-btn" aria-label="Skip" data-tip="Skip for now: the card comes back at the end of this session. No review is logged, so FSRS isn't affected" data-key="S">↷</button>
         <button class="icon-btn" id="susp-btn" aria-label="Suspend" data-tip="Suspend: take the card out of study and add it to the rewrite list, with a reason" data-key="@" data-tip-end>⊘</button>
         <button class="icon-btn" id="undo-btn" aria-label="Undo" data-tip="Undo the last rating, skip or suspend" data-key="U" data-tip-end>↶</button>
+        <button class="icon-btn" id="edit-btn" aria-label="Edit card" data-tip="Edit this card's question and answer" data-key="E" data-tip-end>✎</button>
         <button class="icon-btn" id="info-btn" aria-label="Card info" data-tip="Card info: review history, forgetting curve and your spoken answers" data-key="I" data-tip-end>ⓘ</button>
         <button class="icon-btn more-btn" id="more-btn" aria-label="More actions" aria-haspopup="menu">⋯</button>
       </div>
@@ -324,6 +325,7 @@ async function studyView(deck) {
   $('#undo-btn').onclick = undo;
   $('#susp-btn').onclick = () => S.card && toggleSuspendPop();
   $('#info-btn').onclick = () => S.card && openCardInfo(S.card.id);
+  $('#edit-btn').onclick = () => S.card && openEditor(S.card.id);
   $('#mic-btn').onclick = () => recToggle();
   $('#flag-btn').onclick = () => toggleFlag();
   $('#skip-btn').onclick = () => skipCard();
@@ -345,6 +347,7 @@ async function studyView(deck) {
     else if (S.revealed && '1234'.includes(e.key)) { e.preventDefault(); answer(+e.key); }
     else if (e.key === 'u' || e.key === 'z') undo();
     else if (e.key === 'i') openCardInfo(S.card.id);
+    else if (e.key === 'e') { e.preventDefault(); openEditor(S.card.id); }
     else if (e.key === 'm') recToggle();
     else if (e.key === 'f') toggleFlag();
     else if (e.key === 's') skipCard();
@@ -472,6 +475,7 @@ function toggleMore(show) {
     ['skip-btn', '↷', 'Skip for now', 'Comes back at the end of the session; no review logged'],
     ['susp-btn', '⊘', 'Suspend…', 'Take it out of study and add it to the rewrite list'],
     ['undo-btn', '↶', 'Undo', 'Undo the last rating, skip or suspend'],
+    ['edit-btn', '✎', 'Edit card', 'Change the question and answer'],
     ['info-btn', 'ⓘ', 'Card info', 'History, forgetting curve and spoken answers'],
   ];
   if ($('#talk-btn') && !CHAT) items.unshift(['talk-btn', '◉', 'Talk about this card', 'Voice chat with a tutor that knows this card and your answers']);
@@ -557,10 +561,153 @@ async function suspendAndNext(reason) {
   finally { if (S) S.busy = false; }
 }
 
+/* ---------------------------------------------------------------- card editor */
+/* Every field of the card's note as raw HTML, with the front and back rendered live beside it exactly as in study.
+   "Ask AI" sends a specific change request to the model (it sees the card, its history, spoken answers and
+   conversations); its proposal fills the fields but is only kept once you Save. History lists every request and
+   every saved version, and any of them can be loaded back. Saving writes only the fields that changed; the memory
+   state is kept unless you ask to reset it. */
+async function openEditor(id, after) {
+  if (closeModal() === false) return;
+  const bg = document.createElement('div'); bg.className = 'modal-bg';
+  bg.innerHTML = `<div class="modal edit-modal"><div class="muted">Loading…</div></div>`;
+  bg.onclick = e => { if (e.target === bg) closeModal(); };
+  document.body.append(bg);
+  const c = await api('/api/cards/' + id), m = $('.modal', bg), orig = c.fields;
+  m.innerHTML = `
+    <div class="modal-head"><div><h1 style="font-size:18px">Edit card</h1><div class="sub">${esc(c.deck)} · ${esc(c.notetype)}</div></div>
+      <div style="display:flex;gap:8px"><button class="btn" id="e-cancel">Cancel</button><button class="btn primary" id="e-save">Save <kbd>⌘↵</kbd></button></div></div>
+    <div class="edit-grid">
+      <div class="edit-fields">
+        <div class="ai-box">
+          <textarea class="input" id="ai-q" rows="2" placeholder="Ask AI for a change, e.g. “turn this into an exercise with a number to compute”"></textarea>
+          <div class="ai-row"><span class="sub" id="ai-status">gpt-6.1-sol at max effort: it can take a few minutes. Keep editing or close this; the result waits in History.</span>
+            <button class="btn" id="ai-go">Ask AI <kbd>⌘↵</kbd></button></div>
+          <div class="ai-result hidden" id="ai-result"></div>
+        </div>
+        ${Object.entries(orig).map(([k, v]) => `
+        <label class="edit-field"><span>${esc(k)}</span><textarea class="input" data-f="${esc(k)}" spellcheck="false" rows="1">${esc(v)}</textarea></label>`).join('')}
+        <div class="sub">HTML. Math: <code>\\( … \\)</code> inline, <code>\\[ … \\]</code> on its own line${c.notetype.toLowerCase().includes('cloze') ? ', cloze: <code>{{c1::answer}}</code>' : ''}.</div>
+        <label class="edit-reset"><input type="checkbox" id="e-reset"> Reset its memory (the question now asks something different)</label>
+        <details class="edit-history" id="e-hist"><summary>History</summary><div class="hist-list"></div></details>
+      </div>
+      <div class="edit-preview"><div class="k">Front</div><div class="card-host" id="e-q"></div><div class="k">Back</div><div class="card-host" id="e-a"></div></div>
+    </div>`;
+  const areas = $$('textarea[data-f]', m), grow = t => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 2 + 'px'; };
+  const values = () => Object.fromEntries(areas.map(t => [t.dataset.f, t.value]));
+  const paint = r => { paintCard($('#e-q', m), r.question, r.css); paintCard($('#e-a', m), r.answer, r.css); };
+  paint(c);
+  let timer, seq = 0;
+  const changed = () => {
+    if (areas.some(a => a.value !== orig[a.dataset.f])) bg.dataset.dirty = '1'; else delete bg.dataset.dirty;
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      const n = ++seq, r = await api(`/api/cards/${id}/preview`, { json: { fields: values() } }).catch(() => null);
+      if (r && n === seq && bg.isConnected) paint(r);
+    }, 250);
+  };
+  const setFields = f => { areas.forEach(t => { if (f[t.dataset.f] != null) { t.value = f[t.dataset.f]; grow(t); } }); changed(); };
+  areas.forEach(t => { grow(t); t.oninput = () => { grow(t); changed(); }; });
+
+  // ---- history: AI requests and saved versions, newest first
+  const hist = $('#e-hist', m);
+  let edits = [];
+  const ago = ts => fmtIvl((Date.now() - ts) / 1000) + ' ago';
+  const loadHistory = async () => {
+    edits = await api(`/api/notes/${c.note_id}/edits`).catch(() => []);
+    hist.classList.toggle('hidden', !edits.length);
+    $('summary', hist).textContent = `History (${edits.length})`;
+    $('.hist-list', hist).innerHTML = edits.map(e => `<div class="hist-item">
+      <div class="hist-meta">${ago(e.ts)} · ${e.kind === 'ai' ? 'AI request' : 'Saved' + (e.reset_memory ? ' · memory reset' : '')}
+        ${e.fields_after ? `<button class="btn sm" data-use="${e.id}">Load this version</button>` : ''}</div>
+      ${e.instruction ? `<div class="hist-q">“${esc(e.instruction)}”</div>` : ''}
+      ${e.status === 'pending' ? '<div class="muted">Thinking…</div>' : e.status === 'error' ? `<div class="hist-err">Failed · ${esc(e.error || '')}</div>`
+        : e.explanation ? `<div class="hist-a">${esc(e.explanation)}</div>` : ''}</div>`).join('');
+  };
+  hist.onclick = e => {
+    const b = e.target.closest('[data-use]'); if (!b) return;
+    const x = edits.find(z => z.id === +b.dataset.use);
+    setFields(x.fields_after); $('#e-reset', m).checked = x.kind === 'ai' && x.reset_memory;
+    toast('Version loaded into the fields · Save to keep it');
+  };
+
+  // ---- ask AI
+  const q = $('#ai-q', m), go = $('#ai-go', m), status = $('#ai-status', m), result = $('#ai-result', m);
+  const showResult = (e, applied) => {
+    result.classList.remove('hidden');
+    result.innerHTML = `<b>${applied ? 'Changed' : 'Proposal ready'}</b> · ${esc(e.explanation || '')}
+      ${e.reset_memory ? '<div class="muted">It thinks the question changed, so “Reset its memory” is ticked.</div>' : ''}
+      <div class="ai-actions">${applied ? '<button class="btn sm" id="ai-undo">Undo</button>' : '<button class="btn sm" id="ai-apply">Load it into the fields</button>'}</div>`;
+    const apply = () => { setFields(e.fields_after); if (e.reset_memory) $('#e-reset', m).checked = true; showResult(e, true); };
+    if (applied) $('#ai-undo', result).onclick = () => { setFields(e.fields_before); $('#e-reset', m).checked = false; result.classList.add('hidden'); };
+    else $('#ai-apply', result).onclick = apply;
+    return apply;
+  };
+  const wait = async (eid, mine) => {
+    const t0 = Date.now(); go.disabled = true;
+    const tick = setInterval(() => { status.textContent = `Thinking at max effort… ${fmtSecs(Date.now() - t0)}`; }, 1000);
+    try {
+      for (;;) {
+        await new Promise(r => setTimeout(r, 2500));
+        if (!bg.isConnected) return;
+        const e = await api('/api/edits/' + eid).catch(() => null);
+        if (!e || e.status === 'pending') continue;
+        if (e.status === 'error') { status.textContent = `Failed · ${e.error || ''}`; }
+        else {
+          status.textContent = 'Done. Not saved yet: check the preview, then Save (or ask for another change).';
+          const apply = showResult(e, false);
+          if (mine) apply();  // a request made in this editor fills the fields at once; an older one waits for a click
+        }
+        loadHistory();
+        return;
+      }
+    } finally { clearInterval(tick); go.disabled = false; }
+  };
+  const ask = async () => {
+    const instruction = q.value.trim();
+    if (!instruction) return q.focus();
+    try {
+      const e = await api(`/api/cards/${id}/ai-edits`, { json: { instruction, fields: values() } });
+      q.value = ''; result.classList.add('hidden'); loadHistory();
+      wait(e.id, true);
+    } catch (er) { toast(`Couldn't ask · ${esc(er.message)}`, 4000); }
+  };
+  go.onclick = ask;
+  await loadHistory();
+  const pending = edits.find(e => e.kind === 'ai' && e.status === 'pending');
+  if (pending) wait(pending.id, false);
+
+  const save = async () => {
+    const fields = Object.fromEntries(Object.entries(values()).filter(([k, v]) => v !== orig[k]));
+    const reset = $('#e-reset', m).checked;
+    if (!Object.keys(fields).length && !reset) { delete bg.dataset.dirty; closeModal(); return; }
+    try {
+      await api('/api/notes/' + c.note_id, { method: 'PUT', json: { fields, reset_cards: reset } });
+    } catch (e) { return toast(`Couldn't save · ${esc(e.message)}`, 4000); }
+    delete bg.dataset.dirty; closeModal();
+    toast(reset ? '<b>Card saved</b> · memory reset, it starts as new' : '<b>Card saved</b>');
+    if (S && S.card && S.card.note_id === c.note_id) {
+      const r = await api(`/api/study/card/${S.card.id}` + (S.deck ? '?deck=' + encodeURIComponent(S.deck) : '')).catch(() => null);
+      if (r?.card && S?.card) { S.card = r.card; studyRestyle(); }
+    }
+    after && after();
+  };
+  $('#e-save', m).onclick = save;
+  $('#e-cancel', m).onclick = () => closeModal() && after && after();
+  m.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); e.target === q ? ask() : save(); }
+  });
+  setTimeout(() => areas[0]?.focus(), 0);
+}
+
 /* ---------------------------------------------------------------- card info modal */
-function closeModal() { $('.modal-bg')?.remove(); hideTip(); }
+function closeModal() {
+  const bg = $('.modal-bg');
+  if (bg?.dataset.dirty && !confirm('Discard your edits to this card?')) return false;
+  bg?.remove(); hideTip(); return true;
+}
 async function openCardInfo(id) {
-  closeModal();
+  if (closeModal() === false) return;
   const bg = document.createElement('div'); bg.className = 'modal-bg';
   bg.innerHTML = `<div class="modal"><div class="muted">Loading…</div></div>`;
   bg.onclick = e => { if (e.target === bg) closeModal(); };
@@ -578,6 +725,7 @@ async function openCardInfo(id) {
     <div class="sub" style="margin-top:10px">${c.state === 'new' ? 'Not studied yet.' : `Due <b>${fmtDate(c.due)}</b> (${rel(c.due)}) · last review ${c.last_review ? fmtDateTime(c.last_review * 1000) : '—'}`}</div>
     ${c.suspended ? `<div class="susp-note">Suspended${c.suspended_at ? ' ' + fmtDateTime(c.suspended_at * 1000) : ''}${c.suspend_reason ? ` · <b>${esc(c.suspend_reason)}</b>` : ' · no reason given'}</div>` : ''}
     <div style="display:flex;gap:8px;margin:8px 0 16px;flex-wrap:wrap">
+      <button class="btn" id="m-edit">✎ Edit</button>
       <button class="btn" id="m-susp">${c.suspended ? 'Unsuspend' : 'Suspend…'}</button>
       <button class="btn danger" id="m-reset">Reset to new</button>
     </div>
@@ -603,6 +751,7 @@ async function openCardInfo(id) {
     </div>`;
   paintCard($('#m-card', m), c.answer, c.css);
   $('#m-close', m).onclick = closeModal;
+  $('#m-edit', m).onclick = () => openEditor(id, () => openCardInfo(id));
   if ($('#m-resp', m)) { bindResponses($('#m-resp', m), () => openCardInfo(id)); renderMath($('#m-resp', m)); }
   if ($('#m-chats', m)) { bindResponses($('#m-chats', m), () => openCardInfo(id)); renderMath($('#m-chats', m)); }
   $('#m-susp', m).onclick = async () => {

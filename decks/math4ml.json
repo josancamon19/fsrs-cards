@@ -286,7 +286,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=1.%20Etymology",
   "source_label": "Math › 1. Etymology",
-  "suspended": null
+  "suspended": [
+   "Weird card not sure if it makes sense at all"
+  ]
  },
  {
   "id": 1792626439656,
@@ -367,7 +369,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.3%20Cross-Entropy%20Loss%20%3D%3D%20Negative%20Log%20Likelihood",
   "source_label": "Math › 5.3 Cross-Entropy Loss == Negative Log Likelihood",
-  "suspended": null
+  "suspended": [
+   "Not useful"
+  ]
  },
  {
   "id": 1792626439664,
@@ -545,7 +549,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
   "source_label": "Math › 2.2 Terminology",
-  "suspended": null
+  "suspended": [
+   "Ambiguous question"
+  ]
  },
  {
   "id": 1792626439682,
@@ -563,7 +569,10 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
   "source_label": "Math › 2.2 Terminology",
-  "suspended": null
+  "suspended": [
+   "it's very confusing what should be included here",
+   "Not useful"
+  ]
  },
  {
   "id": 1792626439685,
@@ -624,7 +633,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
   "source_label": "Math › 2.2 Terminology",
-  "suspended": null
+  "suspended": [
+   "super unclear question"
+  ]
  },
  {
   "id": 1792626439692,
@@ -697,7 +708,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
   "source_label": "Math › 2.2 Terminology",
-  "suspended": null
+  "suspended": [
+   "Ambiguous question"
+  ]
  },
  {
   "id": 1792626439701,
@@ -1301,7 +1314,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
   "source_label": "Math › 2.2 Terminology",
-  "suspended": null
+  "suspended": [
+   "Not useful"
+  ]
  },
  {
   "id": 1792626439765,
@@ -1400,7 +1415,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
   "source_label": "Math › 2.2 Terminology",
-  "suspended": null
+  "suspended": [
+   "Ambiguous question"
+  ]
  },
  {
   "id": 1792626439775,
@@ -1631,7 +1648,7 @@
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.1.%20Probability%20normalization",
   "source_label": "Math › 3.1. Probability normalization",
   "suspended": [
-   "I don't understand this card, what?"
+   "Replaced by the exercise 1793567769828 (naive vs stable softmax). Was: I don't understand this card, what?"
   ]
  },
  {
@@ -1880,7 +1897,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
   "source_label": "Math › 3.2. Scale normalization",
-  "suspended": null
+  "suspended": [
+   "Ambiguous question"
+  ]
  },
  {
   "id": 1792626439827,
@@ -1917,7 +1936,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
   "source_label": "Math › 3.2. Scale normalization",
-  "suspended": null
+  "suspended": [
+   "Ambiguous question"
+  ]
  },
  {
   "id": 1792626439831,
@@ -1956,7 +1977,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
   "source_label": "Math › 3.2. Scale normalization",
-  "suspended": null
+  "suspended": [
+   "Not useful"
+  ]
  },
  {
   "id": 1792626439836,
@@ -2013,7 +2036,10 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
   "source_label": "Math › 3.2. Scale normalization",
-  "suspended": null
+  "suspended": [
+   "Not useful",
+   "Not useful"
+  ]
  },
  {
   "id": 1792626439843,
@@ -2033,7 +2059,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
   "source_label": "Math › 3.2. Scale normalization",
-  "suspended": null
+  "suspended": [
+   "Not useful"
+  ]
  },
  {
   "id": 1792626439845,
@@ -2052,7 +2080,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.2.%20Scale%20normalization",
   "source_label": "Math › 3.2. Scale normalization",
-  "suspended": null
+  "suspended": [
+   "Not useful"
+  ]
  },
  {
   "id": 1792626439847,
@@ -2106,6 +2136,26 @@
    "Level": "L4 · Connect",
    "LevelClass": "L4",
    "Kind": "Synthesis"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.1.%20Probability%20normalization",
+  "source_label": "Math › 3.1. Probability normalization",
+  "suspended": null
+ },
+ {
+  "id": 1793567769828,
+  "deck": "Math4ML::Probability & Information Theory::06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::06 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::softmax",
+  "fields": {
+   "Problem": "Logits [1000, 999, 998]. What does a naive softmax return in float32, and what's the stable result?",
+   "Hint": "Softmax ignores adding a constant to every logit.",
+   "Answer": "Naive: <b>NaN</b>. Stable: ≈ [0.67, 0.24, 0.09]",
+   "Steps": "\\(e^{1000}\\) overflows to ∞ (float32 tops out near \\(e^{88}\\)), and ∞ / ∞ = NaN. Subtract the max first: [0, −1, −2] → \\(e^0 = 1,\\ e^{-1} \\approx 0.37,\\ e^{-2} \\approx 0.14\\), sum ≈ 1.50 → 0.67, 0.24, 0.09. Same answer, because softmax is shift-invariant: \\(e^{-1000}\\) cancels top and bottom. After the shift the largest term is \\(e^0 = 1\\), so nothing overflows, and the sum is ≥ 1, so very negative logits like [−1000, −1001] can't underflow to 0 / 0 either.",
+   "Image": "",
+   "Section": "06 Normalization · Softmax, LayerNorm, RMSNorm, L2",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=3.1.%20Probability%20normalization",
   "source_label": "Math › 3.1. Probability normalization",
@@ -2205,7 +2255,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
   "source_label": "Math › 4. More Definitions",
-  "suspended": null
+  "suspended": [
+   "not necessary for now"
+  ]
  },
  {
   "id": 1792626439861,
@@ -2376,7 +2428,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
   "source_label": "Math › 4. More Definitions",
-  "suspended": null
+  "suspended": [
+   "Not useful"
+  ]
  },
  {
   "id": 1792626439880,
@@ -4092,6 +4146,206 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=Algebraic%20Relationships",
   "source_label": "Math › Algebraic Relationships",
+  "suspended": null
+ },
+ {
+  "id": 1793567768820,
+  "deck": "Math4ML::Probability & Information Theory::12 Evaluation · Accuracy, Precision, Recall",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::12 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::evaluation",
+  "fields": {
+   "Problem": "1,000 emails, 10 are spam. A filter flags <b>nothing</b>. What are its accuracy and recall?",
+   "Hint": "",
+   "Answer": "99% accuracy, 0% recall",
+   "Steps": "Accuracy = (0 + 990) / 1000. Recall = 0 / 10. With rare positives, accuracy rewards doing nothing.",
+   "Image": "",
+   "Section": "12 Evaluation · Accuracy, Precision, Recall",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.4%20Accuracy%20and%20Recall",
+  "source_label": "Math › 5.4 Accuracy and Recall",
+  "suspended": null
+ },
+ {
+  "id": 1793567768906,
+  "deck": "Math4ML::Probability & Information Theory::12 Evaluation · Accuracy, Precision, Recall",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::12 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::evaluation",
+  "fields": {
+   "Problem": "1,000 emails, 30 are spam. A filter flags <b>everything</b>. What are its recall and precision?",
+   "Hint": "",
+   "Answer": "100% recall, 3% precision",
+   "Steps": "Recall = 30 / 30. Precision = 30 / 1000, the base rate. Recall alone is trivially maxed by flagging everything.",
+   "Image": "",
+   "Section": "12 Evaluation · Accuracy, Precision, Recall",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.4%20Accuracy%20and%20Recall",
+  "source_label": "Math › 5.4 Accuracy and Recall",
+  "suspended": null
+ },
+ {
+  "id": 1793567768988,
+  "deck": "Math4ML::Probability & Information Theory::12 Evaluation · Accuracy, Precision, Recall",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::12 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::evaluation",
+  "fields": {
+   "Problem": "100 spam, 900 legit. The filter flags 120 emails, and 80 of them are spam. What are its precision and recall?",
+   "Hint": "",
+   "Answer": "Precision ≈ 67%, recall = 80%",
+   "Steps": "Precision = TP / flagged = 80 / 120. Recall = TP / actual spam = 80 / 100.",
+   "Image": "",
+   "Section": "12 Evaluation · Accuracy, Precision, Recall",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.4%20Accuracy%20and%20Recall",
+  "source_label": "Math › 5.4 Accuracy and Recall",
+  "suspended": null
+ },
+ {
+  "id": 1793567769086,
+  "deck": "Math4ML::Probability & Information Theory::12 Evaluation · Accuracy, Precision, Recall",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::12 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::evaluation",
+  "fields": {
+   "Problem": "Your spam filter <b>permanently deletes</b> what it flags, with no spam folder. Do you tune it for precision or recall?",
+   "Hint": "",
+   "Answer": "Precision",
+   "Steps": "A false positive destroys a real email; a missed spam costs a second to delete. When false alarms are expensive, precision matters.",
+   "Image": "",
+   "Section": "12 Evaluation · Accuracy, Precision, Recall",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.4%20Accuracy%20and%20Recall",
+  "source_label": "Math › 5.4 Accuracy and Recall",
+  "suspended": null
+ },
+ {
+  "id": 1793567769183,
+  "deck": "Math4ML::Probability & Information Theory::12 Evaluation · Accuracy, Precision, Recall",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::12 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::evaluation",
+  "fields": {
+   "Problem": "1,000 legit emails, and the filter wrongly flags 50 of them. What is its specificity, and what is specificity the recall of?",
+   "Hint": "",
+   "Answer": "95%; it's recall on the <b>negative</b> class",
+   "Steps": "Specificity = TN / (TN + FP) = 950 / 1000: of the real non-spam, how much you left alone. It's independent of recall, not its inverse: a filter can be high on both.",
+   "Image": "",
+   "Section": "12 Evaluation · Accuracy, Precision, Recall",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.4%20Accuracy%20and%20Recall",
+  "source_label": "Math › 5.4 Accuracy and Recall",
+  "suspended": null
+ },
+ {
+  "id": 1793567769292,
+  "deck": "Math4ML::Probability & Information Theory::12 Evaluation · Accuracy, Precision, Recall",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::12 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::evaluation",
+  "fields": {
+   "Problem": "A RAG retriever returns 50 passages, then a reranker keeps the best 5. Do you tune the retriever for precision or recall?",
+   "Hint": "",
+   "Answer": "Recall",
+   "Steps": "The reranker can drop bad passages, but it can't recover one the retriever never returned. In a multi-stage pipeline, early stages favor recall; later stages fix precision.",
+   "Image": "",
+   "Section": "12 Evaluation · Accuracy, Precision, Recall",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.4%20Accuracy%20and%20Recall",
+  "source_label": "Math › 5.4 Accuracy and Recall",
+  "suspended": null
+ },
+ {
+  "id": 1793567769392,
+  "deck": "Math4ML::Probability & Information Theory::12 Evaluation · Accuracy, Precision, Recall",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::12 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::evaluation",
+  "fields": {
+   "Problem": "You lower a classifier's threshold from 0.9 to 0.5. Which metric is <b>guaranteed</b> not to go down?",
+   "Hint": "",
+   "Answer": "Recall",
+   "Steps": "Lowering the threshold only adds positives: TP can only grow, and TP + FN (all real positives) stays fixed. Precision can move either way, since new flags may be true or false.",
+   "Image": "",
+   "Section": "12 Evaluation · Accuracy, Precision, Recall",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.4%20Accuracy%20and%20Recall",
+  "source_label": "Math › 5.4 Accuracy and Recall",
+  "suspended": null
+ },
+ {
+  "id": 1793567769497,
+  "deck": "Math4ML::Probability & Information Theory::12 Evaluation · Accuracy, Precision, Recall",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::12 m4ml::level::4_connect m4ml::kind::exercise m4ml::topic::evaluation",
+  "fields": {
+   "Problem": "10,000 transactions, 2% fraud. The detector has 90% recall and 98% specificity. Guess first: of the flagged transactions, what share is fraud?",
+   "Hint": "",
+   "Answer": "≈ 48%",
+   "Steps": "200 fraud → 180 caught. 9,800 legit → 2% flagged = 196 false alarms. Precision = 180 / 376. A 98% specificity still means half the flags are false when positives are rare.",
+   "Image": "",
+   "Section": "12 Evaluation · Accuracy, Precision, Recall",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.4%20Accuracy%20and%20Recall",
+  "source_label": "Math › 5.4 Accuracy and Recall",
+  "suspended": null
+ },
+ {
+  "id": 1793567769609,
+  "deck": "Math4ML::Probability & Information Theory::12 Evaluation · Accuracy, Precision, Recall",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::12 m4ml::level::3_apply m4ml::kind::exercise m4ml::topic::evaluation",
+  "fields": {
+   "Problem": "Model A has P = 0.9, R = 0.1. Model B has P = 0.5, R = 0.5. Which has the higher F1?",
+   "Hint": "",
+   "Answer": "B: 0.50 vs 0.18",
+   "Steps": "F1_A = 2 · 0.9 · 0.1 / (0.9 + 0.1) = 0.18; the arithmetic mean would say 0.5 for both. F1 is a harmonic mean, so the weaker of P and R dominates.",
+   "Image": "",
+   "Section": "12 Evaluation · Accuracy, Precision, Recall",
+   "Level": "L3 · Apply",
+   "LevelClass": "L3",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.4%20Accuracy%20and%20Recall",
+  "source_label": "Math › 5.4 Accuracy and Recall",
+  "suspended": null
+ },
+ {
+  "id": 1793567769717,
+  "deck": "Math4ML::Probability & Information Theory::12 Evaluation · Accuracy, Precision, Recall",
+  "notetype": "Math4ML · Exercise",
+  "tags": "m4ml m4ml::section::12 m4ml::level::4_connect m4ml::kind::exercise m4ml::topic::evaluation",
+  "fields": {
+   "Problem": "A missed fraud costs $500 and a false alarm costs $5 to review. Model X: 40 misses, 200 false alarms. Model Y: 10 misses, 2,000 false alarms. Which is cheaper?",
+   "Hint": "",
+   "Answer": "Y: $15,000 vs $21,000",
+   "Steps": "X = 40 · 500 + 200 · 5 = 20,000 + 1,000. Y = 10 · 500 + 2,000 · 5 = 5,000 + 10,000. Y wins despite 10× the false alarms: the right balance comes from the costs, not from the metric.",
+   "Image": "",
+   "Section": "12 Evaluation · Accuracy, Precision, Recall",
+   "Level": "L4 · Connect",
+   "LevelClass": "L4",
+   "Kind": "Exercise"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.4%20Accuracy%20and%20Recall",
+  "source_label": "Math › 5.4 Accuracy and Recall",
   "suspended": null
  }
 ]

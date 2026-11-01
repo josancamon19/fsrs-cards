@@ -54,7 +54,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Building%20RL%20Bottoms%20Up",
   "source_label": "RL › Building RL Bottoms Up",
-  "suspended": null
+  "suspended": [
+   "List / too many items"
+  ]
  },
  {
   "id": 1792650963068,
@@ -73,7 +75,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=1.%20REINFORCE%20%2F%20Vanilla%2C1992",
   "source_label": "RL › 1. REINFORCE / Vanilla,1992",
-  "suspended": null
+  "suspended": [
+   "Ambiguous question"
+  ]
  },
  {
   "id": 1792650963070,
@@ -168,7 +172,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
   "source_label": "RL › Terminology",
-  "suspended": null
+  "suspended": [
+   "useless question"
+  ]
  },
  {
   "id": 1792650963078,
@@ -187,7 +193,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Creating%20a%20Value%20Function",
   "source_label": "RL › Creating a Value Function",
-  "suspended": null
+  "suspended": [
+   "Ambiguous question"
+  ]
  },
  {
   "id": 1792650963080,
@@ -263,7 +271,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
   "source_label": "RL › Terminology",
-  "suspended": null
+  "suspended": [
+   "Ambiguous question"
+  ]
  },
  {
   "id": 1792650963088,
@@ -320,7 +330,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
   "source_label": "RL › Terminology",
-  "suspended": null
+  "suspended": [
+   "unclear \"how good is that estimate\""
+  ]
  },
  {
   "id": 1792650963094,
@@ -357,7 +369,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=0E8B2A3E-A36A-4276-A1F5-9DF605217D70&header=Terminology",
   "source_label": "RL › Terminology",
-  "suspended": null
+  "suspended": [
+   "Ambiguous question"
+  ]
  },
  {
   "id": 1792650963100,

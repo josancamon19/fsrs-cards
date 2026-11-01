@@ -1,0 +1,154 @@
+[
+ {
+  "id": 1792810988127,
+  "deck": "RL Environments",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RLEnv::open_ended",
+  "fields": {
+   "Front": "Walk through how you'd build one RL task end to end, from “models are bad at X” to a task ready to ship.",
+   "Back": "<ul>\n<li>A task = <b>instruction + environment + verifier</b>; reward = the verifier's score. Purpose: measure progress or make progress.</li>\n<li><b>Find a failure mode</b> rather than inventing a task; judge value by economic value (what do people get paid for?).</li>\n<li><b>Check it's fair</b>, then classify why the model failed.</li>\n<li><b>Build a reproducible environment</b>: realistic, coding-first, no leaks.</li>\n<li><b>Write a verifier</b> that checks outcomes; oracle solution → 1.0, doing nothing → 0.0.</li>\n<li><b>Hunt for reward hacks</b> by sampling.</li>\n<li><b>Calibrate</b> with pass rates across models.</li>\n<li><b>QC</b>: static checks → LM rubrics → automated trials → judge reviews the trials → expert review.</li>\n</ul>",
+   "Image": "",
+   "Extra": "Self-grade: Good = core points with the reasoning · Hard = missed a couple · Again = missed the main idea.",
+   "Level": "2",
+   "LevelLabel": "L2 · Explain",
+   "Type": "open-ended",
+   "Topic": "Full process"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=36166385-11B8-43B4-9D6F-AFAD52C29026&header=1.%20What%20is%20a%20Task%3F",
+  "source_label": "RL Environments › 1. What is a Task?",
+  "suspended": null
+ },
+ {
+  "id": 1792810988218,
+  "deck": "RL Environments",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RLEnv::open_ended",
+  "fields": {
+   "Front": "What are the four sources of failure modes? For each, what do you get for free, and what's the hard part?",
+   "Back": "<ul>\n<li><b>Real usage by experts</b>: you get the instruction, expected result and how it fails. Hard part: reproducing the messy real-world environment.</li>\n<li><b>Raw domain data</b>: learn the domain and who uses the data, find data that changes over time; give the state at <i>t−1</i>, ask for <i>t</i>. GitHub is the best example (commits, issues, PRs).</li>\n<li><b>App-company traces</b>: richest signal (user retries, complaints). Only counts if the failure comes from the model, not the app. Open question: does selling them give away your moat?</li>\n<li><b>Brute force / synthetic</b>: optimization tasks where people push a number. Needs an easy 0 (baseline) and 1 (target), scores measurable across variants, easy-to-change inputs; ideally the solution can be found by search.</li>\n</ul>",
+   "Image": "",
+   "Extra": "Self-grade: Good = core points with the reasoning · Hard = missed a couple · Again = missed the main idea.",
+   "Level": "2",
+   "LevelLabel": "L2 · Explain",
+   "Type": "open-ended",
+   "Topic": "Finding failure modes"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=36166385-11B8-43B4-9D6F-AFAD52C29026&header=3.%20Finding%20Failure%20Modes",
+  "source_label": "RL Environments › 3. Finding Failure Modes",
+  "suspended": null
+ },
+ {
+  "id": 1792810988316,
+  "deck": "RL Environments",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RLEnv::open_ended",
+  "fields": {
+   "Front": "A model fails your task. How do you decide whether this failure is worth turning into a task?",
+   "Back": "<ul>\n<li><b>Fairness test</b>: an expert given the task shouldn't fail the same way the model does.</li>\n<li><b>Sources of unfairness</b>: instruction underspecified, vague or contradictory · environment lacks information or infra fails (can a solution even be found?) · success doesn't reflect reality (inflated expectations) · success depends on implementation, not result.</li>\n<li><b>If fair, classify the failure</b>: lack of knowledge / real-world experience · solved it but broke something else · lazy, stopped early and claimed done · cheated (reward hacking).</li>\n</ul>",
+   "Image": "",
+   "Extra": "Self-grade: Good = core points with the reasoning · Hard = missed a couple · Again = missed the main idea.",
+   "Level": "2",
+   "LevelLabel": "L2 · Explain",
+   "Type": "open-ended",
+   "Topic": "Fairness"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=36166385-11B8-43B4-9D6F-AFAD52C29026&header=2.%20Selecting%20Good%20Failure%20Modes",
+  "source_label": "RL Environments › 2. Selecting Good Failure Modes",
+  "suspended": null
+ },
+ {
+  "id": 1792810988409,
+  "deck": "RL Environments",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RLEnv::open_ended",
+  "fields": {
+   "Front": "What are all the ways a task can give away its answer or reveal that it's a test, and how do you prevent each?",
+   "Back": "<ul>\n<li><b>Leakage</b>: git history, metadata left in the environment, dependencies used during setup.</li>\n<li><b>Contamination</b>: a public solution (e.g. a merged PR) may be in pre-training. Look for answers that seem recalled from memory.</li>\n<li><b>Eval-awareness phrases</b>: “the verifier will check…”, “you have n seconds”.</li>\n<li><b>Instructions</b>: state the goal, not the implementation; don't over-describe the environment; no READMEs or files acting as a second instruction; let the agent discover things.</li>\n<li><b>Internet access</b>: on = security and reproducibility risks; off = consistency, but less realism and more eval awareness. Isolation is the sandbox provider's job.</li>\n</ul>",
+   "Image": "",
+   "Extra": "Self-grade: Good = core points with the reasoning · Hard = missed a couple · Again = missed the main idea.",
+   "Level": "2",
+   "LevelLabel": "L2 · Explain",
+   "Type": "open-ended",
+   "Topic": "Leakage & eval awareness"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=36166385-11B8-43B4-9D6F-AFAD52C29026&header=3.2.%20Leakage%20and%20Eval%20Awareness",
+  "source_label": "RL Environments › 3.2. Leakage and Eval Awareness",
+  "suspended": null
+ },
+ {
+  "id": 1792810988496,
+  "deck": "RL Environments",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RLEnv::open_ended",
+  "fields": {
+   "Front": "How do you design a verifier, and when does it need an LM judge instead of deterministic checks?",
+   "Back": "<ul>\n<li><b>Three rules</b>: check only what the instruction asks for · check results, implementation is a black box · no artificial difficulty (e.g. narrowing a target number).</li>\n<li><b>Choices</b>: binary or continuous, partial credit, baseline, negative scores (24/25 tests? 10ms target? taxes half filed?).</li>\n<li><b>Deterministic vs judge</b>: show a candidate answer to 10 experts. All agree → deterministic (tests, performance, values in mocks, exact strings, float tolerance). Could disagree → judge/rubric (diagnosis, legal, accounting).</li>\n<li><b>For judges</b>: align with experts · self-consistency / majority voting · a few contrasting examples in the prompt.</li>\n<li><b>Sanity checks</b>: oracle → 1.0 every time, doing nothing → 0.0; same result across runs (GPU hardware variance).</li>\n</ul>",
+   "Image": "",
+   "Extra": "Self-grade: Good = core points with the reasoning · Hard = missed a couple · Again = missed the main idea.",
+   "Level": "2",
+   "LevelLabel": "L2 · Explain",
+   "Type": "open-ended",
+   "Topic": "Verifier design"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=36166385-11B8-43B4-9D6F-AFAD52C29026&header=4.%20Scoring%20an%20attempt",
+  "source_label": "RL Environments › 4. Scoring an attempt",
+  "suspended": null
+ },
+ {
+  "id": 1792810988581,
+  "deck": "RL Environments",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RLEnv::open_ended",
+  "fields": {
+   "Front": "Why does reward hacking matter, how do you harden a task against it, and how do you actively find hacks?",
+   "Back": "<ul>\n<li><b>Why</b>: rewarded cheating gets reinforced → misalignment risk. Defending is mostly reactive.</li>\n<li><b>Guards</b>: don't expose tests · protect them from tampering · checksums (SHAs) of files that must not change · separate verifier container · clean copies of files in the verifier, never the environment's.</li>\n<li><b>Find hacks by sampling</b>: cheat trials (give models the verifier, ask for 1.0 without solving; terminal-bench <code>/cheat</code>) · LM judge reads existing trials for hacks · add deterministic checks and repeat until nothing gets through.</li>\n<li><b>Open problem</b>: patches for specific hacks won't stop future models from finding new ones.</li>\n</ul>",
+   "Image": "",
+   "Extra": "Self-grade: Good = core points with the reasoning · Hard = missed a couple · Again = missed the main idea.",
+   "Level": "2",
+   "LevelLabel": "L2 · Explain",
+   "Type": "open-ended",
+   "Topic": "Reward hacking"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=36166385-11B8-43B4-9D6F-AFAD52C29026&header=4.2%20Reward%20Hacking",
+  "source_label": "RL Environments › 4.2 Reward Hacking",
+  "suspended": null
+ },
+ {
+  "id": 1792810988675,
+  "deck": "RL Environments",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RLEnv::open_ended",
+  "fields": {
+   "Front": "How do you calibrate a task's difficulty, and what signals tell you the task design is broken?",
+   "Back": "<ul>\n<li><b>Calibration</b> = pass rates (e.g. 3 of 8 samples succeed). Ideally from the task's natural difficulty, not tweaking.</li>\n<li><b>Making an easy task harder</b> is fine if it stays realistic: no padding with repeated work. Task stacking: ask only for <i>y</i> so the agent must work out and do <i>x</i>; not “do x, then y”.</li>\n<li><b>Warning signs</b>: a small hint makes pass rates jump across many models · many hints and pass rates don't move · every model fails the same way.</li>\n<li><b>Good sign</b>: the task tells models apart; different models struggle with different things.</li>\n</ul>",
+   "Image": "",
+   "Extra": "Self-grade: Good = core points with the reasoning · Hard = missed a couple · Again = missed the main idea.",
+   "Level": "2",
+   "LevelLabel": "L2 · Explain",
+   "Type": "open-ended",
+   "Topic": "Calibration"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=36166385-11B8-43B4-9D6F-AFAD52C29026&header=5.1%20Calibration",
+  "source_label": "RL Environments › 5.1 Calibration",
+  "suspended": null
+ },
+ {
+  "id": 1792810988767,
+  "deck": "RL Environments",
+  "notetype": "RL for LLMs · Basic",
+  "tags": "RLEnv::open_ended",
+  "fields": {
+   "Front": "How do you go from one good task to many without losing quality?",
+   "Back": "<ul>\n<li><b>Scaling depends on</b>: how parametrizable the task is (swap (tax document, filed total) pairs into environment and verifier) and how easily realistic data can be synthesized (augmentation, not ideal).</li>\n<li><b>~80% is QC</b>: static checks → LM rubrics → automated trials → judge reviews the trials → expert review (quality, fairness, realism).</li>\n<li><b>Read the trial logs.</b></li>\n<li><b>Post-train on your tasks</b> if you have the compute: learn which data drove the gains and how much it improves the model.</li>\n</ul>",
+   "Image": "",
+   "Extra": "Self-grade: Good = core points with the reasoning · Hard = missed a couple · Again = missed the main idea.",
+   "Level": "2",
+   "LevelLabel": "L2 · Explain",
+   "Type": "open-ended",
+   "Topic": "Scaling & QC"
+  },
+  "source_url": "bear://x-callback-url/open-note?id=36166385-11B8-43B4-9D6F-AFAD52C29026&header=6.%20Scaling%20up",
+  "source_label": "RL Environments › 6. Scaling up",
+  "suspended": null
+ }
+]

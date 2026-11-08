@@ -2391,7 +2391,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=4.%20More%20Definitions",
   "source_label": "Math › 4. More Definitions",
-  "suspended": null
+  "suspended": [
+   "Not useful"
+  ]
  },
  {
   "id": 1792626439876,
@@ -2547,7 +2549,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=2.2%20Terminology",
   "source_label": "Math › 2.2 Terminology",
-  "suspended": null
+  "suspended": [
+   "Not useful"
+  ]
  },
  {
   "id": 1792626439892,
@@ -2803,7 +2807,9 @@
   },
   "source_url": "bear://x-callback-url/open-note?id=BE5759A7-C98C-40E8-A3FC-A2E20506195A&header=5.2%20Logs%20and%20bits",
   "source_label": "Math › 5.2 Logs and bits",
-  "suspended": null
+  "suspended": [
+   "Not useful"
+  ]
  },
  {
   "id": 1792626439918,

@@ -1,0 +1,15 @@
+<div class="lc lc-back">
+  <section class="lc-desc">
+    <details class="lc-recap"><summary><span class="lc-title">{{Number}}. {{Title}}</span> <span class="lc-diff lc-{{Difficulty}}">{{Difficulty}}</span> <span class="lc-show">problem ▾</span></summary>
+      <div class="lc-body">{{Statement}}</div></details>
+  </section>
+</div>
+<div id="answer" class="lc-ans">
+  <div class="lc-pattern"><span class="lc-pchip">{{Pattern}}</span>{{#Variant}}<span class="lc-variant">{{Variant}}</span>{{/Variant}}</div>
+  {{#Alternatives}}<div class="lc-alt">Also accepted: {{Alternatives}}</div>{{/Alternatives}}
+  <div class="lc-sec lc-signal"><div class="lc-h">Signal</div>{{Signal}}</div>
+  <div class="lc-sec"><div class="lc-h">Approach</div>{{Approach}}</div>
+  <div class="lc-sec"><div class="lc-h">Solution <span class="lc-cx">{{Complexity}}</span></div>
+    <pre class="lc-code"><code class="language-python">{{Solution}}</code></pre></div>
+  {{#Link}}<a class="lc-link" href="{{Link}}" target="_blank" rel="noopener">Open on LeetCode ↗</a>{{/Link}}
+</div>

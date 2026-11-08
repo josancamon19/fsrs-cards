@@ -50,6 +50,17 @@ is stored in SQLite in `./data/anki.db`, and media files go in `./data/media/`.
   cards. Its proposal fills the fields; nothing is stored until you Save. History keeps every request and every saved
   version, and any of them can be loaded back. `CARD_EDIT_MODEL`/`CARD_EDIT_EFFORT` override the model.
 
+- **LeetCode pattern drills** (deck *LeetCode Patterns*, note type `LeetCode · Pattern`): each card shows a problem the way
+  LeetCode does, with the description, examples and constraints on the left and a Python editor with the function
+  signature on the right. Say out loud (mic on) and/or type in the editor: the **pattern**, the **signal** in the problem
+  that points to it, a **plan** and the **complexity**. When you flip (`Space`, or `⌘/Ctrl+Enter` from the editor),
+  the attempt is transcribed and graded (`prompts/pattern-grade.md`). The verdict appears above the answer: right,
+  acceptable or wrong pattern, whether you named the signal, what you got and missed, and a **suggested rating**
+  (outlined button). You still press the rating yourself. Graded answers show in **Answers**. The
+  **Patterns** page is the one-line cheat sheet (`prompts/pattern-cheatsheet.md`). The note type's templates live in
+  `tools/notetypes/leetcode-pattern/`; apply edits with `uv run python tools/cards.py notetype tools/notetypes/leetcode-pattern`.
+  `GRADE_MODEL` overrides the grader model (defaults to `CLEANUP_MODEL`).
+
 ## Cards live in the database
 The live app's SQLite database (on Fly) is the **source of truth** for every card: content, progress, suspensions,
 Bear links and spoken answers. `.apkg` files are only used once, to bring in an outside deck. After that, all

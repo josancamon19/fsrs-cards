@@ -11,6 +11,7 @@
   uv run python tools/cards.py rm 1792626439797
   uv run python tools/cards.py suspend 1792626439797 [more ids] --reason "…"   # or --undo
   uv run python tools/cards.py export                                  # decks/<deck>.json, for history in git
+  uv run python tools/cards.py notetype tools/notetypes/leetcode-pattern   # create/update a note type from a folder
 
 --url defaults to the live app (.fly-app-name) and --password to .app-password; use --url http://127.0.0.1:8000
 for the local app. Field values starting with @ are read from that file.
@@ -102,6 +103,9 @@ def main():
     p = sub.add_parser("suspend", help="suspend (or --undo) every card of these notes")
     p.add_argument("ids", type=int, nargs="+"); p.add_argument("--reason"); p.add_argument("--undo", action="store_true")
     p = sub.add_parser("export"); p.add_argument("--out", default=str(ROOT / "decks"))
+    p = sub.add_parser("notetype", help="create/update a note type from a folder: name.txt (optional), fields.txt, "
+                                        "front.html, back.html, style.css")
+    p.add_argument("dir")
     a = ap.parse_args()
     api = Client(a.url, a.password)
 
@@ -142,6 +146,13 @@ def main():
             for c in n["cards"]:
                 api("POST", f"/api/cards/{c['id']}/suspend", {"suspended": not a.undo, "reason": a.reason})
             print("unsuspended" if a.undo else "suspended", summary(api("GET", f"/api/notes/{nid}")))
+    elif a.cmd == "notetype":
+        d = Path(a.dir)
+        name = (d / "name.txt").read_text().strip() if (d / "name.txt").exists() else None
+        body = {"name": name, "fields": (d / "fields.txt").read_text().split(),
+                "templates": [{"name": "Card 1", "qfmt": (d / "front.html").read_text(), "afmt": (d / "back.html").read_text()}],
+                "css": (d / "style.css").read_text()}
+        print(api("PUT", "/api/notetypes", body))
     elif a.cmd == "export":
         # content only (no scheduling state), so git diffs show what you actually changed
         by_deck: dict[str, list] = {}

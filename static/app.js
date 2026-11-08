@@ -197,7 +197,7 @@ function loginView() {
 
 /* ---------------------------------------------------------------- router */
 let current = null, cleanup = null;
-const routes = { '': decksView, study: studyView, stats: statsView, browse: browseView, answers: answersView, settings: settingsView };
+const routes = { '': decksView, study: studyView, stats: statsView, browse: browseView, answers: answersView, patterns: patternsView, settings: settingsView };
 function route() {
   if (cleanup) { cleanup(); cleanup = null; }
   closeModal();
@@ -273,11 +273,15 @@ const BASE_CARD_CSS = `:host{display:block} .card{min-height:200px;padding:20px;
 function renderMath(el) {
   if (window.renderMathInElement) renderMathInElement(el, { delimiters: [{ left: '\\(', right: '\\)', display: false }, { left: '\\[', right: '\\]', display: true }, { left: '$$', right: '$$', display: true }], throwOnError: false, ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'input'] });
 }
+const hljsCss = {};
+['github', 'github-dark'].forEach(n => fetch(`/static/vendor/hljs/${n}.min.css`).then(r => r.text()).then(t => { hljsCss[n] = sheet(t); }));
 function paintCard(host, html, cssText) {
   const root = host.shadowRoot || host.attachShadow({ mode: 'open' });
-  root.adoptedStyleSheets = [sheet(BASE_CARD_CSS), ...(katexCss ? [katexCss] : []), sheet(cssText || '')];
+  const code = hljsCss[isDark() ? 'github-dark' : 'github'];
+  root.adoptedStyleSheets = [sheet(BASE_CARD_CSS), ...(katexCss ? [katexCss] : []), ...(code ? [code] : []), sheet(cssText || '')];
   root.innerHTML = `<div class="card${isDark() ? ' nightMode night_mode' : ''}">${html}</div>`;
   renderMath(root.firstElementChild);
+  if (window.hljs) root.querySelectorAll('pre code').forEach(el => { try { hljs.highlightElement(el); } catch (e) {} });
   return root;
 }
 function preload(html) { html.replace(/src="([^"]+)"/g, (_, u) => { if (!u.endsWith('.mp3')) (new Image()).src = u; }); }
@@ -335,6 +339,11 @@ async function studyView(deck) {
     if (!$('#more-menu').classList.contains('hidden')) { if (e.key === 'Escape') toggleMore(false); return; }
     const tgt = e.composedPath()[0];
     const typing = tgt && (tgt.tagName === 'INPUT' || tgt.tagName === 'TEXTAREA' || tgt.isContentEditable);
+    if (typing && tgt.tagName === 'TEXTAREA') {
+      if (tgt.id === 'pad' && e.key === 'Enter' && (e.metaKey || e.ctrlKey) && S.card && !S.revealed) { e.preventDefault(); showAnswer(); }
+      else if (e.key === 'Escape') tgt.blur();
+      return;
+    }
     if (typing && e.key !== 'Enter') return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (!$('#susp-pop').classList.contains('hidden')) { if (e.key === 'Escape') toggleSuspendPop(false); return; }
@@ -377,6 +386,7 @@ function applyStudy(res) {
   if (CHAT && (!res.card || res.card.id !== CHAT.cardId)) chatEnd();
   if (!res.card || res.card.id !== S.pendingResponseCard) { S.pendingResponse = null; S.pendingResponseCard = null; }
   S.flagged = false; paintFlag();
+  S.pad = ''; if (S.grade && (!res.card || res.card.id !== S.grade.cardId)) S.grade = null;
   if (!S.card) {
     recDiscard();
     renderCounts();
@@ -410,37 +420,45 @@ function sourceLink(c) {
     <span class="src-ic">↗</span><span class="src-app">Open in ${app}</span><span class="src-lbl">${esc(c.source_label || '')}</span></a>`;
 }
 function cardFrame(c) {
-  return `<div class="card-host" id="card-host"></div><div id="src-slot"></div>
+  return `<div id="grade-slot"></div><div class="card-host" id="card-host"></div><div id="src-slot"></div>
     <div class="card-meta"><span>${esc(c.deck.split('::').slice(-1)[0])}</span>·<span>${esc(c.notetype)}</span>${c.last_review ? `·<span>last seen ${fmtIvl(Date.now() / 1000 - c.last_review)} ago</span>` : ''}</div>
     ${fsrsStrip(c)}`;
 }
 function showQuestion() {
   const c = S.card;
+  $('.study')?.classList.toggle('wide', isPattern(c));
   $('#study-body').innerHTML = cardFrame(c);
   const root = paintCard($('#card-host'), c.question, c.css);
   const ti = root.querySelector('#typeans');
   if (ti) setTimeout(() => ti.focus(), 0);
-  $('#abar').innerHTML = `<button class="reveal" id="reveal">Show answer <kbd>Space</kbd></button>`;
+  $('#abar').innerHTML = `<button class="reveal" id="reveal">${isPattern(c) ? 'Show answer &amp; grade me' : 'Show answer'} <kbd>Space</kbd></button>`;
   $('#reveal').onclick = () => showAnswer();
-  $('#card-host').onclick = e => { const p = e.composedPath()[0]; if (!S.revealed && !p.closest?.('a,input,button,audio,.hint')) showAnswer(); };
+  // pattern cards don't flip on click: you read, select and type in them
+  if (!isPattern(c)) $('#card-host').onclick = e => { const p = e.composedPath()[0]; if (!S.revealed && !p.closest?.('a,input,textarea,button,audio,.hint')) showAnswer(); };
   S.shownAt = performance.now();
 }
 function showAnswer(restyle) {
   const c = S.card;
-  if (!restyle) { const ti = $('#card-host').shadowRoot?.querySelector('#typeans'); S.typed = ti ? ti.value : ''; }
+  if (!restyle) {
+    const sr = $('#card-host').shadowRoot, ti = sr?.querySelector('#typeans'), pad = sr?.querySelector('#pad');
+    S.typed = ti ? ti.value : '';
+    if (isPattern(c)) S.pad = pad ? pad.value : '';
+  }
   if (restyle) $('#study-body').innerHTML = cardFrame(c);
   const root = paintCard($('#card-host'), c.answer, c.css);
   const tr = root.querySelector('#typeans-result');
   if (tr) { tr.innerHTML = typeCompare(S.typed.trim(), tr.dataset.expected); }
   const hr = root.querySelector('#answer');
-  if (hr && !restyle) setTimeout(() => hr.scrollIntoView({ block: 'nearest', behavior: 'smooth' }), 0);
+  if (hr && !restyle && !isPattern(c)) setTimeout(() => hr.scrollIntoView({ block: 'nearest', behavior: 'smooth' }), 0);
   S.revealed = true;
   if (!restyle) recMarkReveal();
   $('#src-slot').innerHTML = sourceLink(c);
+  if (isPattern(c) && !restyle) { scrollTo(0, 0); gradeStart(c); }
   $('#abar').innerHTML = `<div class="ratings">${RATINGS.map(r => `
     <button class="rate ${r.cls}" data-r="${r.n}"><kbd>${r.n}</kbd><div class="lbl">${r.label}</div><div class="ivl">${fmtIvl(c.previews[r.n])}</div></button>`).join('')}</div>
     <button class="talk-btn${CHAT ? ' hidden' : ''}" id="talk-btn"><span class="talk-ic">◉</span> Talk about this card <kbd>T</kbd></button>`;
   $$('.rate').forEach(b => b.onclick = () => answer(+b.dataset.r));
+  if (isPattern(c)) paintGrade();
   $('#talk-btn').onclick = () => chatStart();
   document.activeElement?.blur?.();
 }
@@ -449,11 +467,16 @@ async function answer(rating) {
   S.busy = true;
   const c = S.card, dur = Math.round(performance.now() - S.shownAt), flagged = S.flagged;
   const take = recStop();
+  const graded = S.grade && S.grade.cardId === c.id;
   try {
     const res = await api('/api/study/answer', { json: { card_id: c.id, rating, duration_ms: dur, deck: S.deck, skip: S.skipped } });
     S.skipped = S.skipped.filter(x => x !== c.id);
-    if (S.pendingResponse) { api('/api/responses/' + S.pendingResponse, { method: 'PATCH', json: { rating, flagged } }).catch(() => {}); S.pendingResponse = null; }
-    take.then(t => recUpload(c.id, t, { rating, flagged }));
+    if (S.pendingResponse && !graded) { api('/api/responses/' + S.pendingResponse, { method: 'PATCH', json: { rating, flagged } }).catch(() => {}); S.pendingResponse = null; }
+    if (graded) {  // the attempt was already uploaded at the flip; attach the rating (now, or when the grade lands)
+      const g = S.grade;
+      g.rating = { rating, flagged };
+      if (g.id) api('/api/responses/' + g.id, { method: 'PATCH', json: g.rating }).catch(() => {});
+    } else take.then(t => recUpload(c.id, t, { rating, flagged }));
     S.lastAction = { type: 'answer' };
     const a = res.answered, r = RATINGS[rating - 1];
     toast(`<span class="sw" style="background:var(--${r.key})"></span><b>${r.label}</b> → ${fmtIvl(a.interval_secs)} · S ${fmtDays(a.stability_before)} → ${fmtDays(a.stability)} · D ${a.difficulty.toFixed(1)}${a.retrievability != null ? ` · R was ${pct(a.retrievability)}` : ''}`);
@@ -461,6 +484,58 @@ async function answer(rating) {
   } catch (e) { toast(esc(e.message)); }
   finally { if (S) S.busy = false; }
 }
+/* ---------- pattern cards (LeetCode · Pattern): your attempt is graded the moment you flip */
+const isPattern = c => !!c && c.notetype === 'LeetCode · Pattern';
+const VERDICT = { correct: ['✓', 'Right pattern'], acceptable: ['≈', 'Acceptable pattern'], wrong: ['✗', 'Wrong pattern'], none: ['?', 'No pattern named'] };
+async function gradeStart(c) {
+  const g = S.grade = { cardId: c.id, status: 'waiting', id: null, r: null, rating: null };
+  paintGrade();
+  const b = REC.before ? await REC.before : null;
+  const spoke = hasSpeech(b), typed = (S?.pad || '').trim();
+  if (!S || S.grade !== g) return;
+  if (!spoke && !typed) { g.status = 'empty'; return paintGrade(); }
+  const fd = new FormData();
+  if (spoke) fd.append('audio', b.blob, 'before.' + (b.blob.type.includes('mp4') ? 'm4a' : 'webm'));
+  fd.append('typed', typed);
+  fd.append('ts', REC.t0 || Date.now());
+  fd.append('duration_ms', Math.round(performance.now() - S.shownAt));
+  fd.append('meta', JSON.stringify({ mic: REC.stream?.getAudioTracks()[0]?.label || '', before: b ? { ms: b.ms, speechMs: b.speechMs, peak: b.peak } : null }));
+  g.status = 'grading'; paintGrade();
+  try {
+    const r = await api(`/api/cards/${c.id}/grade`, { method: 'POST', body: fd });
+    g.id = r.id; g.r = r; g.status = r.status === 'done' ? 'done' : 'error';
+    if (g.rating) api('/api/responses/' + r.id, { method: 'PATCH', json: g.rating }).catch(() => {});
+    else if (S && S.card && S.card.id === c.id) { S.pendingResponse = r.id; S.pendingResponseCard = c.id; }
+  } catch (e) { g.status = 'error'; g.err = e.message; }
+  if (S && S.grade === g) paintGrade();
+}
+function paintGrade() {
+  const slot = $('#grade-slot'), g = S && S.grade;
+  if (!slot || !g || !S.card || g.cardId !== S.card.id) return;
+  $$('.rate').forEach(b => b.classList.remove('suggested'));
+  if (g.status === 'waiting' || g.status === 'grading') {
+    slot.innerHTML = `<div class="grade-box pending" style="margin:0 0 10px"><span class="spin"></span> ${g.status === 'waiting' ? 'Listening back…' : 'Grading your answer…'}</div>`; return;
+  }
+  if (g.status === 'empty') {
+    slot.innerHTML = `<div class="grade-box muted">${REC.on ? 'Nothing heard or typed, so there is nothing to grade.' : 'Turn on the mic (<kbd>M</kbd>) or type in the editor to get graded.'} Rate yourself below.</div>`; return;
+  }
+  if (g.status === 'error') { slot.innerHTML = `<div class="grade-box bad">Couldn't grade · ${esc(g.err || g.r?.error || 'unknown error')}</div>`; return; }
+  const a = g.r.analysis || {};
+  if (a.cleanup_error) { slot.innerHTML = `<div class="grade-box bad">Couldn't grade · ${esc(a.cleanup_error)}</div>`; return; }
+  const v = VERDICT[a.verdict] || VERDICT.none, rt = RATINGS[(a.score || 1) - 1];
+  $$('.rate').forEach(b => b.classList.toggle('suggested', +b.dataset.r === a.score));
+  const li = (xs, cls) => (xs || []).map(x => `<li class="${cls}">${esc(x)}</li>`).join('');
+  slot.innerHTML = `<div class="grade-box v-${esc(a.verdict || 'none')}">
+    <div class="grade-head"><span class="grade-v">${v[0]} ${v[1]}</span>${a.named_pattern ? `<span class="grade-said">you said <b>${esc(a.named_pattern)}</b></span>` : ''}
+      <span class="grade-sig">signal: ${esc(a.signal || '—')}</span>
+      <span class="grade-score" style="--c:var(--${rt.key})">suggests <b>${rt.label}</b> <kbd>${rt.n}</kbd></span></div>
+    ${a.feedback ? `<div class="grade-fb">${esc(a.feedback)}</div>` : ''}
+    ${(a.got || []).length + (a.missed || []).length ? `<ul class="grade-pts">${li(a.got, 'ok')}${li(a.missed, 'miss')}</ul>` : ''}
+    ${g.r.typed ? `<details class="grade-tr"><summary>What you typed</summary><pre class="resp-typed">${esc(g.r.typed)}</pre></details>` : ''}
+    ${g.r.transcript_raw && g.r.transcript ? `<details class="grade-tr"><summary>What you said</summary>${esc(g.r.transcript)}</details>` : ''}
+  </div>`;
+}
+
 /* Phone layout: the study-bar actions live in a ⋯ menu with big touch targets. Each item just presses the real button. */
 function toggleMore(show) {
   const menu = $('#more-menu'); if (!menu) return;
@@ -1447,6 +1522,8 @@ function responseItem(r, withQuestion = false) {
       <button class="icon-btn flag-btn${r.flagged ? ' on' : ''}" data-flag="${r.id}" title="${r.flagged ? 'Unflag' : 'Flag to dive into later'}">⚑</button>
       <button class="icon-btn" data-del="${r.id}" title="Delete this answer">✕</button></div>
     ${body}
+    ${r.typed ? `<pre class="resp-typed">${esc(r.typed)}</pre>` : ''}
+    ${r.analysis?.verdict ? `<div class="resp-grade v-${esc(r.analysis.verdict)}"><b>${VERDICT[r.analysis.verdict]?.[1] || ''}</b>${r.analysis.named_pattern ? ` · said ${esc(r.analysis.named_pattern)}` : ''} · signal ${esc(r.analysis.signal)} · grader: ${ratingChip(r.analysis.score)}${r.analysis.feedback ? `<div>${esc(r.analysis.feedback)}</div>` : ''}</div>` : ''}
     ${unsure.length ? `<div class="resp-tags"><span class="k">Unsure</span>${unsure.map(x => `<span class="tag unsure">${esc(x)}</span>`).join('')}</div>` : ''}
     ${missed.length ? `<div class="resp-tags"><span class="k">Missed</span>${missed.map(x => `<span class="tag missed">${esc(x)}</span>`).join('')}</div>` : ''}
     ${r.flagged ? `<input class="input resp-note" data-note="${r.id}" placeholder="What to dive into…" value="${esc(r.note || '')}">` : ''}
@@ -1466,6 +1543,32 @@ function bindResponses(host, reload) {
 }
 
 let answersReload = null;
+/* ---------------------------------------------------------------- patterns cheat sheet */
+function miniMarkdown(md) {  // just enough for prompts/pattern-cheatsheet.md: headings, one table, paragraphs, **bold**, `code`
+  const inline = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/`([^`]+)`/g, '<code>$1</code>');
+  const out = [], lines = md.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    if (/^#+ /.test(l)) out.push(`<h1>${inline(l.replace(/^#+ /, ''))}</h1>`);
+    else if (l.startsWith('|')) {
+      const rows = [];
+      while (i < lines.length && lines[i].startsWith('|')) rows.push(lines[i++]);
+      i--;
+      const cells = r => r.replace(/^\||\|$/g, '').split('|').map(x => x.trim());
+      out.push(`<table><thead><tr>${cells(rows[0]).map(c => `<th>${inline(c)}</th>`).join('')}</tr></thead><tbody>${rows.slice(2).map(r => `<tr>${cells(r).map(c => `<td>${inline(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`);
+    } else if (l.trim()) {
+      let para = l;
+      while (i + 1 < lines.length && lines[i + 1].trim() && !/^[#|]/.test(lines[i + 1])) para += ' ' + lines[++i];
+      out.push(`<p>${inline(para)}</p>`);
+    }
+  }
+  return out.join('');
+}
+async function patternsView() {
+  const r = await api('/api/patterns');
+  view.innerHTML = `<div class="cheat">${miniMarkdown(r.markdown)}</div>`;
+}
+
 async function answersView() {
   const p = { q: '', deck: '', show: sessionStorage.getItem('answers-show') || '', offset: 0 };
   const decks = await api('/api/decks');

@@ -54,9 +54,18 @@ def _store(part: tuple[bytes, str] | None) -> str | None:
     return path.name
 
 
-def save_upload(card_id: int, before: tuple[bytes, str] | None, after: tuple[bytes, str] | None, **meta) -> int:
-    """`before` is the recall attempt (until the card was flipped), `after` is what was said once the answer showed."""
+def save_upload(card_id: int, before: tuple[bytes, str] | None, after: tuple[bytes, str] | None,
+                background: bool = True, typed: str = "", **meta) -> int:
+    """`before` is the recall attempt (until the card was flipped), `after` is what was said once the answer showed.
+    `typed`: what was written in a pattern card's editor (kept in meta.typed, graded with the spoken part).
+    background=False: the caller runs process() itself (pattern cards are graded while you wait)."""
     q, a = card_text(card_id)
+    if typed.strip():
+        try:
+            m = json.loads(meta.get("meta") or "{}")
+        except ValueError:
+            m = {}
+        meta["meta"] = json.dumps({**m, "typed": typed})
     c = db.conn()
     with db.lock():
         note = c.execute("SELECT note_id FROM cards WHERE id = ?", (card_id,)).fetchone()
@@ -65,7 +74,8 @@ def save_upload(card_id: int, before: tuple[bytes, str] | None, after: tuple[byt
                         (card_id, note["note_id"], meta["ts"], meta.get("duration_ms"), meta.get("reveal_ms"),
                          meta.get("rating"), int(bool(meta.get("flagged"))), q, a, _store(before), _store(after),
                          meta.get("meta"))).lastrowid
-    enqueue(rid)
+    if background:
+        enqueue(rid)
     return rid
 
 
@@ -120,13 +130,24 @@ def process(rid: int) -> None:
     if not row or row["status"] == "done":
         return
     paths = [AUDIO_DIR / row[k] if row[k] else None for k in ("audio_path", "audio_after_path")]
-    if not any(paths) or any(p and not p.is_file() for p in paths):
+    typed = _typed(row)
+    if (not any(paths) and not typed) or any(p and not p.is_file() for p in paths):
         return _update(rid, status="error", error="audio file is gone (it is only kept until transcription)")
     if not api_key():
         return _update(rid, status="error", error="OPENAI_API_KEY is not set on the server")
     _update(rid, status="pending", error=None)
     before, after = (transcribe(p, row["question"], row["answer"]).strip() if p else "" for p in paths)
-    if not before and not after:
+    pattern = pattern_fields(row["card_id"])
+    if pattern is not None and (before or typed):  # pattern cards: grade the attempt (spoken and/or typed)
+        try:
+            out = grade_pattern(before, typed, pattern)
+            text, analysis, model = out.pop("before").strip(), out, f"{TRANSCRIBE_MODEL} + {GRADE_MODEL}"
+        except Exception as e:
+            text, analysis, model = before, {"cleanup_error": str(e)[:300]}, TRANSCRIBE_MODEL
+        _update(rid, status="done", transcript_raw=before, transcript=text, transcript_after_raw=after or None,
+                transcript_after=after or None, analysis=json.dumps(analysis), audio_path=None, audio_after_path=None,
+                model=model, error=None, done_at=int(time.time() * 1000))
+    elif not before and not after:
         _update(rid, status="empty", transcript_raw="", transcript="", audio_path=None, audio_after_path=None,
                 model=TRANSCRIBE_MODEL)
     else:
@@ -211,10 +232,66 @@ def cleanup(before: str, after: str, question: str, answer: str) -> dict:
     return json.loads(text)
 
 
+# ---------------------------------------------------------------- pattern cards (LeetCode · Pattern)
+
+PATTERN_NOTETYPE = "LeetCode · Pattern"
+GRADE_MODEL = os.environ.get("GRADE_MODEL", CLEANUP_MODEL)
+GRADE_SCHEMA = {
+    "type": "object", "additionalProperties": False,
+    "required": ["before", "named_pattern", "verdict", "signal", "score", "got", "missed", "unsure", "feedback"],
+    "properties": {
+        "before": {"type": "string"},
+        "named_pattern": {"type": "string"},
+        "verdict": {"type": "string", "enum": ["correct", "acceptable", "wrong", "none"]},
+        "signal": {"type": "string", "enum": ["named", "partial", "missing"]},
+        "score": {"type": "integer", "enum": [1, 2, 3, 4]},
+        "got": {"type": "array", "items": {"type": "string"}},
+        "missed": {"type": "array", "items": {"type": "string"}},
+        "unsure": {"type": "array", "items": {"type": "string"}},
+        "feedback": {"type": "string"},
+    },
+}
+
+
+def _typed(row) -> str:
+    try:
+        return (json.loads(row["meta"] or "{}").get("typed") or "").strip()
+    except ValueError:
+        return ""
+
+
+def pattern_fields(card_id: int) -> dict | None:
+    """The note's fields when the card is a pattern card, else None."""
+    r = db.conn().execute("""SELECT n.fields, t.fields AS names, t.name FROM cards c JOIN notes n ON n.id = c.note_id
+                             JOIN notetypes t ON t.id = n.notetype_id WHERE c.id = ?""", (card_id,)).fetchone()
+    if not r or r["name"] != PATTERN_NOTETYPE:
+        return None
+    return dict(zip(json.loads(r["names"]), json.loads(r["fields"])))
+
+
+def grade_pattern(spoken: str, typed: str, f: dict) -> dict:
+    t = lambda k: render.strip_html(f.get(k, ""))
+    body = {
+        "model": GRADE_MODEL,
+        "instructions": prompts.load("pattern-grade", cheatsheet=prompts.load("pattern-cheatsheet")),
+        "input": f"<problem>\n{f.get('Number', '')}. {t('Title')} ({t('Difficulty')})\n{t('Statement')}\n</problem>\n"
+                 f"<reference>\npattern: {t('Pattern')}\nvariant: {t('Variant')}\nalso acceptable: {t('Alternatives') or 'none'}\n"
+                 f"signal: {t('Signal')}\napproach: {t('Approach')}\ncomplexity: {t('Complexity')}\n</reference>\n"
+                 f"<spoken_attempt>\n{spoken}\n</spoken_attempt>\n<typed_attempt>\n{typed}\n</typed_attempt>",
+        "reasoning": {"effort": "low"},
+        "text": {"format": {"type": "json_schema", "name": "pattern_grade", "strict": True, "schema": GRADE_SCHEMA}},
+    }
+    res = _post(f"{API}/responses", json.dumps(body).encode(), "application/json", timeout=120)
+    text = "".join(c.get("text", "") for item in res.get("output", []) if item.get("type") == "message"
+                   for c in item.get("content", []) if c.get("type") == "output_text")
+    return json.loads(text)
+
+
 def to_dict(r) -> dict:
     d = {k: r[k] for k in ("id", "card_id", "note_id", "ts", "duration_ms", "reveal_ms", "rating", "question", "answer",
                            "status", "transcript", "transcript_raw", "transcript_after", "transcript_after_raw", "error", "model", "done_at", "note")}
     d["flagged"] = bool(r["flagged"])
     d["analysis"] = json.loads(r["analysis"]) if r["analysis"] else None
     d["meta"] = json.loads(r["meta"]) if r["meta"] else None
+    d["typed"] = (d["meta"] or {}).get("typed") if isinstance(d["meta"], dict) else None
     return d

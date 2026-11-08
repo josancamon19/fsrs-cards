@@ -19,7 +19,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.gzip import GZipMiddleware
 from pydantic import BaseModel
 
-from . import apkg, card_edit, chat, db, render, responses, sched
+from . import apkg, card_edit, chat, db, prompts, render, responses, sched
 
 STATIC = Path(__file__).resolve().parent.parent / "static"
 CARD_COLS = ("state", "step", "stability", "difficulty", "due", "last_review", "reps", "lapses")
@@ -433,6 +433,41 @@ def notetypes():
              "templates": [t["name"] for t in json.loads(r["templates"])]} for r in rows]
 
 
+class NotetypeIn(BaseModel):
+    name: str
+    fields: list[str]
+    templates: list[dict]           # [{name, qfmt, afmt}]
+    css: str = ""
+
+
+@app.put("/api/notetypes")
+def put_notetype(body: NotetypeIn, request: Request):
+    """Create a standard note type, or update one with the same name (templates, CSS, appended fields).
+    Existing fields can't be removed or reordered: notes store values by position."""
+    require_admin(request)
+    c = db.conn()
+    row = c.execute("SELECT * FROM notetypes WHERE name = ?", (body.name,)).fetchone()
+    with db.lock():
+        if row:
+            old = json.loads(row["fields"])
+            if body.fields[:len(old)] != old:
+                raise HTTPException(400, f"fields must start with the existing ones in order: {old}")
+            c.execute("UPDATE notetypes SET fields = ?, templates = ?, css = ? WHERE id = ?",
+                      (json.dumps(body.fields), json.dumps(body.templates), body.css, row["id"]))
+            ntid = row["id"]
+        else:
+            ntid = c.execute("INSERT INTO notetypes(name, kind, fields, templates, css) VALUES (?,0,?,?,?)",
+                             (body.name, json.dumps(body.fields), json.dumps(body.templates), body.css)).lastrowid
+    render.clear_cache()
+    return {"id": ntid, "name": body.name, "created": not row}
+
+
+@app.get("/api/patterns")
+def pattern_cheatsheet():
+    """The pattern cheat sheet (prompts/pattern-cheatsheet.md) for the Patterns page."""
+    return {"markdown": prompts.load("pattern-cheatsheet")}
+
+
 def note_dict(n, names, cards) -> dict:
     return {"id": n["id"], "notetype": n["notetype"], "deck": cards[0]["deck"] if cards else None, "tags": n["tags"],
             "fields": dict(zip(names, json.loads(n["fields"]))), "source_url": n["source_url"],
@@ -684,6 +719,29 @@ async def upload_response(card_id: int, audio: UploadFile | None = File(None), a
                                   duration_ms=duration_ms, reveal_ms=reveal_ms, rating=rating, flagged=flagged,
                                   meta=(meta or "")[:4000] or None)
     return {"id": rid, "status": "pending", "transcription": bool(responses.api_key())}
+
+
+@app.post("/api/cards/{card_id}/grade")
+async def grade_response(card_id: int, audio: UploadFile | None = File(None), typed: str = Form(""), ts: int = Form(...),
+                         duration_ms: int | None = Form(None), meta: str | None = Form(None)):
+    """Pattern cards: grade the recall attempt right when the card is flipped, so the verdict shows on the back.
+    `audio` is what was said before the flip; `typed` is what was written in the card's editor. Stored as a response."""
+    if not db.conn().execute("SELECT 1 FROM cards WHERE id = ?", (card_id,)).fetchone():
+        raise HTTPException(404)
+    data = await audio.read() if audio else b""
+    if len(data) > 25 * 1024 * 1024:
+        raise HTTPException(413, "Recording is over OpenAI's 25 MB limit")
+    if not data and not typed.strip():
+        raise HTTPException(400, "nothing to grade")
+    if not responses.api_key():
+        raise HTTPException(503, "OPENAI_API_KEY is not set on the server")
+    part = (data, audio.content_type or "audio/webm") if data else None
+    rid = await asyncio.to_thread(responses.save_upload, card_id, part, None, ts=ts, duration_ms=duration_ms,
+                                  reveal_ms=duration_ms, typed=typed[:8000], meta=(meta or "")[:4000] or None,
+                                  background=False)
+    await asyncio.to_thread(responses.process, rid)
+    row = db.conn().execute("SELECT * FROM responses WHERE id = ?", (rid,)).fetchone()
+    return responses.to_dict(row)
 
 
 @app.get("/api/responses")

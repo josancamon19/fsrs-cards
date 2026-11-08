@@ -455,3 +455,32 @@ table.data th:last-child, table.data td:last-child { padding-right: 16px; }
 .chat-ctx .k { text-transform: uppercase; letter-spacing: .04em; font-size: 11px; }
 .chat-warn { margin-top: 8px; font-size: 13px; color: var(--ink-2); background: color-mix(in srgb, var(--hard) 14%, transparent); padding: 6px 10px; border-radius: 8px; }
 .chat-warn a { color: inherit; }
+
+/* pattern cards: the grade shown on the back, and the suggested rating */
+#grade-slot:empty { display: none; }
+.grade-box { margin: 0 0 10px; border: 1px solid var(--border); border-left: 4px solid var(--border-2); border-radius: var(--radius); background: var(--surface); padding: 10px 14px; font-size: 14px; }
+.grade-box.pending { display: flex; align-items: center; gap: 10px; color: var(--muted); }
+.grade-box.bad { border-left-color: var(--again); }
+.grade-box.v-correct { border-left-color: var(--good); } .grade-box.v-acceptable { border-left-color: var(--hard); }
+.grade-box.v-wrong, .grade-box.v-none { border-left-color: var(--again); }
+.grade-head { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; }
+.grade-v { font-weight: 700; } .grade-said, .grade-sig { color: var(--muted); font-size: 13px; }
+.grade-score { margin-left: auto; font-size: 13px; } .grade-score b { color: var(--c); }
+.grade-fb { margin-top: 6px; }
+.grade-pts { margin: 6px 0 0; padding-left: 0; list-style: none; font-size: 13px; }
+.grade-pts li::before { display: inline-block; width: 1.3em; font-weight: 700; }
+.grade-pts li.ok::before { content: "✓"; color: var(--good); } .grade-pts li.miss::before { content: "✗"; color: var(--again); }
+.grade-tr { margin-top: 6px; font-size: 13px; color: var(--muted); } .grade-tr summary { cursor: pointer; }
+.spin { width: 14px; height: 14px; border: 2px solid var(--border-2); border-top-color: var(--ink); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.rate.suggested { outline: 2px solid currentColor; outline-offset: 2px; }
+.study.wide { max-width: 1180px; }
+/* Patterns page: the cheat sheet */
+.cheat { max-width: 1000px; } .cheat table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.cheat th, .cheat td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+.cheat td:first-child { font-weight: 600; white-space: nowrap; } .cheat code { font-size: 12.5px; }
+@media (max-width: 700px) { .cheat thead { display: none; } .cheat tr { display: block; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .cheat td { display: block; border: 0; padding: 2px 0; } }
+.resp-typed { font: 12.5px/1.5 ui-monospace, Menlo, monospace; background: var(--surface-2, transparent); border: 1px dashed var(--border); border-radius: 8px; padding: 6px 10px; margin: 6px 0; white-space: pre-wrap; }
+.resp-grade { font-size: 13px; margin: 6px 0; padding-left: 10px; border-left: 3px solid var(--border-2); }
+.resp-grade.v-correct { border-left-color: var(--good); } .resp-grade.v-acceptable { border-left-color: var(--hard); } .resp-grade.v-wrong, .resp-grade.v-none { border-left-color: var(--again); }

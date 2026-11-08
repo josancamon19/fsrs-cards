@@ -10,7 +10,7 @@
 .lc-desc { padding: 0 18px 18px; }
 .lc-tabs { display: flex; gap: 16px; font-size: 12.5px; color: var(--lc-mute); border-bottom: 1px solid var(--lc-line); margin: 0 -18px 14px; padding: 9px 18px; }
 .lc-tabs .on { color: var(--lc-text); font-weight: 600; }
-.lc-title { font-size: 20px; font-weight: 600; margin: 0 0 10px; line-height: 1.3; }
+.lc-title { font-size: 20px; font-weight: 600; margin: 4px 0 14px; line-height: 1.3; }
 .lc-meta { display: flex; gap: 6px; margin-bottom: 14px; }
 .lc-diff, .lc-chip { font-size: 12px; padding: 2px 9px; border-radius: 999px; background: var(--lc-code); color: var(--lc-mute); }
 .lc-diff { font-weight: 600; }
